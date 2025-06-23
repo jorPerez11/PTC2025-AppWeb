@@ -1,0 +1,335 @@
+body{
+    font-family: "Montserrat", sans-serif;
+}
+
+.navbar{
+    background-color: transparent;
+    transition: background-color 0.4s, box-shadow 0.4s;
+}
+
+.navbar-scrolled {
+  background-color: #03071E; /* o cualquier color sólido */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-separator{
+    border: 0;
+    height: 1px; 
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+.botonInicioSesion,
+.botonRegistro,
+.botonComenzar {
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.botonComenzar{
+    color: white;
+    background-color: #DC2F02;
+}
+
+.botonComenzar:hover{
+    background-color: #FF3500;
+    color: white;
+}
+
+.botonComenzar:focus{
+    background-color: #CE2B00;
+    color: white;
+}
+
+.navbar-nav{
+    padding-right: 30px;
+}
+
+.nav-item{
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+
+.navbar-toggler{
+   border: none;
+}
+.navbar-toggler:focus{
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus{
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro{
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover{
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus{
+   background-color: #a45d00;
+    color: white;
+}
+
+.botonConocenos{
+    width: auto;
+    height: auto;
+    font-size: 18px;
+    white-space: nowrap;   
+    padding-left: 1rem;
+    padding-right: 1rem; 
+}
+
+.botonInicioSesion{
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus{
+    box-shadow: none;
+}
+
+
+.navbar-brand{
+    size: 100px;
+}
+
+.nav-link{
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover{
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before{
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before{
+    width: 100%;
+}
+
+
+.headerImg{
+    background-color: #222222;
+    background-size: cover;
+    width: 100%;
+    height: auto;
+}
+
+.hdText{
+    padding-left: 100px;
+}
+
+.contParent{
+    color: white;
+    background-color: #222222
+}
+
+.textInfo{
+    width: 70%;
+    text-align: justify;
+}
+
+.textInfo h5{
+    font-weight: 300;
+}
+
+.contChar{
+    width: 70%;
+}
+
+
+.contInfo{
+    background: linear-gradient(to bottom, #03071E, #6A040F);
+    border-radius: 30px;
+    color: white;
+}
+
+.contText{
+    align-items: start;
+    padding-top: 40px;
+}
+
+.contInfoEnd{
+    border-radius: 30px;
+    background-image: url(../img/FondoTexto.png), linear-gradient(to left, #F48C06, #FFBA08);
+    background-repeat: no-repeat;
+    background-position: right center; 
+    background-size: auto 100%;
+}
+
+.contInfoEnd h1{
+    font-weight: 600;
+}
+
+.textInfoEnd{
+    padding-left: 3rem;
+}
+
+.separatorV2{
+    width: 100%;
+}
+
+@media (max-width: 783px){
+    .contChar{
+        width: 100%;
+    }
+}
+
+@media (max-width: 1309px)  {
+    .textInfoTitle{
+        font-size: 32px;
+    }
+    .textInfo h5{
+        font-size: large;
+    }
+}
+
+@media (max-width: 992px) {
+    .textInfoTitle {
+        font-size: 30px;
+    }
+    .textInfo h5{
+        font-size: medium;
+    }
+    .botonConocenos{
+        font-size: medium;
+    }
+    .botonRegistro{
+        font-size: medium;
+    }
+    .contCards h1{
+        font-size: 25px;
+    }
+    .contCards h5{
+        font-size: 16px;
+    }
+    .contTextHead h1{
+        font-size: 25px;
+    }
+    .contText h5{
+        font-size: 16px;
+        background-image: url(../img/H2C_LOGO_WHITE_TRANSPARENT.png);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: contain;
+    }
+    .contInfo{
+        border-radius: 1px;
+        width: 100%;
+    }
+    .contInfoEnd{
+        background-image: url(../img/FondoTextoTransparent.png), linear-gradient(to left, #F48C06, #FFBA08);
+    }
+    .textInfoEnd{
+        padding: 1rem;
+    }
+}
+
+
+
+.footerInfo h5, p {
+    word-wrap: break-word; /* Rompe palabras largas si es necesario */
+    overflow-wrap: break-word; /* Versión más moderna de word-wrap */
+}
+
+@media (max-width: 991.98px) {
+  .headerImgMobile {
+    padding-top: 70px; /* ajustá según el alto de tu navbar */
+  }
+}
+
+.headerImgMobile{
+    top: 55%;
+}
+
+@media (max-width: 991.98px) {
+  .imgCustomMobile {
+    height: 50vh; /* Ocupa toda la altura visible */
+    object-fit: cover; /* Para que no se deforme */
+  }
+
+  .imgCustomMobile {
+    top: 55%; /* Centra el texto un poco más abajo */
+  }
+}
+
+.card{
+    border-radius: 30px;
+}
+
+.card-header{
+    color: #FFBA08;
+    background-color: #020412;
+    font-size: 25px;
+}
+
+.card-body{
+    background-color: #03071E;
+    color: white;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.card-img-top{
+    -webkit-user-drag: none;
+}   
+
+@media (max-width: 992px){
+    .contText{padding-top: 20px;}
+}
+
+.pillar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+    margin-bottom: 20px; /* Espacio entre los elementos al apilarse en móvil */
+}
+
+.pillar-circle img{
+    width: 200px;
+}
+
+.footer{
+    background-color: #03071E;
+    color: white;
+}
+
+.footer a{
+    text-decoration: none;
+    color: white;
+}
+
+.footer a:hover{
+    color: rgb(205, 205, 205);
+}
