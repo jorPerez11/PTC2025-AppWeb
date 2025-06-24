@@ -1,0 +1,204 @@
+body{
+    font-family: "Montserrat", sans-serif;
+    padding-top: 5.5rem;
+    background-image: url(../img/ResourcesBackground.png);
+}
+
+.navbar{
+    background-color: #03071E;
+    transition: background-color 0.4s, box-shadow 0.4s;
+}
+
+.nav-separator{
+    border: 0;
+    height: 1px; 
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+.botonInicioSesion,
+.botonRegistro,
+.botonComenzar {
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.botonComenzar{
+    color: white;
+    background-color: #DC2F02;
+}
+
+.botonComenzar:hover{
+    background-color: #FF3500;
+    color: white;
+}
+
+.botonComenzar:focus{
+    background-color: #CE2B00;
+    color: white;
+}
+
+.navbar-nav{
+    padding-right: 30px;
+}
+
+.nav-item{
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+
+.navbar-toggler{
+   border: none;
+}
+.navbar-toggler:focus{
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus{
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro{
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover{
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus{
+   background-color: #a45d00;
+    color: white;
+}
+
+.botonConocenos{
+    width: auto;
+    height: auto;
+    font-size: 18px;
+    white-space: nowrap;   
+    padding-left: 1rem;
+    padding-right: 1rem; 
+}
+
+.botonInicioSesion{
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus{
+    box-shadow: none;
+}
+
+
+.navbar-brand{
+    size: 100px;
+}
+
+.nav-link{
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover{
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before{
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before{
+    width: 100%;
+}
+
+.contPhrase{
+    background-image: url(../img/ResourcesBanner.png), linear-gradient(to bottom, #121212, #DC2F02);
+    background-repeat: no-repeat;
+    background-position: top;
+
+    border-radius: 40px;
+    color: white;
+}
+
+.textPhrase{
+    width: 50%;
+}
+
+.textPhrase h1{
+    font-size: 3rem;
+}
+
+.contCards{
+    width: 100%;
+}
+
+.card-header{
+    border-color: #03071E;
+    background-image: linear-gradient(to right, #C21111, #000000);
+    color: white;
+}
+
+
+.card-body{
+    background-color: rgba(0, 0, 0, 0.63);
+    
+}
+
+.card{
+    width: 80%;
+    background-color: #03071e09;
+    color: white;
+}
+
+.card-text{
+    width: 40rem;
+}
+
+.card-text h5{
+    font-weight: 400;
+}
+
+.imgSection{
+    padding-right: 9rem;
+    height: auto;
+}
+
+.contFAQ{
+    border-radius: 40px;
+    background-color: white;
+}
+
+.contInnerFAQ{
+    padding-left: 6rem;
+}
+
+.accordion{
+    width: 40%;
+    max-width: 80%;
+}
+
+.accordion-item{
+    max-width:100%;
+}
