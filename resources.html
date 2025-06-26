@@ -94,7 +94,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-flex align-items-center justify-content-center">
-                        <img src="img/UserManual.png" class="imgSection m-3" alt="">
+                        <img src="img/UserManual.png" class="imgSection m-3 d-lg-block" alt="">
 
                         <div class="card-text text-center pb-4 pe-5 ">
                             <h5>En este manual encontrarás todo lo que necesitas para empezar a usar la aplicación sin complicaciones.</h5>
@@ -135,25 +135,87 @@
         </div> 
 </div>
 
+<!--Display para pantallas md o sm-->
 
-<div class="contFAQ mx-5 m-5 pt-5 pb-2 d-flex flex-column align-items-center">
+<div class="contPhrase mx-5 m-5 pt-5 pb-2 d-block d-lg-none justify-content-center align-items-center">
+    <div class="textPhrase mx-auto text-center align-items-center ">
+        <h1 style="font-weight: 600; color: #F48C06;">¿Tienes dudas?</h1>
+        <h4 class="pb-3">Estamos aquí para ayudarte.</h4>
+        <h5 style="font-weight: 400;">Explora nuestros manuales de ayuda para orientarte paso a paso y resolver cualquier duda que tengas sobre el uso de nuestra aplicación.</h5>
+    </div>
+    <br>
+    <br>
+        <div class="contCards align-items-center justify-content-center d-flex flex-column">
+            <div class="card mb-3 border-0 mx-5">
+                <div class="card-header d-flex align-items-center py-3 ps-5">
+                    <h4 class="my-2 mx-auto" style="margin-bottom: 0 ;">Manual de Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-center">
+
+                        <div class="card-text text-center pb-4 ">
+                            <h5>En este manual encontrarás todo lo que necesitas para empezar a usar la aplicación sin complicaciones.</h5>
+                            <br>
+                            <h5>Te guiamos paso a paso desde la instalación hasta el uso de cada función, con explicaciones claras y consejos útiles para aprovechar al máximo tu experiencia.</h5>
+                            <br><br>
+                            <button type="button" class="btn botonRegistro mx-5 d-flex mx-auto justify-content-center align-items-center">
+                                <img src="img/DownloadIcon.png" class="pe-3 py-1" style="width: 3rem;" alt="">
+                                <h5 style="margin-bottom: 0;">Descargar manual</h5>
+                            </button>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+
+            <div class="card mb-3 border-0 mx-5">
+                <div class="card-header d-flex align-items-center py-3 ps-5">
+                    <h4 class="my-2 mx-auto" style="margin-bottom: 0 ;">Manual Técnico</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-center">
+
+                        <div class="card-text text-center pb-4  ">
+                            <h5>Dirigido a desarrolladores, técnicos y personal de soporte, este manual proporciona una visión completa de la aplicación.</h5>
+                            <br>
+                            <h5>este manual describe la arquitectura de la aplicación, tecnologías utilizadas, procesos de instalación, mantenimiento y buenas prácticas para su administración y actualización.</h5>
+                            <br><br>
+                            <button type="button" class="btn botonRegistro mx-5 d-flex mx-auto justify-content-center align-items-center">
+                                <img src="img/DownloadIcon.png" class="pe-3 py-1" style="width: 3rem;" alt="">
+                                <h5 style="margin-bottom: 0;">Descargar manual</h5>
+                            </button>
+                        </div>
+                    </div>    
+                </div>
+            </div> 
+        </div> 
+</div>
+
+
+
+
+
+
+<div class="contFAQ mx-5 m-5 pt-5 pb-5 d-flex flex-column align-items-center">
     <div class="contInnerFAQ m-3 text-center">
       <h1 style="font-weight: 700;">Preguntas frecuentes</h1> 
       <br>
     </div>
 
-    <div class="row w-100 justify-content-center">
-        <div class="col-lg-6 col-md-10 col-12">
+    <div class="row w-100">
+        <div class="col-lg-6">
             <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
-                    <h2 class="accordion-header">
+                    <h5 class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                         <h5>¿Qué es una Mesa de Ayuda?</h5>
                     </button>
-                    </h2>
+                    </h5>
                     <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the first item’s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            El software de mesa de ayuda es una herramienta que sirve para una amplia gama de actividades de atención al cliente. Puedes organizar mensajes, brindar asistencia e intercambiar información con los clientes en un único punto de contacto (SPC). La mesa de ayuda utiliza tickets para la comunicación, por eso también se la conoce como  <strong>software de sistema de tickets.</strong>
+                            <br><br>
+                            Los datos recopilados de los tickets son una valiosa fuente de información del cliente. Puedes analizar los historiales de soporte y estar bien preparado para nuevos casos y problemas de clientes.
                         </div>
                     </div>
                 </div>
@@ -165,22 +227,57 @@
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the second item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            Un sistema de mesa de ayuda gestiona las solicitudes de soporte o correos electrónicos (llamados tickets) de los usuarios. Cuando los usuarios tienen problemas especializados o necesitan ayuda, <strong>envían una solicitud de soporte a través de diferentes canales</strong> como correo electrónico, teléfono o un formulario en línea en un sitio web. Luego, el equipo o software de la mesa de ayuda <strong> clasifica y prioriza los tickets </strong> según la naturaleza y gravedad del problema.
+                            <br><br>
+                            El ticket se asigna entonces al personal de soporte o <strong> equipo apropiado que trabaja en la resolución del problema. </strong> La mesa de ayuda hace un seguimiento del progreso del ticket proporcionando actualizaciones y comunicándose con el usuario. Una vez que el problema se resuelve, la mesa de ayuda le da al usuario una solución y cierra el ticket.
                         </div>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        <h5>¿H2C Help Desk ofrece soporte 24/7?</h5>
+                        <h5>¿Cómo se manejan los tickets?</h5>
                     </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            Utiliza nuestro sistema de soporte para gestionar solicitudes a través de un proceso estructurado y administrar y responder eficientemente a las peticiones de los clientes.
+                            <br><br>
+                            <strong>1. Creación de tickets:</strong> Los usuarios envían tickets a través de correo electrónico, formularios web o redes sociales, incluyendo todos los detalles.
+                            <br><br>
+                            <strong>2. Asignación de tickets:</strong> Los tickets se asignan automáticamente a los agentes adecuados basándose en reglas predefinidas.
+                            <br><br>
+                            <strong>3. Seguimiento de tickets:</strong> El sistema rastrea el estado y las actualizaciones de los tickets, registrando las notas y acciones del agente.
+                            <br><br>
+                            <strong>4. Priorización de tickets:</strong> Los tickets se priorizan en función del impacto, la urgencia o las reglas de SLA predefinidas.
+                            <br><br>
+                            <strong>5. Comunicación y colaboración:</strong> Los agentes se comunican con los usuarios, solicitan información y colaboran con sus colegas.
+                            <br><br>
+                            <strong>6. Resolución de tickets:</strong> Los agentes trabajan en la resolución de problemas, proporcionando instrucciones o escalando a equipos especializados.
+                            <br><br>
+                            <strong>7. Cierre de tickets:</strong> Los agentes actualizan el estado del ticket, registran los detalles de la resolución y recopilan los comentarios del usuario.
+                            <br><br>
+                            <strong>8. Informes y análisis:</strong> Los sistemas de Help Desk H2C proporcionan informes sobre el volumen de tickets, tiempos de respuesta, tiempos de resolución y satisfacción del cliente.
                         </div>
                     </div>
                 </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                        <h5>¿Hay recursos de capacitación o documentación disponible?</h5>
+                    </button>
+                    </h2>
+                    <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            Sí, dentro de los manuales de la  disponibles encontrarás todo lo que necesitas para empezar a usar la aplicación sin complicaciones. Te guiamos paso a paso desde la instalación hasta el uso de cada función, con explicaciones claras y consejos útiles para aprovechar al máximo tu experiencia.
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        
+        <div class="col-lg-6 col-md-10 col-12">
+            <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
@@ -189,7 +286,7 @@
                     </h2>
                     <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            Sí, ofrecemos una aplicación <strong>100% gratuito</strong>, útil para cualquier tamaño y tipo de negocio.
                         </div>
                     </div>
                 </div>
@@ -201,7 +298,7 @@
                     </h2>
                     <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            No necesitas instalar Help Desk H2C en absoluto, ya que es una solución basada en navegador. Lo único que se requiere para usar la aplicación es una conexión a internet.
                         </div>
                     </div>
                 </div>
@@ -213,33 +310,66 @@
                     </h2>
                     <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong>This is the third item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                            Sí, para utilizar Help Desk H2C, es imprescindible crear una cuenta o iniciar sesión con una existente. Este proceso asegura la gestión personalizada de tus solicitudes y te permite acceder a todas las funcionalidades de la plataforma. Sin una cuenta, no podrás registrar tickets, comunicarte con el equipo de soporte ni aprovechar los beneficios de un sistema estructurado.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="col-lg-6 col-md-10 col-12">
-            <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-                        <h5>¿Qué es una Mesa de Ayuda?</h5>
-                    </button>
-                    </h2>
-                    <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <strong>This is the first item’s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        
     </div>   
+</div>
 
+<footer class="footer py-4">
+    <div class="container pb-5 ">
+        <div class="row"> 
+            <div class="col-md-2 text-center text-md-start">
+                <div class="d-flex justify-content-center justify-content-md-start">
+                    <img src="img/H2C_LOGO_WHITE.png" style="width: 70px;" alt="H2C Logo">
+                    <h4 style="font-weight: 500; padding-top: 20px;">H2C</h4>
+                </div>
+                <div class="d-flex gap-2 mt-3 justify-content-center justify-content-md-start"> <a href="#">
+                        <img src="img/InstagramIcon.png" alt="Instagram">
+                    </a>
+                    <a href="#">
+                        <img src="img/FacebookIcon.png" alt="Facebook">
+                    </a>
+                    <a href="#">
+                        <img src="img/TwitterIcon.png" alt="Twitter">
+                    </a>
+                    <a href="#">
+                        <img src="img/YoutubeIcon.png" alt="Youtube">
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 d-flex text-center ps-4 mx-auto">
+                <div class="footerLinks d-lg-flex gap-4 mx-auto pt-5 pb-5 pt-md-1 pt-lg-5">
+                    <a href="#">
+                        <h5>Acerca de</h5>
+                    </a>
+                    <a href="#">
+                        <h5>Contactanos</h5>
+                    </a>
+                    <a href="#">
+                        <h5>Productos</h5>
+                    </a>
+                    <a href="#">
+                        <h5>Recursos</h5>
+                    </a>   
+                </div>
+            </div>
+
+            <div class="footerInfo col-md-2 text-center text-md-start">
+                <h5>Contacto</h5>
+                <p>Tel. (503) 2510-8403</p>
+                <p>info@h2cgroup.com</p>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto text-center">
+        <h5>© H2C Help Desk</h5>
+    </div>
+</footer>
     
 
 
