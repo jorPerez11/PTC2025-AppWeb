@@ -194,10 +194,6 @@ body{
     background-color: white;
 }
 
-.contInnerFAQ{
-    padding-left: 6rem;
-}
-
 .accordion{
     width: 100%;
     --bs-accordion-btn-focus-box-shadow: none;
@@ -280,4 +276,9 @@ body{
 }
 
 
+@media (max-width: 991px){
+    .textPhrase{
+        width: 90%;
+    }
+}
 
