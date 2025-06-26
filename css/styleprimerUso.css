@@ -1,0 +1,1002 @@
+/* Fondo general con gradiente y estilo global */
+body {
+    background: linear-gradient(135deg, #e8e9f3 0%, #f0f1f5 100%);
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    height: 100%;
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #e8e9f3 0%, #f0f1f5 100%);
+}
+
+.navbar {
+    background-color: #03071E;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.separator {
+    width: 3.5px;
+    /* Ancho del "palito" */
+    height: 34px;
+    /* Altura del "palito" (aprox. la altura de los iconos) */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Color blanco semi-transparente */
+    margin: 0 10px;
+}
+
+.botonInicioSesion,
+.botonRegistro {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-nav {
+    padding-right: 30px;
+}
+
+.nav-item {
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro {
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonInicioSesion {
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus {
+    box-shadow: none;
+}
+
+.navbar-brand {
+    size: 100px;
+}
+
+.nav-link {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 100%;
+}
+
+.nav-separator {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+
+/* Contenedor principal con márgenes automáticos */
+.main-container {
+    padding: 40px 20px;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 25px;
+    /* Centrado horizontal */
+    align-items: center;
+    /* Centrado vertical */
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Wrapper que organiza los dos bloques principales (tarjetas y texto) */
+.content-wrapper {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+}
+
+/* ----- Sección de Tarjetas ----- */
+.cards-section {
+    flex: 1;
+    max-width: 600px;
+    position: relative;
+    overflow: visible;
+}
+
+/*Este selector asegura que todo menos los íconos .bg-deco esté por encima.*/
+.cards-section>*:not(.bg-deco) {
+    position: relative;
+    z-index: 1;
+}
+
+/* Fila superior con encabezados de columnas */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 15px 20px;
+    margin-bottom: -5px;
+    font-size: 18px;
+    color: #2F2F2F;
+    font-family: Montserrat;
+    font-weight: 600;
+    line-height: 40px;
+    gap: 80px;
+    margin-left: 40px;
+    flex-wrap: nowrap;
+}
+
+.header-row span.tec {
+    margin-right: 35px;
+}
+
+.header-row span {
+    width: 33%;
+    text-align: center;
+}
+
+.header-row span {
+    flex: 1;
+    /* Distribuye equitativamente */
+    min-width: 0;
+    /* Evita desbordes */
+    text-align: center;
+    white-space: nowrap;
+    /* Opcional: evita salto de línea */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Estilo de cada tarjeta */
+.ticket-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.ticket-card.pattern {
+    height: 93px;
+    display: block;
+}
+
+/* Contenido dentro de cada tarjeta */
+.ticket-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    /* opcional: para evitar que los íconos peguen los bordes */
+}
+
+/* Agrupa ítems del ticket */
+.ticket-info {
+    display: flex;
+    gap: 80px;
+    align-items: center;
+    flex: 1;
+}
+
+/* Campo individual en el ticket */
+.ticket-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 8px;
+}
+
+.ticket-field.horizontal {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+/* Icono redondo para campos */
+.field-icon {
+    width: 45px;
+    height: 45px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: relative;
+    /* Permite el posicionamiento absoluto de los SVGs */
+}
+
+.field-icon svg {
+    width: 45px;
+    height: 45px;
+    display: block;
+    position: relative;
+    top: 5px;
+    left: 4px;
+}
+
+.field-icon img {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+}
+
+.field-icon span.svgcircle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.field-value {
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    font-family: Montserrat;
+    font-style: normal;
+    gap: 10px;
+    /* Espacio entre ícono y texto */
+    color: black;
+    white-space: nowrap;
+    line-height: 40px;
+    /* 181.818% */
+}
+
+.status-badge {
+    background-color: #ffc107;
+    color: #000;
+    border-radius: 10px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    height: 30px;
+    line-height: normal;
+    /* importante para evitar desalineación */
+}
+
+
+/* Menú de puntos suspensivos */
+.ticket-menu {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+}
+
+/* Tarjeta de carga simulada (skeleton) */
+.skeleton-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 20px;
+}
+
+
+.skeleton-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.skeleton-line {
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+.bg-deco {
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.deco-top-left {
+    top: -7%;
+    left: -13%;
+    width: 185px;
+}
+
+.deco-bottom-left {
+    bottom: -25%;
+    left: -9%;
+    width: 165px;
+}
+
+.deco-middle-right {
+    top: 65%;
+    right: -10%;
+    transform: translateY(-50%);
+    width: 150px;
+}
+
+/* ----- Sección de Texto ----- */
+.text-section {
+    flex: 1;
+    max-width: 800px;
+    padding-left: 40px;
+    position: relative;
+}
+
+
+.description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #000;
+    margin-bottom: 40px;
+    text-align: justify;
+}
+
+.cta-link {
+    color: #0066FF;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cta-link:hover {
+    color: #0056b3;
+}
+
+.arrow svg {
+    width: 45px;
+    height: auto;
+}
+
+.arrow:hover {
+    color: #0056b3;
+}
+
+.main-title {
+    font-size: clamp(24px, 5vw, 36px);
+    /* Tamaño de texto adaptable */
+    font-weight: 700;
+    line-height: 1.4;
+    position: relative;
+    display: inline-block;
+    /* Asegura que el contenido interno sea respetado */
+}
+
+.main-phrase {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    /* opcional, para evitar que se peguen demasiado */
+    white-space: nowrap;
+}
+
+.word-with-icon {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    padding-right: 40px;
+    /* deja espacio para la imagen */
+}
+
+.relative-container {
+    position: relative;
+    display: inline-block;
+}
+
+.decorative-lines {
+    position: absolute;
+    top: -0.9em;
+    /* más relativo al texto */
+    right: -30px;
+    /* se aleja del texto hacia la derecha */
+    width: 95px;
+    height: 95px;
+    transform: rotate(-210.772deg) scaleY(-1);
+    ;
+}
+
+.decorative-lines img {
+    margin-right: 25px;
+    width: 100%;
+    height: auto;
+}
+
+.highlight {
+    color: #DC2F02;
+    font-family: Montserrat;
+    font-size: clamp(24px, 5vw, 36px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.2;
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+}
+
+.redline {
+    position: absolute;
+    bottom: -180px;
+    /* Ajusta según tu imagen */
+    left: 0;
+    width: 100%;
+    z-index: -1;
+    pointer-events: none;
+    display: block;
+    margin-top: 100px;
+    text-align: center;
+    /* Asegura que no interfiera */
+}
+
+.redline img {
+    width: 100%;
+    /* se adapta al ancho del texto */
+    height: 330px;
+    /* grosor de la línea roja, ajusta si es necesario */
+    object-fit: contain;
+    display: block;
+}
+
+/* TABLET Y HASTA 992px */
+@media (max-width: 1200px) {
+
+    .cards-section {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .header-row,
+    .skeleton-content {
+        display: grid;
+        grid-template-columns: 1.2fr 4fr min-content auto;
+        align-items: center;
+        width: 100%;
+        gap: 1rem;
+    }
+
+    /* 2. Hacemos que los elementos del encabezado ocupen su columna */
+    .header-row span:nth-child(1) {
+        grid-column: 1;
+        justify-self: start;
+    }
+
+    .ticket-content .ticket-menu {
+        grid-column: 4;
+        justify-self: end;
+    }
+
+    .skeleton-content .field-icon {
+        grid-column: 1;
+        justify-self: start;
+        display: flex;
+        justify-content: start;
+        padding-left: clamp(12px, 2vw, 55px);
+        width: 100%;
+    }
+
+    .ticket-card {
+        width: 100%;
+    }
+
+    .ticket-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .ticket-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 15px;
+    }
+
+    .ticket-info>.ticket-field {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+        padding: 0 8px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 0 10px;
+        font-size: 16px;
+    }
+
+    .header-row span {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+        padding: 0 8px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ticket-field.horizontal {
+        flex-direction: row;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .field-icon,
+    .field-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .status-badge,
+    .field-value {
+        font-size: 16px;
+    }
+
+    .text-section {
+        margin-top: 150px;
+        padding-left: 0;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .main-title,
+    .highlight {
+        font-size: clamp(1.8rem, 5vw, 2.2rem);
+        text-align: center;
+    }
+
+    .description {
+        font-size: 18px;
+        text-align: justify;
+        margin-bottom: 15px;
+    }
+
+    .cta-link {
+        justify-content: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .arrow svg {
+        width: 45px;
+    }
+
+    .cards-section {
+        padding: 0 20px;
+    }
+
+    .ticket-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .ticket-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 15px;
+    }
+
+    .ticket-info>.ticket-field {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+        padding: 0 8px;
+        box-sizing: border-box;
+    }
+
+    .field-icon,
+    .field-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .field-value,
+    .status-badge {
+        font-size: 16px;
+    }
+
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 10px;
+        font-size: 18px;
+    }
+
+    .header-row span {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+    }
+
+    .ticket-menu svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .decorative-lines {
+        width: 70px;
+        height: 70px;
+        right: -20px;
+    }
+
+    .redline {
+        bottom: -120px;
+        z-index: -1;
+        text-align: center;
+    }
+
+    .redline img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .bg-deco {
+        position: absolute;
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+    }
+
+    .deco-top-left {
+        top: -19px;
+        left: -35px;
+        width: 185px;
+    }
+
+    .deco-bottom-left {
+        bottom: -60px;
+        left: -20px;
+        width: 165px;
+    }
+
+    .deco-middle-right {
+        top: 68%;
+        right: 3px;
+        transform: translateY(-50%);
+        width: 400px;
+    }
+
+    .deco-top-left,
+    .deco-bottom-left,
+    .deco-middle-right {
+        display: block;
+        width: 115px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .main-title {
+        font-size: 22px;
+    }
+
+    .text-section {
+        margin-top: 80px;
+        padding: 0 15px;
+        text-align: center;
+    }
+
+    /* Contenido dentro de cada tarjeta */
+    .ticket-content {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        gap: 15px;
+    }
+
+    .cards-section {
+        padding: 0 15px;
+    }
+
+    .header-row,
+    .ticket-info {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .header-row span,
+    .ticket-info>.ticket-field {
+        flex: 1 1 0;
+        min-width: 0;
+        text-align: center;
+        padding: 0 5px;
+        box-sizing: border-box;
+    }
+
+    .ticket-card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .ticket-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .ticket-field {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .ticket-field.horizontal {
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .field-icon,
+    .field-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .field-value {
+        font-size: 14px;
+    }
+
+    .status-badge {
+        font-size: 13px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .ticket-menu svg {
+        width: 30px;
+        height: 30px;
+    }
+
+
+    /* Campo individual en el ticket */
+    .ticket-field {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        gap: 8px;
+    }
+
+    .ticket-info>.ticket-field {
+        flex: 1 1 0;
+        text-align: center;
+        padding: 0 10px;
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
+
+    .ticket-field.horizontal {
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .content-wrapper {
+        padding: 0 15px;
+    }
+
+    .header-row {
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    .header-row,
+    .ticket-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-row span,
+    .ticket-info>div {
+        flex: 1;
+        text-align: center;
+    }
+
+    .main-title,
+    .highlight {
+        font-size: 22px;
+    }
+
+    .description {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    .cta-link {
+        padding-top: -100%;
+        font-size: 15px;
+    }
+
+    .ticket-content {
+        flex-direction: column;
+        padding: 0 10px;
+        gap: 15px;
+    }
+
+    .field-icon,
+    .field-icon svg {
+        width: 35px;
+        height: 35px;
+    }
+
+    .status-badge {
+        font-size: 13px;
+        padding: 2px 6px;
+    }
+
+    .decorative-lines {
+        width: 50px;
+        height: 50px;
+        right: -5px;
+    }
+
+    .redline {
+        bottom: -75px;
+    }
+
+    .redline img {
+        height: 120px;
+        width: 100%;
+    }
+
+    .deco-top-left,
+    .deco-bottom-left,
+    .deco-middle-right {
+        display: block;
+        width: 90px;
+    }
+
+    .deco-top-left {
+        transform: translate(10%, 5%);
+        width: 100px;
+    }
+
+    .deco-middle-right {
+        transform: translate(10%, -55%);
+        width: 120px;
+    }
+
+    .deco-bottom-left {
+        width: 100px;
+        transform: translate(10%, -15%);
+    }
+}
+
+@media (max-width: 1200px) {
+    .skeleton-content .field-icon {
+        padding-left: 55px;
+    }
+}
+
+@media (max-width: 992px) {
+    .skeleton-content .field-icon {
+        padding-left: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .skeleton-content .field-icon {
+        padding-left: 0;
+        margin-left: 0;
+        justify-self: start;
+    }
+
+    .skeleton-content {
+        gap: 0.01rem;
+        /* o 0 si querés que esté bien pegado */
+    }
+
+    .skeleton-content .field-icon img {
+        margin: 0;
+        display: block;
+    }
+}

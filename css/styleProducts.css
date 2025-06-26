@@ -157,7 +157,7 @@ body{
 }
 
 .ImgBackground{
-    background-image: url(../img/AltBackground.png);
+    background-image: url(../img/productsImg/AltBackground.png);
 }
 
 .contCenterItems{
@@ -185,7 +185,7 @@ body{
 .contImageHeader{
     width: 33rem;
     height: 31rem;
-    background-image: url(../img/H2CTickets.png), linear-gradient(to right, #C21111, #FFBA08);
+    background-image: url(../img/productsImg/H2CTickets.png), linear-gradient(to right, #C21111, #FFBA08);
     background-size: 29rem, cover;
     background-repeat: no-repeat;   
     background-position: bottom right; 

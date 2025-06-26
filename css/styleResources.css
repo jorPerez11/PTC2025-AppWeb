@@ -1,7 +1,7 @@
 body{
     font-family: "Montserrat", sans-serif;
     padding-top: 5.5rem;
-    background-image: url(../img/ResourcesBackground.png);
+    background-image: url(../img/resourcesImg/ResourcesBackground.png);
 }
 
 .navbar{
@@ -134,7 +134,7 @@ body{
 }
 
 .contPhrase{
-    background-image: url(../img/ResourcesBanner.png), linear-gradient(to bottom, #121212, #DC2F02);
+    background-image: url(../img/resourcesImg/ResourcesBanner.png), linear-gradient(to bottom, #121212, #DC2F02);
     background-repeat: no-repeat;
     background-position: top;
 

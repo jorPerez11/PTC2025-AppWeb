@@ -180,7 +180,7 @@ body{
 
 .contInfoEnd{
     border-radius: 30px;
-    background-image: url(../img/FondoTexto.png), linear-gradient(to left, #F48C06, #FFBA08);
+    background-image: url(../img/indexImg/FondoTexto.png), linear-gradient(to left, #F48C06, #FFBA08);
     background-repeat: no-repeat;
     background-position: right center; 
     background-size: auto 100%;
@@ -237,7 +237,7 @@ body{
     }
     .contText h5{
         font-size: 16px;
-        background-image: url(../img/H2C_LOGO_WHITE_TRANSPARENT.png);
+        background-image: url(../img/indexImg/H2C_LOGO_WHITE_TRANSPARENT.png);
         background-repeat: no-repeat;
         background-position: center center;
         background-size: contain;
@@ -247,7 +247,7 @@ body{
         width: 100%;
     }
     .contInfoEnd{
-        background-image: url(../img/FondoTextoTransparent.png), linear-gradient(to left, #F48C06, #FFBA08);
+        background-image: url(../img/indexImg/FondoTextoTransparent.png), linear-gradient(to left, #F48C06, #FFBA08);
     }
     .textInfoEnd{
         padding: 1rem;
