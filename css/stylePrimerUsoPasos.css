@@ -1,0 +1,574 @@
+/* Fondo general con gradiente y estilo global */
+body {
+    background: linear-gradient(135deg, #e8e9f3 0%, #f0f1f5 100%);
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    height: 100%;
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(135deg, #e8e9f3 0%, #f0f1f5 100%);
+    width: 100%;
+    overflow-x: hidden;
+    /* <- Esto previene el scroll horizontal */
+}
+
+.navbar {
+    background-color: #03071E;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.separator {
+    width: 3.5px;
+    /* Ancho del "palito" */
+    height: 34px;
+    /* Altura del "palito" (aprox. la altura de los iconos) */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Color blanco semi-transparente */
+    margin: 0 10px;
+}
+
+.botonInicioSesion,
+.botonRegistro {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-nav {
+    padding-right: 30px;
+}
+
+.nav-item {
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro {
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonInicioSesion {
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus {
+    box-shadow: none;
+}
+
+.navbar-brand {
+    size: 100px;
+}
+
+.nav-link {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 100%;
+}
+
+.nav-separator {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+header,
+footer {
+    background-color: #EFEFEF;
+    border: 1px solid #C3C3C3;
+    box-sizing: border-box;
+}
+
+.pantalla-fondo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.contenedor-central {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 1000px;
+    /* más ancho para el formulario */
+    max-height: 90vh;
+    /* limita la altura del modal */
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+
+    /* Flexbox para layout vertical */
+    display: flex;
+    flex-direction: column;
+
+    /* Transición suave para cambios de tamaño */
+    transition: all 0.3s ease-in-out;
+
+    /* Scroll interno si el contenido es muy alto */
+    overflow: hidden;
+}
+
+/* Header con altura fija */
+header {
+    flex-shrink: 0;
+    padding: 2rem 2rem 1rem 2rem;
+    background: #FFFFFF;
+    color: #000000;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+/* Main que crece según contenido */
+main {
+    flex: 1;
+    padding: 2rem;
+    background: #FFFFFF;
+    border-left: 1px solid #E5E5E5;
+    border-right: 1px solid #E5E5E5;
+    overflow-y: auto;
+    /* scroll interno si es necesario */
+    min-height: 400px;
+}
+
+/* Footer con altura fija */
+footer {
+    flex-shrink: 0;
+    padding: 1rem 2rem 2rem 2rem;
+    background: #FFFFFF;
+    color: #000000;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-top: 1px solid #E5E5E5;
+    gap: 1rem;
+}
+
+/* Progreso visual */
+.progreso-header {
+    font-family: 'Montserrat', sans-serif;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #E5E5E5;
+    margin-bottom: 0;
+}
+
+.paso-indicador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* centrado para mejor apariencia */
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+.paso {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #BDBDBD;
+    font-weight: 500;
+}
+
+.paso .circulo {
+    width: 32px;
+    height: 32px;
+    border: 2px solid #BDBDBD;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.paso.activo {
+    color: #0066FF;
+}
+
+.paso.activo .circulo {
+    border-color: #0066FF;
+    color: #000000;
+}
+
+.texto-1 {
+    color: #000000;
+}
+
+.texto-1,
+.texto-2,
+.texto-3 {
+    font-size: clamp(0.85rem, 1.8vw, 1rem);
+}
+
+.separador {
+    color: #C3C3C3;
+    font-size: 1.25rem;
+    margin: 0 0.5rem;
+}
+
+/* Botones */
+.next-button {
+    background-color: #0066FF;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.back-button {
+    background: none;
+    color: #656565;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s ease-in-out;
+}
+
+.cancel-button {
+    background: none;
+    color: #000000;
+    font-weight: 600;
+    border: none;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.svgrow {
+    width: 20px;
+    height: auto;
+}
+
+.next-button:hover {
+    background-color: #0052cc;
+}
+
+.back-button:hover {
+    color: #404040;
+}
+
+.cancel-button:hover {
+    color: #666666;
+}
+
+/* Área de contenido dinámico */
+#contenido-dinamico {
+    height: auto;
+    min-height: unset;
+}
+
+#contenido-dinamico .container {
+    height: 100%;
+}
+
+#contenido-dinamico .row {
+    min-height: 200px;
+    /* altura mínima para el contenido */
+}
+
+/* Responsive para pantallas de poca altura */
+@media (max-height: 576px) {
+    .pantalla-fondo {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 1rem;
+    }
+
+    .contenedor-central {
+        max-height: 95vh;
+        margin: 1rem 0;
+    }
+
+    header {
+        padding: 1rem 2rem 0.5rem 2rem;
+    }
+
+    footer {
+        padding: 0.5rem 2rem 1rem 2rem;
+    }
+
+    .progreso-header {
+        padding-bottom: 1rem;
+    }
+
+    .paso-indicador {
+        gap: 1rem;
+    }
+
+    .texto-1,
+    .texto-2,
+    .texto-3 {
+        font-size: 0.85rem;
+    }
+
+    .paso .circulo {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    main {
+        padding: 1.5rem;
+        min-height: 250px;
+    }
+}
+
+/* Responsive para pantallas pequeñas de ancho */
+@media (max-width: 768px) {
+    .pantalla-fondo {
+        padding: 1rem;
+    }
+
+    .contenedor-central {
+        width: 95%;
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+
+    header,
+    main,
+    footer {
+        padding: 1.5rem 1rem;
+    }
+
+    main {
+        padding: 1.5rem 1rem;
+    }
+
+    footer {
+        padding: 1rem;
+    }
+
+    .paso-indicador {
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+
+    .separador {
+        font-size: 1rem;
+        margin: 0 0.25rem;
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+    .pantalla-fondo {
+        padding: 0.5rem;
+    }
+
+    .contenedor-central {
+        width: 98%;
+        max-height: 98vh;
+    }
+
+    .texto-1,
+    .texto-2,
+    .texto-3 {
+        font-size: 0.8rem;
+    }
+
+    .paso .circulo {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    header,
+    main,
+    footer {
+        padding: 1rem;
+    }
+}
+
+/* OPCIÓN 1: Solo pantallas muy pequeñas de ancho (más flexible) */
+@media (max-width: 576px) {
+    /* Centrar el contenedor principal */
+    .progreso-header .paso-indicador {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Ocultar todos los elementos por defecto */
+    .progreso-header .paso-indicador .paso:not(.activo),
+    .progreso-header .paso-indicador .separador {
+        display: none !important;
+    }
+
+    /* Mostrar solo el paso activo */
+    .progreso-header .paso-indicador .paso.activo {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Estilos específicos para el paso activo */
+    .progreso-header .paso-indicador .paso.activo .circulo {
+        margin-bottom: 0 !important;
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo .texto-1,
+    .progreso-header .paso-indicador .paso.activo .texto-2,
+    .progreso-header .paso-indicador .paso.activo .texto-3 {
+        font-size: 0.8rem !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+}
+
+/* OPCIÓN 2: Combinación original (mantener como respaldo) */
+@media (max-width: 768px) and (max-height: 576px) {
+    .pantalla-fondo {
+        padding: 0.5rem;
+    }
+
+    .contenedor-central {
+        width: 98%;
+        max-height: 98vh;
+        margin: 0.5rem 0;
+    }
+
+    header {
+        padding: 0.75rem 1rem 0.5rem 1rem;
+    }
+
+    footer {
+        padding: 0.5rem 1rem 0.75rem 1rem;
+    }
+
+    main {
+        padding: 1rem;
+        min-height: 200px;
+    }
+
+    .progreso-header {
+        padding-bottom: 0.75rem;
+    }
+
+    /* Centrar el contenedor principal */
+    .progreso-header .paso-indicador {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Ocultar todos los elementos por defecto */
+    .progreso-header .paso-indicador .paso:not(.activo),
+    .progreso-header .paso-indicador .separador {
+        display: none !important;
+    }
+
+    /* Mostrar solo el paso activo */
+    .progreso-header .paso-indicador .paso.activo {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 0.5rem !important;
+    }
+
+    /* Estilos específicos para el paso activo */
+    .progreso-header .paso-indicador .paso.activo .circulo {
+        margin-bottom: 0 !important;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo .texto-1,
+    .progreso-header .paso-indicador .paso.activo .texto-2,
+    .progreso-header .paso-indicador .paso.activo .texto-3 {
+        font-size: 0.75rem !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+    }
+}
