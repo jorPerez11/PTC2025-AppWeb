@@ -18,6 +18,9 @@ function cargarPaso() {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = paso;
             actualizarIndicadorPaso();
+            setTimeout(() => {
+                inicializarInputsTelefono();
+            }, 0);
         });
 
     // Mostralo u ocultalo de inmediato, sin depender del fetch
@@ -27,7 +30,75 @@ function cargarPaso() {
     }
 }
 
+function inicializarInputsTelefono() {
+    const inputs = ["#telefonoAdmin", "#telefonoEmpresa"];
+    inputs.forEach(selector => {
+        const input = document.querySelector(selector);
+        if (input && typeof window.intlTelInput === "function") {
+            const iti = window.intlTelInput(input, {
+                initialCountry: "sv",
+                preferredCountries: ["sv", "mx", "co"],
+                separateDialCode: true,
+                utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+            });
 
+            // Guardamos la instancia en el input para futuras consultas
+            input.dataset.intl = "true"; // solo como marca para no repetir
+        }
+    });
+}
+
+
+function validarTelefonos() {
+    const campos = ["#telefonoAdmin", "#telefonoEmpresa"];
+    let todosValidos = true;
+
+    campos.forEach(selector => {
+        const input = document.querySelector(selector);
+        if (input && window.intlTelInputGlobals) {
+            const iti = window.intlTelInputGlobals.getInstance(input);
+            if (!iti || !iti.isValidNumber()) {
+                input.classList.add("is-invalid");
+                todosValidos = false;
+            } else {
+                input.classList.remove("is-invalid");
+            }
+        }
+    });
+
+    return todosValidos;
+}
+/* 
+const telefonoEmpresa = window.intlTelInputGlobals.getInstance(
+  document.querySelector("#telefonoEmpresa")
+)?.getNumber();
+
+const telefonoAdmin = window.intlTelInputGlobals.getInstance(
+  document.querySelector("#telefonoAdmin")
+)?.getNumber();
+
+console.log("Empresa:", telefonoEmpresa);
+console.log("Admin:", telefonoAdmin); */
+
+function siguientePaso() {
+    if (!validarTelefonos()) {
+        return;
+    }
+
+    const inputEmpresa = document.querySelector("#telefonoEmpresa");
+    const inputAdmin = document.querySelector("#telefonoAdmin");
+
+    const telefonoEmpresa = window.intlTelInputGlobals.getInstance(inputEmpresa)?.getNumber();
+    const telefonoAdmin = window.intlTelInputGlobals.getInstance(inputAdmin)?.getNumber();
+
+    console.log("Empresa:", telefonoEmpresa);
+    console.log("Admin:", telefonoAdmin);
+
+    if (paso < 3) {
+        paso++;
+        cargarPaso();
+    }
+}
 
 function siguientePaso() {
     if (paso < 3) {
@@ -73,4 +144,3 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarPaso();
 });
 
-console.log('¿Existe #btn-atras?', document.getElementById("btn-atras"));
