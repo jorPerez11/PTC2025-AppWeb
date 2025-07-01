@@ -17,19 +17,17 @@ function cargarPaso() {
         .then(html => {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = paso;
-
-            // Actualizar el indicador visual de pasos
             actualizarIndicadorPaso();
-
-            // Mostrar u ocultar el botón Atrás según el paso
-            const btnAtras = document.getElementById("btn-atras");
-            if (paso === 1) {
-                btnAtras.style.display = "none";
-            } else {
-                btnAtras.style.display = "inline-flex"; // o 'flex'
-            }
         });
+
+    // Mostralo u ocultalo de inmediato, sin depender del fetch
+    const btnAtras = document.getElementById("btn-atras");
+    if (btnAtras) {
+        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+    }
 }
+
+
 
 function siguientePaso() {
     if (paso < 3) {
@@ -71,4 +69,8 @@ function cancelarPaso() {
 }
 
 // Carga inicial
-window.onload = cargarPaso();
+document.addEventListener('DOMContentLoaded', () => {
+    cargarPaso();
+});
+
+console.log('¿Existe #btn-atras?', document.getElementById("btn-atras"));

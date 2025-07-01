@@ -344,6 +344,14 @@ footer {
     /* altura mínima para el contenido */
 }
 
+#btn-atras {
+  display: none; /* Oculto por defecto */
+}
+
+#paso-actual{
+    display: none;
+}
+
 /* Responsive para pantallas de poca altura */
 @media (max-height: 576px) {
     .pantalla-fondo {
