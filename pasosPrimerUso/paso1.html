@@ -137,13 +137,18 @@
                 <h5 class="fw-semibold border-bottom pb-2 mb-4">Datos de Empresa</h5>
 
                 <div class="mb-3">
-                    <label for="nombreEmpresa" class="form-label">Nombre de la empresa</label>
-                    <input type="text" class="form-control" id="nombreEmpresa" placeholder="H2C - Help To Comply">
+                    <label class="form-label">Nombre de la empresa</label>
+                    <div class="form-control" style="background-color: #ffffff; color: #000000; cursor: not-allowed;">
+                        H2C - Help To Comply
+                    </div>
+                    <!-- Input hidden para enviar el valor con el formulario -->
+                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply">
                 </div>
 
                 <div class="mb-3">
                     <label for="correoEmpresa" class="form-label">Correo corporativo principal</label>
-                    <input type="email" class="form-control" id="correoEmpresa" placeholder="correo@empresa.com">
+                    <input type="email" class="form-control" id="correoEmpresa" placeholder="correo@empresa.com"
+                        maxlength="100">
                 </div>
 
                 <div class="mb-3">
@@ -153,7 +158,8 @@
 
                 <div class="mb-3">
                     <label for="sitioWeb" class="form-label">Sitio web (opcional)</label>
-                    <input type="url" class="form-control" id="sitioWeb" placeholder="https://www.miempresa.com">
+                    <input type="url" class="form-control" id="sitioWeb" placeholder="https://www.miempresa.com"
+                        maxlength="150">
                 </div>
             </div>
 
@@ -163,12 +169,14 @@
 
                 <div class="mb-3">
                     <label for="nombreAdmin" class="form-label">Nombre completo</label>
-                    <input type="text" class="form-control" id="nombreAdmin" placeholder="Nombre del administrador">
+                    <input type="text" class="form-control" id="nombreAdmin" placeholder="Nombre del administrador"
+                        maxlength="90">
                 </div>
 
                 <div class="mb-3">
                     <label for="correoAdmin" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="correoAdmin" placeholder="correo@ejemplo.com">
+                    <input type="email" class="form-control" id="correoAdmin" placeholder="correo@ejemplo.com"
+                        maxlength="100">
                 </div>
 
                 <div class="mb-3">
@@ -178,7 +186,13 @@
 
                 <div class="mb-3">
                     <label for="rolAdmin" class="form-label">Cargo o rol dentro de la empresa</label>
-                    <input type="text" class="form-control" id="rolAdmin" placeholder="Administrador general">
+                    <select id="rolAdmin" class="form-select" required>
+                        <option value="" disabled selected>Selecciona un rol</option>
+                        <option value="Administrador general">Administrador general</option>
+                        <option value="Supervisor / Jefe de área">Supervisor / Jefe de área</option>
+                        <option value="Agente de soporte / Técnico">Agente de soporte / Técnico</option>
+                        <option value="Colaborador interno">Colaborador interno</option>
+                    </select>
                 </div>
             </div>
         </div>
