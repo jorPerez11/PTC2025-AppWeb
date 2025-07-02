@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acerca de - H2C</title>
+    <title>Login - H2C</title>
     <!--Enlace a tipografía externa-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
     <!--Enlaces a CSS y Framework Bootstrap-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styleAboutUs.css">
+    <link rel="stylesheet" href="css/styleLogin.css">
 </head>
 <body>
 <div class="container">
@@ -76,102 +76,56 @@
         </div>   
     </nav>
 </div>
-<div class="container-fluid p-0 contHeader d-flex justify-content-center align-items-center">
-    <div class="text-center innerHeader pt-5">
-            <h1 style="font-weight: 600;">Impulsando la transformación <br> digital con soluciones inteligentes</h1>
-            <br>
-            <div class="blockText mx-auto">
-                <h5><span style="font-weight: 500;">Ayudamos a las empresas a evolucionar con herramientas tecnológicas modernas y enfocadas en la eficiencia.</span></h5>
+
+<div class="mainCont d-flex">
+    <div class="contLoginPanel">
+        <div class="contSign mx-auto mt-5 ps-5 pe-5 mb-5">
+            <div class="contSignText">
+                <h1 style="font-weight: 600;">Bienvenido</h1>
+                <br>
+                <h5>Nos alegra tenerte aquí. ¿Qué necesitas resolver hoy?</h5>
+                <br>
+                <div class="d-grid gap-4 pb-3">
+                    <button class="btn botonRegistroV2 py-3 d-flex justify-content-center" type="button">
+                        <img src="img/signUpImg/googleIcon.png" class="pe-3" alt="">
+                        <h5 class="pt-1" style="margin-bottom: 0;">Iniciar sesión con Google</h5>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <hr class="hr-text" data-content="Ó">
+                </div>
+                <br>
+                <form>
+                    <div class="formInput mb-4">
+                        <label for="inputName" class="form-label"><h5>Dirección de correo electrónico</h5></label>
+                        <input type="email" class="form-control" id="inputEmail" placeholder="Ingresa tu email">
+                    </div>
+                    <div class="formInput mb-5">
+                        <label for="inputName" class="form-label"><h5>Contraseña</h5></label>
+                        <input type="password" class="form-control" id="inputPassword" placeholder="Ingresa tu contraseña">
+                    </div>
+                    <div class="d-grid ">
+                    <button class="btn botonRegistroV3 py-3 d-flex justify-content-center mb-4" type="button">
+                        <h5 class="pt-1" style="margin-bottom: 0;">Registrarse</h5>
+                    </button>
+                    </div>
+                </form>
             </div>
-            <br>
-            <div class="blockText mx-auto d-none d-lg-flex">
-                <h5 style="font-weight: 300;">Brindamos soluciones web que facilitan la operación diaria, optimizan procesos y fortalecen la infraestructura de IT de organizaciones en crecimiento.</h5>
-            </div>
-    </div>
-</div>
+        </div>
 
-<div class="container d-flex justify-content-center pb-5 contAbout">
-    <div class="contBody mt-5">
-      <h2>Sobre nosotros</h2>  
-      <hr class="separatorV2">
     </div>
-</div>
 
-<div class="d-none d-lg-flex contInfo mb-5">
-    <div class="contText d-block">
-        <p style="font-weight: 600;">Transformación digital</p>
-        <h3 style="font-weight: 600;">Empresas <span style="color: #DC2F02;">100% Salvadoreñas</span> <br>  confían en H2C</h3>  
-        <h5>Adaptamos los procesos logísticos a las nuevas demandas del mercado, sin afectar el valor de tus productos</h5>
-    </div>
-    <div class="imgSection">
-      <img src="img/aboutImg/TransformacionD.png" alt="">  
-    </div>
-</div>
-<!--Contenido para pantallas md o sm-->
-<div class="d-flex d-lg-none mb-5">
-    <div class="contText text-center d-block mx-auto">
-        <p style="font-weight: 600;">Transformación digital</p>
-        <h3 style="font-weight: 600;">Empresas <br> <span style="color: #DC2F02;">100% Salvadoreñas</span> <br>  confían en H2C</h3>  
-        <h5>Adaptamos los procesos logísticos a las nuevas demandas del mercado, sin afectar el valor de tus productos</h5>
-    </div>
-</div>
-
-<hr class="separator mx-auto mb-5">
-
-<div class="d-none d-lg-flex contInfo mb-5">
-    <div class="imgSectionVar">
-        <img src="img/aboutImg/SolucionAdmin.png" alt="">
-    </div>
-    <div class="contTextVar d-block">
-        <p style="font-weight: 600;">Solución administrativa</p>
-        <h3 style="font-weight: 600;"><span style="color: #DC2F02;">Control total</span> de tu empresa con status</h3>  
-        <h5>Accede a información financiera en tiempo real y toma decisiones estratégicas mientras la tecnología trabaja por ti.</h5>
+    <div class="loginImg">
+        <img src="img/loginImg/H2CIllustration.png" alt="">
     </div>
     
 </div>
-<!--Contenido para pantallas md o sm-->
-<div class="d-flex d-lg-none mb-5">
-    <div class="contText text-center d-block mx-auto">
-        <p style="font-weight: 600;">Solución administrativa</p>
-        <h3 style="font-weight: 600;"><span style="color: #DC2F02;">Control total</span> de tu empresa con status</h3>  
-        <h5>Accede a información financiera en tiempo real y toma decisiones estratégicas mientras la tecnología trabaja por ti.</h5>
-    </div>
-</div>
-
-<hr class="separator mx-auto mb-5">
-
-<div class="d-none d-lg-flex contInfo mb-5">
-    <div class="contText d-block">
-        <p style="font-weight: 600;">100% Seguro</p>
-        <h3 style="font-weight: 600;"><span style="color: #DC2F02;">Ciberseguridad</span> <br> al alcance de tu empresa</h3>  
-        <h5>Anticipamos, detectamos y respondemos ante amenazas para proteger tus activos, sin importar el tamaño de tu operación.</h5>
-    </div>
-    <div class="imgSection">
-      <img src="img/aboutImg/Ciberseguridad.png" alt="">  
-    </div>
-</div>
-<!--Contenido para pantallas md o sm-->
-<div class="d-flex d-lg-none mb-5">
-    <div class="contText text-center d-block mx-auto">
-        <p style="font-weight: 600;">100% Seguro</p>
-        <h3 style="font-weight: 600;"><span style="color: #DC2F02;">Ciberseguridad</span> <br>  al alcance de tu empresa</h3>  
-        <h5>Anticipamos, detectamos y respondemos ante amenazas para proteger tus activos, sin importar el tamaño de tu operación.</h5>
-    </div>
-</div>
 
 
-<div class="contPhrase mx-auto m-5 pt-5 pb-5 d-flex justify-content-center align-items-center">
-    <div class="textPhrase mx-auto text-center">
-        <h5>En H2C potenciamos tu negocio con soluciones propias y aliadas, para que tomes el control, optimices tu gestión y disfrutes hacer crecer tu empresa.</h5>
-        <br>
-        <img src="img/aboutImg/UserIconV2.png" alt="">
-        <h6 style="font-weight: 600;">Manager</h6>
-        <p>Director de la Empresa H2C</p>
-    </div>
-</div>
+
 
 <footer class="footer py-4">
-    <div class="container pb-5 ">
+    <div class="container pb-5">
         <div class="row"> 
             <div class="col-md-2 text-center text-md-start">
                 <div class="d-flex justify-content-center justify-content-md-start">
@@ -221,6 +175,8 @@
         <h5>© H2C Help Desk</h5>
     </div>
 </footer>
+
+
 
 
 <!--Enlace a JS Local / Bootstrap-->
