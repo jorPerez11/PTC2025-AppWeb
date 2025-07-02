@@ -146,7 +146,6 @@ body {
 header,
 footer {
     background-color: #EFEFEF;
-    border: 1px solid #C3C3C3;
     box-sizing: border-box;
 }
 
@@ -172,6 +171,8 @@ footer {
     max-width: clamp(1000px, 85%, 1400px);
     /* más ancho para el formulario */
     max-height: 90vh;
+    margin-top: 4rem;
+    margin-bottom: 7rem;
     /* limita la altura del modal */
     padding: 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
@@ -190,6 +191,21 @@ footer {
 
 .contenedor-central {
     min-height: clamp(600px, 80vh, 900px);
+}
+
+/* Envoltorio limitado a la altura sin solaparse con header/footer */
+.envoltorio-central {
+    margin-top: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 160px);
+    /* asumiendo header=120px y footer=40px */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    /* ya no necesitás padding top/bottom si usás height fija */
 }
 
 header {
@@ -401,7 +417,7 @@ footer {
     display: none;
 }
 
-.envoltorio-central {
+/* .envoltorio-central {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -412,7 +428,7 @@ footer {
     width: 100%;
     max-width: none;
 }
-
+ */
 @media (min-width: 1400px) {
     .contenedor-central {
         width: 100%;
@@ -564,6 +580,20 @@ footer {
         overflow: visible !important;
         margin: 1rem auto;
         border-radius: 10px;
+    }
+
+    .envoltorio-central {
+        margin-top: 2rem;
+    }
+
+    .envoltorio-central::after {
+        content: "";
+        display: block;
+        height: 2rem;
+    }
+
+    .contenedor-central {
+        overflow: hidden !important;
     }
 
     header {

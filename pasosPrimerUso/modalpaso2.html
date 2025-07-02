@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agregar Contacto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <link rel="stylesheet" href="css/stylePasos/stylePaso2.css" />
+</head>
+
+<body class="container">
+
+    <!-- Modal tipo card -->
+    <dialog id="modal-agregar" style="border: none; border-radius: 1rem; padding: 0; max-width: 460px; width: 90%;">
+        <article class="card p-4" style="border-radius: 1rem;">
+            <header class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">Agregar integrante</h4>
+                <button id="btnCerrarModal" class="btn btn-sm contrast" aria-label="Cerrar">✕</button>
+            </header>
+
+            <form id="frmAgregar" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+                <!-- Foto previsualización -->
+                <div class="d-flex align-items-center gap-3">
+                    <img id="preview" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto de perfil"
+                        width="56" height="56" style="border-radius: 50%; object-fit: cover; background: #f3f3f3;">
+                    <input type="file" id="foto" class="form-control" accept="image/*" />
+                </div>
+
+                <!-- Datos -->
+                <input type="text" id="nombre" placeholder="Nombre completo" required class="form-control" />
+                <input type="email" id="email" placeholder="Correo electrónico" required class="form-control" />
+                <input type="tel" id="telefono" placeholder="Número de teléfono" required class="form-control" />
+
+                <footer class="d-flex justify-content-end gap-2 pt-2">
+                    <button type="button" id="btnCerrarModal2" class="btn btn-outline-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </footer>
+            </form>
+        </article>
+    </dialog>
+</body>
+
+</html>
