@@ -24,6 +24,12 @@ html {
     /* <- Esto previene el scroll horizontal */
 }
 
+html,
+body {
+    height: auto !important;
+    overflow-y: auto;
+}
+
 .navbar {
     background-color: #03071E;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -162,8 +168,8 @@ footer {
     background-color: #FFFFFF;
     border: 1px solid #E5E5E5;
     border-radius: 12px;
-    width: 90%;
-    max-width: 1000px;
+    width: clamp(90%, 60vw, 1200px);
+    max-width: clamp(1000px, 85%, 1400px);
     /* más ancho para el formulario */
     max-height: 90vh;
     /* limita la altura del modal */
@@ -182,13 +188,20 @@ footer {
     overflow: hidden;
 }
 
-/* Header con altura fija */
+.contenedor-central {
+    min-height: clamp(600px, 80vh, 900px);
+}
+
 header {
-    flex-shrink: 0;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
     padding: 2rem 2rem 1rem 2rem;
     background: #FFFFFF;
     color: #000000;
     border-bottom: 1px solid #E5E5E5;
+    transition: all 0.3s ease-in-out;
 }
 
 /* Main que crece según contenido */
@@ -205,6 +218,10 @@ main {
 
 /* Footer con altura fija */
 footer {
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
     flex-shrink: 0;
     padding: 1rem 2rem 2rem 2rem;
     background: #FFFFFF;
@@ -214,6 +231,21 @@ footer {
     align-items: center;
     border-top: 1px solid #E5E5E5;
     gap: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.footer {
+    width: 100%;
+    padding: 1rem 2rem 2rem 2rem;
+    background: #FFFFFF;
+    color: #000000;
+    border-top: 1px solid #E5E5E5;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease-in-out;
 }
 
 /* Progreso visual */
@@ -243,6 +275,26 @@ footer {
     font-weight: 500;
 }
 
+.paso.activo {
+    color: #000000;
+}
+
+.paso.activo .circulo {
+    border-color: #0066FF;
+    color: #000000;
+}
+
+.paso.activo .circulo {
+    border-color: #0066FF;
+    color: #000000;
+}
+
+.paso.activo .texto-1,
+.paso.activo .texto-2,
+.paso.activo .texto-3 {
+    color: #000000;
+}
+
 .paso .circulo {
     width: 32px;
     height: 32px;
@@ -253,26 +305,18 @@ footer {
     justify-content: center;
     font-weight: 500;
     font-size: 0.9rem;
+    color: #BDBDBD;
+    /* Inactivo por defecto */
 }
 
-.paso.activo {
-    color: #0066FF;
-}
-
-.paso.activo .circulo {
-    border-color: #0066FF;
-    color: #000000;
-}
-
-.texto-1 {
-    color: #000000;
-}
-
-.texto-1,
-.texto-2,
-.texto-3 {
+/* Texto por defecto en gris también */
+.paso .texto-1,
+.paso .texto-2,
+.paso .texto-3 {
     font-size: clamp(0.85rem, 1.8vw, 1rem);
+    color: #BDBDBD;
 }
+
 
 .separador {
     color: #C3C3C3;
@@ -365,6 +409,62 @@ footer {
     padding-top: 120px;
     padding-bottom: 40px;
     box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+}
+
+@media (min-width: 1400px) {
+    .contenedor-central {
+        width: 100%;
+        min-height: 720px;
+        max-width: 1500px !important;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .paso {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .circulo {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 1.4rem !important;
+        line-height: 38px !important;
+        border-radius: 50%;
+    }
+
+    .texto-1,
+    .texto-2,
+    .texto-3 {
+        font-size: 1.1rem !important;
+        font-weight: 500;
+        line-height: 1.3;
+        text-align: center;
+        margin: 0;
+    }
+
+    .progreso-header .paso-indicador {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0.5rem 0 !important;
+    }
+
+    .progreso-header .paso-indicador .paso:not(.activo),
+    .progreso-header .paso-indicador .separador {
+        display: none !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 0.4rem !important;
+    }
 }
 
 @media (max-width: 576px) {
@@ -390,6 +490,17 @@ footer {
         flex-wrap: wrap;
     }
 
+    header {
+        min-height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1rem;
+        box-sizing: border-box;
+        flex-wrap: wrap;
+        overflow: visible;
+    }
+
     main {
         padding: 1rem;
         overflow: visible;
@@ -397,107 +508,90 @@ footer {
     }
 }
 
-
-
-/* Responsive para pantallas de poca altura */
-@media (max-height: 576px) {
-    .pantalla-fondo {
-        align-items: flex-start;
-        overflow-y: auto;
-        padding: 1rem;
-    }
-
-    .contenedor-central {
-        max-height: 95vh;
-        margin: 1rem 0;
-    }
-
-    header {
-        padding: 1rem 2rem 0.5rem 2rem;
-    }
-
-    footer {
-        padding: 0.5rem 2rem 1rem 2rem;
-    }
-
-    .progreso-header {
-        padding-bottom: 1rem;
-    }
-
-    .paso-indicador {
-        gap: 1rem;
-    }
-
-    .texto-1,
-    .texto-2,
-    .texto-3 {
-        font-size: 0.85rem;
-    }
-
-    .paso .circulo {
-        width: 28px;
-        height: 28px;
-        font-size: 0.8rem;
-    }
-
-    main {
-        padding: 1.5rem;
-        min-height: 250px;
-    }
-}
-
-/* Responsive para pantallas pequeñas de ancho */
-@media (max-width: 768px) {
-    .pantalla-fondo {
-        padding: 1rem;
-    }
-
-    .contenedor-central {
-        width: 95%;
-        max-width: 95vw;
-        max-height: 95vh;
-    }
-
-    header,
-    main,
-    footer {
-        padding: 1.5rem 1rem;
-    }
-
-    main {
-        padding: 1.5rem 1rem;
-    }
-
-    footer {
-        padding: 1rem;
-    }
-
-    .paso-indicador {
-        gap: 1rem;
-        padding: 0 0.5rem;
-    }
-
-    .separador {
-        font-size: 1rem;
-        margin: 0 0.25rem;
-    }
-}
-
-/* Responsive para móviles */
 @media (max-width: 576px) {
+
+    /* Paso activo centrado */
+    .progreso-header .paso-indicador {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding: 0.5rem !important;
+    }
+
+    .progreso-header .paso-indicador .paso:not(.activo),
+    .progreso-header .paso-indicador .separador {
+        display: none !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 0.6rem !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo .circulo {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1.1rem !important;
+        line-height: 36px !important;
+    }
+
+    .progreso-header .paso-indicador .paso.activo .texto-1,
+    .progreso-header .paso-indicador .paso.activo .texto-2,
+    .progreso-header .paso-indicador .paso.activo .texto-3 {
+        font-size: 0.95rem !important;
+        font-weight: 500;
+        line-height: 1.2;
+        text-align: center !important;
+        white-space: normal !important;
+    }
+}
+
+@media (max-width: 576px),
+(max-height: 576px) {
     .pantalla-fondo {
         padding: 0.5rem;
+        align-items: flex-start !important;
+        overflow-y: auto !important;
     }
 
     .contenedor-central {
         width: 98%;
-        max-height: 98vh;
+        max-width: 100%;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        margin: 1rem auto;
+        border-radius: 10px;
     }
 
-    .texto-1,
-    .texto-2,
-    .texto-3 {
-        font-size: 0.8rem;
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 1rem;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        box-sizing: border-box;
+    }
+
+    main {
+        padding: 1rem;
+        min-height: unset;
+        overflow: visible;
+    }
+
+    footer {
+        padding: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .paso-indicador {
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     .paso .circulo {
@@ -506,10 +600,10 @@ footer {
         font-size: 0.8rem;
     }
 
-    header,
-    main,
-    footer {
-        padding: 1rem;
+    .texto-1,
+    .texto-2,
+    .texto-3 {
+        font-size: 0.8rem;
     }
 }
 
