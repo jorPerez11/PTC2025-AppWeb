@@ -376,6 +376,10 @@ label {
     justify-content: center;
 }
 
+.headers-contacto {
+    font-size: large;
+}
+
 #lista-contactos .col {
     display: flex;
     align-items: center;
@@ -390,8 +394,6 @@ label {
     color: white;
     border: none;
     border-radius: 50%;
-    width: 60px !important;
-    height: 60px !important;
     box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4), 0 2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
@@ -399,9 +401,11 @@ label {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1050;
     cursor: pointer;
-    font-size: 24px;
     font-weight: 600;
     backdrop-filter: blur(10px);
+    width: clamp(50px, 10vw, 70px) !important;
+    height: clamp(50px, 10vw, 70px) !important;
+    font-size: clamp(20px, 4vw, 28px);
 }
 
 #btnFlotanteAgregar:hover {
@@ -502,50 +506,125 @@ dialog:not([open]) {
 }
 
 .iti__country-list {
-    max-height: 180px;
-    overflow-y: auto;
-    font-size: 0.85rem;
-    padding: 4px 0;
-    border-radius: 6px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    max-height: 260px;
+    /* Más altura para scroll */
+    font-size: 1rem;
+    /* Tamaño de texto más legible */
+    padding: 6px 0;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     z-index: 1050;
 }
 
 .iti__country {
-    padding: 6px 12px;
-    line-height: 1.2;
+    padding: 10px 16px;
+    /* Más espacio interior */
+    line-height: 1.4;
 }
 
 .iti__country:hover {
-    background-color: #f1f1f1;
+    background-color: #f7f7f7;
     cursor: pointer;
 }
 
 .iti--allow-dropdown {
     width: 100%;
     font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
 }
 
 .iti__divider {
     height: 1px;
-    margin: 4px 0;
-    background-color: #e5e5e5;
+    margin: 6px 0;
+    background-color: #e0e0e0;
 }
 
+
 .btn-remover {
-  font-size: 2.2rem;        /* Más grande aún */
-  color: #dc3545;           /* Rojo intenso */
-  background: transparent;
-  border: none;
-  padding: 0.2rem 0.6rem;
-  line-height: 1;
-  font-weight: bold;
-  border-radius: 0.375rem;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+    font-size: 2.2rem;
+    /* Más grande aún */
+    color: #dc3545;
+    /* Rojo intenso */
+    background: transparent;
+    border: none;
+    padding: 0.2rem 0.6rem;
+    line-height: 1;
+    font-weight: bold;
+    border-radius: 0.375rem;
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .btn-remover:hover {
-  transform: scale(1.25);    /* Aumenta al pasar el mouse */
-  background-color: rgba(220, 53, 69, 0.1);
-  cursor: pointer;
+    transform: scale(1.25);
+    /* Aumenta al pasar el mouse */
+    background-color: rgba(220, 53, 69, 0.1);
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {
+
+    /* For screens up to 576px wide */
+    .modal-perfil {
+        width: 95%;
+        /* Take up 95% of the viewport width */
+        margin: 1rem auto;
+        /* Center it with some margin */
+        max-width: none;
+        /* Remove max-width restriction on small screens */
+    }
+}
+
+@media (max-width: 576px) {
+    .contacto-fila {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: left;
+    }
+
+    .contacto-fila>.col,
+    .contacto-fila>.col-auto {
+        width: 100% !important;
+        flex: 0 0 auto;
+        margin-bottom: 0.5rem;
+    }
+
+    .contacto-fila .nombre-contacto,
+    .contacto-fila .correo-contacto,
+    .contacto-fila .telefono-contacto {
+        font-size: 0.95rem;
+        word-wrap: break-word;
+    }
+
+    .contacto-fila .d-flex.justify-content-end {
+        justify-content: flex-start !important;
+    }
+
+    .contacto-fila .d-flex.align-items-end {
+        align-items: flex-start !important;
+    }
+
+    .contacto-fila .acciones {
+        width: 100%;
+        text-align: right;
+    }
+
+    .headers-contacto {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 0.25rem 1rem;
+    }
+
+    .headers-contacto>div {
+        display: none !important;
+    }
+
+    .headers-contacto>div:first-child {
+        display: block !important;
+        flex: 0 0 100%;
+        text-align: center !important;
+        font-weight: 600;
+        font-size: 1rem;
+    }
 }

@@ -19,19 +19,31 @@ function cargarPaso() {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = paso;
             actualizarIndicadorPaso();
+
             setTimeout(() => {
                 inicializarInputsTelefono();
 
                 requestAnimationFrame(() => {
-                    if (paso === 1) restaurarDatosPaso1();
-                    if (paso === 2) restaurarDatosPaso2();
-                    if (paso === 3) restaurarDatosPaso3();
+                    // Ejecutar funciones específicas según el paso
+                    if (paso === 1) {
+                        restaurarDatosPaso1();
+                    }
+                    if (paso === 2) {
+                        // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
+                        initPaso2();
+                        // Restaurar datos después de que se hayan cargado los contactos
+                        setTimeout(() => {
+                            restaurarDatosPaso2();
+                        }, 500); // Dar tiempo para que se carguen los contactos
+                    }
+                    if (paso === 3) {
+                        restaurarDatosPaso3();
+                    }
                 });
             }, 0);
-
         });
 
-    // Mostralo u ocultalo de inmediato, sin depender del fetch
+    // Mostrar/ocultar botón atrás
     const btnAtras = document.getElementById("btn-atras");
     if (btnAtras) {
         btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
@@ -114,7 +126,7 @@ function siguientePaso() {
 function guardarDatosPaso1() {
     const telefonoEmpresaEl = document.getElementById("telefonoEmpresa");
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
-    
+
     const datos = {
         empresa: document.querySelector('input[name="nombreEmpresa"]')?.value,
         correoEmpresa: document.getElementById("correoEmpresa")?.value,
@@ -131,7 +143,7 @@ function guardarDatosPaso1() {
 
 function restaurarDatosPaso1() {
     const data = JSON.parse(sessionStorage.getItem("datosPaso1") || "{}");
-    
+
     const campos = {
         nombreEmpresa: data.empresa,
         correoEmpresa: data.correoEmpresa,
@@ -260,7 +272,7 @@ function anteriorPaso() {
 
 function cancelarPaso() {
     const mensaje = "Si cancelás ahora, se perderán los datos ingresados.";
-    
+
     if (typeof Swal !== 'undefined') {
         Swal.fire({
             title: "¿Estás seguro?",
@@ -301,12 +313,9 @@ const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
 const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM cargado, esperando el contenedor...");
-
     const observer = new MutationObserver(() => {
         const contenedor = document.getElementById("lista-contactos");
         if (contenedor) {
-            console.log("Contenedor encontrado, cargando contactos...");
             initPaso2();
             observer.disconnect();
         }
@@ -315,7 +324,6 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(document.body, { childList: true, subtree: true });
 
     if (document.getElementById("lista-contactos")) {
-        console.log("Contenedor ya estaba presente");
         initPaso2();
         observer.disconnect();
     }
@@ -324,11 +332,10 @@ document.addEventListener("DOMContentLoaded", () => {
 function initPaso2() {
     const contenedor = document.getElementById("lista-contactos");
     if (!contenedor) {
-        console.warn("No se encontró el contenedor #lista-contactos");
+        console.warn("No se encontró el contenedor de lista-contactos");
         return;
     }
 
-    console.log("Contenedor encontrado, cargando contactos...");
     obtenerContactos();
     configurarEventosModales();
 
@@ -347,8 +354,17 @@ async function obtenerContactos() {
     const contenedor = document.getElementById("lista-contactos");
     if (!contenedor) return;
 
+    // Mostrar indicador de carga
+    contenedor.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando contactos...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando contactos...</p>
+        </div>
+    `;
+
     try {
-        console.log("Obteniendo datos de la API...");
         const res = await fetch(API_URL);
 
         if (!res.ok) {
@@ -356,7 +372,6 @@ async function obtenerContactos() {
         }
 
         const data = await res.json();
-        console.log("Datos obtenidos:", data);
         listaContactos = data; // Actualizar la lista global
 
         mostrarDatos(data);
@@ -365,6 +380,9 @@ async function obtenerContactos() {
         contenedor.innerHTML = `
             <div class="alert alert-danger">
                 Error al cargar los contactos. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerContactos()">
+                    Reintentar
+                </button>
             </div>
         `;
     }
@@ -383,8 +401,23 @@ function mostrarDatos(contactos) {
         return;
     }
 
-    console.log(`Mostrando ${contactos.length} contactos`);
     contenedor.innerHTML = "";
+
+    // Crear buscador si no existe
+    if (!document.getElementById("busquedaContacto")) {
+        const buscadorContainer = document.createElement("div");
+        buscadorContainer.className = "mb-4";
+        buscadorContainer.innerHTML = `
+            <div class="input-group">
+                <input type="text" id="busquedaContacto" class="form-control" 
+                       placeholder="Buscar por nombre, correo o teléfono...">
+                <button class="btn btn-outline-secondary" type="button" id="btnBuscar">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        `;
+        contenedor.appendChild(buscadorContainer);
+    }
 
     const headers = document.createElement("div");
     headers.className = "row align-items-center mb-2 px-2 headers-contacto";
@@ -399,23 +432,27 @@ function mostrarDatos(contactos) {
     contenedor.appendChild(headers);
 
     contactos.forEach((contacto) => {
-        const imgSrc = contacto.Foto && contacto.Foto.trim() 
-            ? contacto.Foto 
+        const imgSrc = contacto.Foto && contacto.Foto.trim()
+            ? contacto.Foto
             : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
+        const nombreLimpio = limpiarTexto(contacto.Nombre);
+        const telefonoFormateado = formatearTelefonoInteligente(contacto["Número de tel."]);
+
         const fila = document.createElement("div");
-        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white";
+        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white contacto-fila";
+        fila.setAttribute("data-id", contacto.id);
         fila.innerHTML = `
             <div class="col-auto d-flex justify-content-center align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
                 <img src="${imgSrc}" 
-                     alt="Foto de ${contacto.Nombre}" 
+                     alt="Foto de ${nombreLimpio}" 
                      class="rounded-circle foto-contacto"
                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
                 <div class="w-100 fw-semibold nombre-contacto">
-                    ${contacto.Nombre || "Sin nombre"}
+                    ${nombreLimpio || "Sin nombre"}
                 </div>
             </div>
 
@@ -427,12 +464,12 @@ function mostrarDatos(contactos) {
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
                 <div class="w-100 text-muted small telefono-contacto">
-                    ${contacto["Número de tel."] || "+503 0000-0000"}
+                    ${telefonoFormateado}
                 </div>
             </div>
 
             <div class="col d-flex justify-content-end align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="d-flex flex-column align-items-end gap-2">
+                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${contacto.id}">
                     <button class="btn btn-sm btn-accion añadir" data-id="${contacto.id}" title="Añadir al equipo">
                         <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
                     </button>
@@ -450,7 +487,7 @@ function mostrarDatos(contactos) {
 
         contenedor.appendChild(fila);
 
-        // Eventos activos con verificación
+        // Eventos
         const editarBtn = fila.querySelector(".editar");
         const eliminarBtn = fila.querySelector(".eliminar");
         const añadirBtn = fila.querySelector(".añadir");
@@ -469,7 +506,20 @@ function mostrarDatos(contactos) {
 
         if (eliminarBtn) {
             eliminarBtn.addEventListener("click", () => {
-                AbrirModalEliminar(contacto.id, contacto.Nombre);
+                Swal.fire({
+                    title: `¿Eliminar a ${contacto.Nombre}?`,
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        eliminarContacto(contacto.id);
+                    }
+                });
             });
         }
 
@@ -479,11 +529,129 @@ function mostrarDatos(contactos) {
             });
         }
     });
+
+    // Inicializar el buscador después de renderizar
+    setTimeout(() => {
+        inicializarBuscadorDeContactos();
+        // Restaurar estado del equipo
+        restaurarEstadoEquipo();
+    }, 100);
+}
+
+// CORRECCIÓN 5: Función mejorada para restaurar el estado del equipo
+function restaurarEstadoEquipo() {
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+
+    if (equipo.length === 0) return;
+
+    equipo.forEach(id => {
+        const contenedorAcciones = document.getElementById(`acciones-${id}`);
+        if (contenedorAcciones) {
+            marcarContactoComoAñadidoVisual(id, contenedorAcciones);
+        }
+    });
+}
+
+function formatearTelefonoInteligente(telefono) {
+    if (!telefono) return "Teléfono no disponible";
+
+    // Clean the number, keeping only digits and the initial '+' if it exists.
+    const originalTelefono = telefono.toString().trim();
+    const esInternacional = originalTelefono.startsWith('+');
+    let soloDigitos = originalTelefono.replace(/\D/g, '');
+
+    let codigoPais = "";
+    let numero = "";
+
+    // 1. Identify country code and local number
+    if (esInternacional) {
+        if (soloDigitos.startsWith("503")) { // El Salvador
+            codigoPais = "+503";
+            numero = soloDigitos.substring(3);
+        } else if (soloDigitos.startsWith("52")) { // Mexico
+            codigoPais = "+52";
+            numero = soloDigitos.substring(2);
+        } else if (soloDigitos.startsWith("57")) { // Colombia
+            codigoPais = "+57";
+            numero = soloDigitos.substring(2);
+        } else if (soloDigitos.startsWith("1")) { // USA/Canada
+            codigoPais = "+1";
+            numero = soloDigitos.substring(1);
+        } else if (soloDigitos.startsWith("593")) { // Ecuador
+            codigoPais = "+593";
+            numero = soloDigitos.substring(3);
+        } else {
+            // If the code is not recognized, return it as is.
+            return originalTelefono; // Return original if international but not recognized
+        }
+    } else {
+        // Assume El Salvador if there's no international prefix.
+        if (soloDigitos.length === 8) {
+            codigoPais = "+503";
+            numero = soloDigitos;
+        } else {
+            return originalTelefono; // Cannot format with certainty.
+        }
+    }
+
+    // 2. Apply spacing format based on country
+    switch (codigoPais) {
+        case '+503': // Format: +503 XXXX-XXXX
+            if (numero.length === 8) return `${codigoPais} ${numero.substring(0, 4)}-${numero.substring(4)}`;
+            break;
+        case '+52': // Format: +52 XX XXXX XXXX
+            if (numero.length === 10) return `${codigoPais} ${numero.substring(0, 2)} ${numero.substring(2, 6)} ${numero.substring(6)}`;
+            break;
+        case '+57': // Format: +57 XXX XXX XXXX
+            if (numero.length === 10) return `${codigoPais} ${numero.substring(0, 3)} ${numero.substring(3, 6)} ${numero.substring(6)}`;
+            break;
+        case '+1': // Format: +1 (XXX) XXX-XXXX
+            if (numero.length === 10) return `${codigoPais} (${numero.substring(0, 3)}) ${numero.substring(3, 6)}-${numero.substring(6)}`;
+            break;
+        case '+593': // Ecuador Format: +593 9XX XXX XXX (Celular) or +593 X XXX XXXX (Fijo)
+            if (numero.length === 9 && numero.startsWith('9')) { // Mobile (e.g., 987654321)
+                return `${codigoPais} ${numero.substring(0, 3)} ${numero.substring(3, 6)} ${numero.substring(6)}`;
+            } else if (numero.length === 8) { // Landline (e.g., 23456789)
+                return `${codigoPais} ${numero.substring(0, 1)} ${numero.substring(1, 4)} ${numero.substring(4)}`;
+            }
+            break;
+    }
+    return `${codigoPais} ${numero}`.trim();
+}
+
+function eliminarContacto(id) {
+    fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No se pudo eliminar el contacto.");
+            }
+            return response.json();
+        })
+        .then(() => {
+            Swal.fire({
+                icon: "success",
+                title: "Contacto eliminado",
+                text: "El contacto ha sido eliminado correctamente.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
+            // Opcional: recargar lista de contactos o avanzar
+            obtenerContactos?.(); // solo si existe esa función
+        })
+        .catch(error => {
+            console.error(error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Ocurrió un problema al eliminar el contacto."
+            });
+        });
 }
 
 function configurarEventosModales() {
-    console.log("Configurando eventos de modales...");
-
     // Modal AGREGAR CONTACTO
     const modalAgregar = document.getElementById("modal-agregar");
     const btnAbrirModalAgregar = document.getElementById("btnAbrirModal");
@@ -600,57 +768,67 @@ function configurarEventosModales() {
 }
 
 async function agregarContacto() {
-    console.log("=== INICIANDO AGREGAR CONTACTO ===");
-
     const nombre = document.getElementById("nombre")?.value.trim();
     const correo = document.getElementById("email")?.value.trim();
     const archivoFoto = document.getElementById("foto")?.files[0];
 
     // Validar campos obligatorios
     if (!nombre || !correo) {
-        alert("Por favor, completa todos los campos obligatorios (nombre, correo).");
+        Swal.fire({
+            icon: "warning",
+            title: "Campos incompletos",
+            text: "Por favor, completa todos los campos obligatorios (nombre y correo).",
+            confirmButtonText: "Entendido"
+        });
         return;
     }
 
     // Validar formato de correo
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(correo)) {
-        alert("Por favor, ingresa un correo electrónico válido.");
+        Swal.fire({
+            icon: "error",
+            title: "Correo no válido",
+            text: "Por favor, ingresa un correo electrónico con el formato correcto.",
+            confirmButtonText: "Revisar"
+        });
         return;
     }
 
     // Validar teléfono
-    console.log("Validando teléfono...");
     if (!validarTelefonoIndividual("telefonoAgregar")) {
-        alert("Por favor, ingresa un número de teléfono válido (mínimo 7 dígitos).");
+        Swal.fire({
+            icon: "warning",
+            title: "Teléfono inválido",
+            text: "Por favor, ingresa un número de teléfono válido (mínimo 7 dígitos).",
+            confirmButtonText: "Verificar"
+        });
         return;
     }
 
     // Obtener teléfono con prefijo
     const telefono = obtenerTelefonoConPrefijo("telefonoAgregar");
     if (!telefono) {
-        alert("No se pudo procesar el número de teléfono. Por favor, verifica que esté correcto.");
+        Swal.fire({
+            icon: "error",
+            title: "No se pudo procesar",
+            text: "Verifica que el número de teléfono esté completo y correcto.",
+            confirmButtonText: "Ok"
+        });
         return;
     }
-
-    console.log("Todos los datos validados correctamente");
-    console.log("Teléfono final:", telefono);
 
     // Proceder con el guardado
     await enviarContacto(nombre, correo, telefono, archivoFoto);
 }
 
 async function enviarContacto(nombre, correo, telefono, archivoFoto) {
-    console.log("=== ENVIANDO CONTACTO ===");
-    console.log("Datos:", { nombre, correo, telefono });
 
     try {
         // Subir imagen si fue seleccionada
         let urlFoto = "";
         if (archivoFoto) {
-            console.log("Subiendo imagen...");
             urlFoto = await subirImagen(archivoFoto);
-            console.log("URL de imagen:", urlFoto);
         }
 
         const nuevoContacto = {
@@ -659,8 +837,6 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
             "Número de tel.": telefono,
             Foto: urlFoto
         };
-
-        console.log("Enviando a API:", nuevoContacto);
 
         const res = await fetch(API_URL, {
             method: "POST",
@@ -673,14 +849,19 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
         }
 
         const respuesta = await res.json();
-        console.log("Respuesta del servidor:", respuesta);
 
-        alert("¡Contacto agregado exitosamente!");
+        Swal.fire({
+            icon: "success",
+            title: "¡Contacto agregado!",
+            text: "El contacto ha sido guardado exitosamente.",
+            timer: 1500,
+            showConfirmButton: false
+        });
 
         // Limpiar formulario
         const frmAgregar = document.getElementById("frmAgregar");
         if (frmAgregar) frmAgregar.reset();
-        
+
         const previewAgregar = document.getElementById("previewAgregar");
         if (previewAgregar) previewAgregar.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -693,7 +874,13 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
 
     } catch (error) {
         console.error("Error al agregar contacto:", error);
-        alert("Ocurrió un problema al guardar el contacto. Por favor, intenta nuevamente.");
+
+        Swal.fire({
+            icon: "error",
+            title: "Ups...",
+            text: "Ocurrió un problema al guardar el contacto. Por favor, intenta nuevamente.",
+            confirmButtonText: "Entendido"
+        });
     }
 }
 
@@ -705,12 +892,15 @@ function validarTelefonoIndividual(idInput) {
     }
 
     const valorInput = input.value.trim();
-    console.log(`=== Validando ${idInput} ===`);
-    console.log('Valor del input:', valorInput);
 
     // Validación básica primero
     if (!valorInput || valorInput.length < 7) {
-        console.log('Teléfono muy corto o vacío');
+        Swal.fire({
+            icon: "warning",
+            title: "Teléfono inválido",
+            text: "El número de teléfono está vacío o es demasiado corto.",
+            confirmButtonText: "Entendido"
+        });
         input.classList.add("is-invalid");
         return false;
     }
@@ -718,7 +908,12 @@ function validarTelefonoIndividual(idInput) {
     // Verificar que contenga solo números, espacios, guiones, paréntesis
     const formatoValido = /^[\d\s\-\(\)+]+$/.test(valorInput);
     if (!formatoValido) {
-        console.log('Formato de teléfono inválido');
+        Swal.fire({
+            icon: "warning",
+            title: "Teléfono inválido",
+            text: "El número debe contener solo números, espacios, guiones o paréntesis.",
+            confirmButtonText: "Revisar"
+        });
         input.classList.add("is-invalid");
         return false;
     }
@@ -727,21 +922,19 @@ function validarTelefonoIndividual(idInput) {
     const soloDigitos = valorInput.replace(/\D/g, '');
     const esValido = soloDigitos.length >= 7 && soloDigitos.length <= 15;
 
-    console.log('Solo dígitos:', soloDigitos);
-    console.log('Cantidad de dígitos:', soloDigitos.length);
-    console.log('Es válido:', esValido);
-
     // Aplicar clase visual
     input.classList.toggle("is-invalid", !esValido);
 
     return esValido;
 }
 
+// CORRECCIÓN 4: Función AbrirModalEditar corregida
 function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
-    console.log("Abriendo modal de editar con:", { id, nombre, correo, telefono, foto });
+    // Limpiar el nombre de caracteres problemáticos
+    const nombreLimpio = limpiarTexto(nombre);
 
     document.getElementById("idEditar").value = id;
-    document.getElementById("nombreEditar").value = nombre || "";
+    document.getElementById("nombreEditar").value = nombreLimpio || "";
     document.getElementById("emailEditar").value = correo || "";
 
     const fotoActual = document.getElementById("fotoActual");
@@ -761,10 +954,11 @@ function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
             setTimeout(() => {
                 const telefonoInput = document.getElementById("telefonoEditar");
                 if (telefonoInput && telefono) {
-                    const iti = window.intlTelInputGlobals.getInstance(telefonoInput);
+                    const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
                     if (iti) {
-                        iti.setNumber(telefono);
-                        console.log("Número establecido en modal editar:", telefono);
+                        // Limpiar el teléfono antes de establecerlo
+                        const telefonoLimpio = telefono.replace(/[^\d\+\-\s\(\)]/g, '');
+                        iti.setNumber(telefonoLimpio);
                     }
                 }
             }, 200);
@@ -779,6 +973,7 @@ async function obtenerContactosPaso2() {
     renderizarContactos(listaContactos);
 }
 
+// CORRECCIÓN 2: Función mejorada para obtener teléfono con prefijo
 function obtenerTelefonoConPrefijo(idInput) {
     const input = document.getElementById(idInput);
     if (!input) {
@@ -787,8 +982,6 @@ function obtenerTelefonoConPrefijo(idInput) {
     }
 
     const valorInput = input.value.trim();
-    console.log(`=== Obteniendo teléfono de ${idInput} ===`);
-    console.log('Valor del input:', valorInput);
 
     // Intentar usar intlTelInput si está disponible
     const iti = window.intlTelInputGlobals?.getInstance(input);
@@ -800,15 +993,15 @@ function obtenerTelefonoConPrefijo(idInput) {
             const numeroCompleto = iti.getNumber();
             const paisSeleccionado = iti.getSelectedCountryData();
 
-            console.log('IntlTelInput - Número completo:', numeroCompleto);
-            console.log('IntlTelInput - País:', paisSeleccionado);
+            /* console.log('IntlTelInput - Número completo:', numeroCompleto);
+            console.log('IntlTelInput - País:', paisSeleccionado); */
 
             if (numeroCompleto && numeroCompleto.trim() !== '') {
                 numeroFinal = numeroCompleto.trim();
             } else if (paisSeleccionado && paisSeleccionado.dialCode) {
                 // Construir manualmente si intlTelInput no devolvió el número
                 const soloDigitos = valorInput.replace(/\D/g, '');
-                numeroFinal = `+${paisSeleccionado.dialCode}${soloDigitos}`;
+                numeroFinal = `+${paisSeleccionado.dialCode} ${soloDigitos}`;
             }
         } catch (error) {
             console.warn('Error con intlTelInput:', error);
@@ -821,18 +1014,32 @@ function obtenerTelefonoConPrefijo(idInput) {
         if (soloDigitos.length >= 7) {
             // Si ya tiene código de país, usarlo tal como está
             if (valorInput.startsWith('+')) {
-                numeroFinal = `+${soloDigitos}`;
+                numeroFinal = valorInput;
             } else {
                 // Usar +503 (El Salvador) como predeterminado
-                numeroFinal = `+503${soloDigitos}`;
+                numeroFinal = `+503 ${soloDigitos}`;
             }
         }
     }
-
-    console.log('Número final:', numeroFinal);
-    console.log('===============================');
-
     return numeroFinal;
+}
+
+// CORRECCIÓN 3: Función para mostrar teléfono con prefijo en las cards
+function formatearTelefonoParaMostrar(telefono) {
+    if (!telefono) return "+503 0000-0000";
+
+    // Si ya tiene el formato correcto, devolverlo tal como está
+    if (telefono.startsWith('+')) {
+        return telefono;
+    }
+
+    // Si es solo números, agregar el prefijo de El Salvador
+    const soloDigitos = telefono.replace(/\D/g, '');
+    if (soloDigitos.length >= 7) {
+        return `+503 ${soloDigitos}`;
+    }
+
+    return telefono;
 }
 
 function renderizarContactos(contactos) {
@@ -893,15 +1100,11 @@ function renderizarContactos(contactos) {
 
 function obtenerContactoPorId(id) {
     const contacto = listaContactos?.find(c => c.id == id);
-    console.log("¿Se encontró el contacto?", contacto);
     return contacto;
 }
 
 // 2. Función modificada para abrir modal y guardar ID correctamente
 function abrirModalAgregarEquipo(contacto) {
-    console.log("=== ABRIENDO MODAL AGREGAR EQUIPO ===");
-    console.log("Contacto recibido:", contacto);
-
     document.getElementById("imgEquipo").src = contacto.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
     document.getElementById("nombreEquipo").value = contacto.Nombre || "";
     document.getElementById("correoEquipo").value = contacto["Correo Electrónico"] || "";
@@ -912,21 +1115,32 @@ function abrirModalAgregarEquipo(contacto) {
     const frmAgregarEquipo = document.getElementById("frmAgregarEquipo");
     if (frmAgregarEquipo) {
         frmAgregarEquipo.dataset.idContacto = contacto.id;
-        console.log("ID guardado en formulario:", contacto.id);
     }
 
     document.getElementById("modal-agregar-equipo").showModal();
 }
 
 
+// CORRECCIÓN 6: Función editarContacto corregida
 async function editarContacto() {
     const id = document.getElementById("idEditar").value;
-    const nombre = document.getElementById("nombreEditar").value.trim();
+    const nombre = limpiarTexto(document.getElementById("nombreEditar").value.trim());
     const correo = document.getElementById("emailEditar").value.trim();
-    const telefono = document.getElementById("telefonoEditar").value.trim();
+    const telefonoInput = document.getElementById("telefonoEditar");
     const nuevaFoto = document.getElementById("fotoEditar").files[0];
     const previewFoto = document.getElementById("fotoActual");
     let urlFinal = previewFoto ? previewFoto.src : "";
+
+    // Obtener teléfono con prefijo
+    let telefono = "";
+    if (telefonoInput) {
+        const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
+        if (iti) {
+            telefono = iti.getNumber() || obtenerTelefonoConPrefijo("telefonoEditar");
+        } else {
+            telefono = obtenerTelefonoConPrefijo("telefonoEditar");
+        }
+    }
 
     if (!nombre || !correo || !telefono) {
         alert("Complete todos los campos obligatorios");
@@ -952,15 +1166,27 @@ async function editarContacto() {
         });
 
         if (res.ok) {
-            alert("Contacto actualizado exitosamente");
+            Swal.fire({
+                icon: "success",
+                title: "Contacto actualizado",
+                text: "El contacto ha sido actualizado exitosamente.",
+                timer: 1500,
+                showConfirmButton: false
+            });
+
             document.getElementById("modal-editar").close();
-            obtenerContactosPaso2(); // Recargar la lista
+            obtenerContactos(); // Recargar la lista
         } else {
             throw new Error("Error al actualizar el contacto");
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Error al actualizar el contacto");
+        Swal.fire({
+            icon: "error",
+            title: "Algo salió mal",
+            text: "No se pudo actualizar el contacto.",
+            confirmButtonText: "Entendido"
+        });
     }
 }
 
@@ -1056,7 +1282,6 @@ function inicializarTelefonosPaso2() {
         if (input && typeof window.intlTelInput === "function") {
             // Verificar si ya está inicializado
             if (input.dataset.intl === "true") {
-                console.log(`Input ${selector} ya está inicializado`);
                 return;
             }
 
@@ -1069,7 +1294,6 @@ function inicializarTelefonosPaso2() {
 
             // Marcar como inicializado
             input.dataset.intl = "true";
-            console.log(`Input ${selector} inicializado correctamente`);
         }
     });
 }
@@ -1091,64 +1315,274 @@ function validarAntesDeEnviar(idInput) {
         console.log(`Input ${idInput} tiene formato inválido:`, valorInput);
         return false;
     }
-
-    console.log(`Input ${idInput} pasó validación básica:`, valorInput);
     return true;
 }
 
-
-function marcarContactoComoAñadido(idContacto, restaurando = false) {
-    const btnAñadir = document.querySelector(`button.añadir[data-id="${idContacto}"]`);
-    if (!btnAñadir) return;
-
-    const contenedorAcciones = btnAñadir.closest('.d-flex.flex-column');
-    if (!contenedorAcciones) return;
-
-    contenedorAcciones.innerHTML = `
-        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idContacto}">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            Parte de tu equipo
-            <button class="btn btn-sm text-danger ms-3 btn-remover" title="Eliminar del equipo">&times;</button>
-        </div>
-    `;
-
-    // Solo agregar evento si no se está restaurando (para evitar doble binding)
-    if (!restaurando) {
-        actualizarEquipoEnStorage(idContacto, "agregar");
-    }
-
-    // Evento para remover
-    contenedorAcciones.querySelector(".btn-remover").addEventListener("click", () => {
-        actualizarEquipoEnStorage(idContacto, "eliminar");
-        obtenerContactos(); // Refrescar para volver a mostrar el botón "Añadir"
-    });
-}
-
-function guardarDatosPaso2() {
-    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
-    const ids = Array.from(equipoActual).map(el => el.dataset.id);
-    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
-}
-
-function restaurarDatosPaso2() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
-    equipo.forEach(id => marcarContactoComoAñadido(id, true));
-}
-
 function actualizarEquipoEnStorage(id, accion) {
-    let equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
 
     if (accion === "agregar" && !equipo.includes(id)) {
         equipo.push(id);
     }
 
     if (accion === "eliminar") {
-        equipo = equipo.filter(item => item !== id);
+        const index = equipo.indexOf(id);
+        if (index !== -1) equipo.splice(index, 1);
     }
 
     sessionStorage.setItem("miEquipo", JSON.stringify(equipo));
 }
 
+
+// CORRECCIÓN 8: Función mejorada para marcar contacto como añadido
+function marcarContactoComoAñadido(idContacto, restaurando = false) {
+    const contenedorAcciones = document.getElementById(`acciones-${idContacto}`);
+    if (!contenedorAcciones) return;
+
+    // Actualizar storage solo si no se está restaurando
+    if (!restaurando) {
+        actualizarEquipoEnStorage(idContacto, "agregar");
+    }
+
+    // Marcar visualmente
+    marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones);
+}
+
+// CORRECCIÓN 6: Función separada para marcar visualmente como añadido
+function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
+    if (!contenedorAcciones) return;
+
+    contenedorAcciones.innerHTML = `
+        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idContacto}">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            Parte de tu equipo
+            <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
+        </div>
+    `;
+
+    // Reconfigurar eventos para los botones de editar y eliminar
+    const editarBtn = contenedorAcciones.querySelector(".editar");
+    const eliminarBtn = contenedorAcciones.querySelector(".eliminar");
+    const removerBtn = contenedorAcciones.querySelector(".btn-remover");
+
+    if (editarBtn) {
+        editarBtn.addEventListener("click", () => {
+            const contacto = listaContactos.find(c => c.id == idContacto);
+            if (contacto) {
+                AbrirModalEditar(
+                    contacto.id,
+                    contacto.Nombre,
+                    contacto["Correo Electrónico"] || contacto["Correo Elect."],
+                    contacto["Número de tel."],
+                    contacto.Foto
+                );
+            }
+        });
+    }
+
+    if (eliminarBtn) {
+        eliminarBtn.addEventListener("click", () => {
+            const contacto = listaContactos.find(c => c.id == idContacto);
+            if (contacto) {
+                Swal.fire({
+                    title: `¿Eliminar a ${contacto.Nombre}?`,
+                    text: "Esta acción no se puede deshacer.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        eliminarContacto(idContacto);
+                    }
+                });
+            }
+        });
+    }
+
+    if (removerBtn) {
+        removerBtn.addEventListener("click", () => {
+            removerDelEquipo(idContacto);
+        });
+    }
+}
+
+// CORRECCIÓN 7: Función para remover del equipo
+function removerDelEquipo(idContacto) {
+    Swal.fire({
+        title: '¿Remover del equipo?',
+        text: 'Esta persona ya no formará parte de tu equipo de trabajo.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, remover',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Actualizar storage
+            actualizarEquipoEnStorage(idContacto, "eliminar");
+
+            // Refrescar la vista
+            obtenerContactos();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Removido del equipo',
+                text: 'La persona ha sido removida de tu equipo.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+function guardarDatosPaso2() {
+    // Obtener todos los contactos que están marcados como parte del equipo
+    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
+    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+
+    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+}
+
+// CORRECCIÓN 9: Función mejorada para restaurar datos del paso 2
+function restaurarDatosPaso2() {
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+
+    if (equipo.length === 0) return;
+
+    // Función para verificar y restaurar con reintentos
+    const verificarYRestaurar = (intentos = 0) => {
+        const contenedor = document.getElementById("lista-contactos");
+
+        if (!contenedor) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Verificar que los contactos estén renderizados
+        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
+
+        if (contactosRenderizados.length === 0) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Restaurar estado del equipo
+        setTimeout(() => {
+            restaurarEstadoEquipo();
+        }, 200);
+    };
+
+    verificarYRestaurar();
+}
+
+// Función mejorada para el buscador
+function inicializarBuscadorDeContactos() {
+    const inputBusqueda = document.getElementById("busquedaContacto");
+    const botonBuscar = document.getElementById("btnBuscar");
+
+    if (!inputBusqueda || !botonBuscar) return;
+
+    // Función de filtrado mejorada
+    const filtrarContactos = () => {
+        const query = inputBusqueda.value.trim().toLowerCase();
+        const filas = document.querySelectorAll(".contacto-fila");
+
+        let contactosVisibles = 0;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
+            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
+            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
+
+            // Buscar en todos los campos
+            const coincide = query === "" ||
+                nombre.includes(query) ||
+                correo.includes(query) ||
+                telefono.includes(query);
+
+            if (coincide) {
+                fila.style.display = "flex";
+                contactosVisibles++;
+            } else {
+                fila.style.display = "none";
+            }
+        });
+
+        // Mostrar mensaje si no hay resultados
+        mostrarMensajeResultados(contactosVisibles, query);
+    };
+
+    // Asignar nuevos eventos
+    botonBuscar.addEventListener("click", filtrarContactos);
+    inputBusqueda.addEventListener("keyup", filtrarContactos);
+}
+
+// Función mejorada para el buscador
+function inicializarBuscadorDeContactos() {
+    const inputBusqueda = document.getElementById("busquedaContacto");
+    const botonBuscar = document.getElementById("btnBuscar");
+
+    if (!inputBusqueda || !botonBuscar) return;
+
+    // Función de filtrado mejorada
+    const filtrarContactos = () => {
+        const query = inputBusqueda.value.trim().toLowerCase();
+        const filas = document.querySelectorAll(".contacto-fila");
+
+        let contactosVisibles = 0;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
+            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
+            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
+
+            // Buscar en todos los campos
+            const coincide = query === "" ||
+                nombre.includes(query) ||
+                correo.includes(query) ||
+                telefono.includes(query);
+
+            if (coincide) {
+                fila.style.display = "flex";
+                contactosVisibles++;
+            } else {
+                fila.style.display = "none";
+            }
+        });
+
+        // Mostrar mensaje si no hay resultados
+        mostrarMensajeResultados(contactosVisibles, query);
+    };
+
+    // Asignar nuevos eventos
+    botonBuscar.addEventListener("click", filtrarContactos);
+    inputBusqueda.addEventListener("keyup", filtrarContactos);
+}
+
+// CORRECCIÓN 1: Función para limpiar caracteres especiales en nombres
+function limpiarTexto(texto) {
+    if (!texto) return "";
+
+    return texto
+        // Permitir letras (incluyendo acentos y ñ Ñ), espacios, guiones y apóstrofes
+        .replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñüÜ'\s-]/g, '')
+        .replace(/\s+/g, ' ')       // Normalizar espacios múltiples
+        .trim();                    // Eliminar espacios al inicio y al final
+}
+
 function accionSiguientePaso() {
     siguientePaso();
+}
+
+//---------------------------------- PASO 3 ----------------------------------
+function restaurarDatosPaso3() {
+    // Aún no implementada, pero evita el error
 }
