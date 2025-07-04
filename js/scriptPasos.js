@@ -1586,3 +1586,26 @@ function accionSiguientePaso() {
 function restaurarDatosPaso3() {
     // Aún no implementada, pero evita el error
 }
+
+document.addEventListener("click", function (e) {
+  // Detecta si se hizo clic en uno de los botones que cargan pasos
+  const boton = e.target.closest("[data-paso]");
+
+  if (boton) {
+    const paso = boton.dataset.paso;
+
+    fetch(`pasosPrimerUso/paso${paso}.html`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("main").innerHTML = html;
+        if (typeof inicializarPaso === "function") {
+          inicializarPaso(parseInt(paso)); // si tenés lógica por paso
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      })
+      .catch(err => {
+        console.error("Error al cargar paso:", err);
+        Swal.fire("Ups", "No se pudo cargar el paso. Verificá la ruta.", "error");
+      });
+  }
+});
