@@ -29,15 +29,21 @@ function cargarPaso() {
                         restaurarDatosPaso1();
                     }
                     if (paso === 2) {
-                        // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
-                        initPaso2();
-                        // Restaurar datos después de que se hayan cargado los contactos
                         setTimeout(() => {
                             restaurarDatosPaso2();
-                        }, 500); // Dar tiempo para que se carguen los contactos
+                        }, 500); // Dar tiempo para que se carguen los Técnicos
+
                     }
                     if (paso === 3) {
-                        restaurarDatosPaso3();
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                        initPaso3();
+                        // Restaurar datos después de que se hayan cargado los Técnicos
+                        setTimeout(() => {
+                            restaurarDatosPaso3();
+                        }, 500); // Dar tiempo para que se carguen los Técnicos
+                    }
+                    if (paso === 4) {
+                        restaurarDatosPaso4();
                     }
                 });
             }, 0);
@@ -62,7 +68,6 @@ function validarPaso1() {
     const adminCorreo = document.getElementById("correoAdmin")?.value.trim();
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
     const telefonoAdmin = telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null;
-    const rolAdmin = document.getElementById("rolAdmin")?.value.trim();
 
     // Validaciones básicas
     if (!correoEmpresa) errores.push("El correo de empresa no puede estar vacío.");
@@ -70,7 +75,6 @@ function validarPaso1() {
     if (!adminNombre) errores.push("El nombre del administrador es obligatorio.");
     if (!adminCorreo) errores.push("El correo del administrador no puede estar vacío.");
     if (!telefonoAdmin) errores.push("El teléfono del administrador es requerido.");
-    if (!rolAdmin) errores.push("Debes seleccionar un rol para el administrador.");
 
     // Validaciones de formato
     if (correoEmpresa && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoEmpresa)) {
@@ -115,9 +119,10 @@ function siguientePaso() {
     }
 
     if (paso === 2) guardarDatosPaso2();
-    if (paso === 3 && typeof guardarDatosPaso3 === 'function') guardarDatosPaso3();
+    if (paso === 3) guardarDatosPaso3();
+    if (paso === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
 
-    if (paso < 3) {
+    if (paso < 4) {
         paso++;
         cargarPaso();
     }
@@ -135,7 +140,6 @@ function guardarDatosPaso1() {
         adminNombre: document.getElementById("nombreAdmin")?.value,
         adminCorreo: document.getElementById("correoAdmin")?.value,
         telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
-        rolAdmin: document.getElementById("rolAdmin")?.value
     };
 
     sessionStorage.setItem("datosPaso1", JSON.stringify(datos));
@@ -150,7 +154,7 @@ function restaurarDatosPaso1() {
         sitioWeb: data.sitioWeb,
         nombreAdmin: data.adminNombre,
         correoAdmin: data.adminCorreo,
-        rolAdmin: data.rolAdmin
+        departamentoAdmin: data.departamentoAdmin
     };
 
     for (const [id, valor] of Object.entries(campos)) {
@@ -316,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const observer = new MutationObserver(() => {
         const contenedor = document.getElementById("lista-contactos");
         if (contenedor) {
-            initPaso2();
+            initPaso3();
             observer.disconnect();
         }
     });
@@ -324,12 +328,12 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(document.body, { childList: true, subtree: true });
 
     if (document.getElementById("lista-contactos")) {
-        initPaso2();
+        initPaso3();
         observer.disconnect();
     }
 });
 
-function initPaso2() {
+function initPaso3() {
     const contenedor = document.getElementById("lista-contactos");
     if (!contenedor) {
         console.warn("No se encontró el contenedor de lista-contactos");
@@ -422,7 +426,7 @@ function mostrarDatos(contactos) {
     const headers = document.createElement("div");
     headers.className = "row align-items-center mb-2 px-2 headers-contacto";
     headers.innerHTML = `
-        <div class="col-auto text-center">Contacto</div>
+        <div class="col-auto text-center">Técnico</div>
         <div class="col text-end">Nombre</div>
         <div class="col text-end">Correo</div>
         <div class="col text-end">Teléfono</div>
@@ -1232,7 +1236,7 @@ function iniciarPaso() {
             break;
         case "2":
             console.log("Iniciando Paso 2");
-            initPaso2();
+            initPaso3();
             break;
         case "3":
             console.log("Iniciando Paso 3");
@@ -1447,82 +1451,9 @@ function guardarDatosPaso2() {
     sessionStorage.setItem("miEquipo", JSON.stringify(ids));
 }
 
-// CORRECCIÓN 9: Función mejorada para restaurar datos del paso 2
+// Departamentos
 function restaurarDatosPaso2() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
 
-    if (equipo.length === 0) return;
-
-    // Función para verificar y restaurar con reintentos
-    const verificarYRestaurar = (intentos = 0) => {
-        const contenedor = document.getElementById("lista-contactos");
-
-        if (!contenedor) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
-        }
-
-        // Verificar que los contactos estén renderizados
-        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
-
-        if (contactosRenderizados.length === 0) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
-        }
-
-        // Restaurar estado del equipo
-        setTimeout(() => {
-            restaurarEstadoEquipo();
-        }, 200);
-    };
-
-    verificarYRestaurar();
-}
-
-// Función mejorada para el buscador
-function inicializarBuscadorDeContactos() {
-    const inputBusqueda = document.getElementById("busquedaContacto");
-    const botonBuscar = document.getElementById("btnBuscar");
-
-    if (!inputBusqueda || !botonBuscar) return;
-
-    // Función de filtrado mejorada
-    const filtrarContactos = () => {
-        const query = inputBusqueda.value.trim().toLowerCase();
-        const filas = document.querySelectorAll(".contacto-fila");
-
-        let contactosVisibles = 0;
-
-        filas.forEach(fila => {
-            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
-            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
-            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
-
-            // Buscar en todos los campos
-            const coincide = query === "" ||
-                nombre.includes(query) ||
-                correo.includes(query) ||
-                telefono.includes(query);
-
-            if (coincide) {
-                fila.style.display = "flex";
-                contactosVisibles++;
-            } else {
-                fila.style.display = "none";
-            }
-        });
-
-        // Mostrar mensaje si no hay resultados
-        mostrarMensajeResultados(contactosVisibles, query);
-    };
-
-    // Asignar nuevos eventos
-    botonBuscar.addEventListener("click", filtrarContactos);
-    inputBusqueda.addEventListener("keyup", filtrarContactos);
 }
 
 // Función mejorada para el buscador
@@ -1583,29 +1514,169 @@ function accionSiguientePaso() {
 }
 
 //---------------------------------- PASO 3 ----------------------------------
+
+function guardarDatosPaso3() {
+    // Obtener todos los contactos que están marcados como parte del equipo
+    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
+    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+
+    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+}
+
 function restaurarDatosPaso3() {
-    // Aún no implementada, pero evita el error
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+
+    if (equipo.length === 0) return;
+
+    // Función para verificar y restaurar con reintentos
+    const verificarYRestaurar = (intentos = 0) => {
+        const contenedor = document.getElementById("lista-contactos");
+
+        if (!contenedor) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Verificar que los contactos estén renderizados
+        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
+
+        if (contactosRenderizados.length === 0) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Restaurar estado del equipo
+        setTimeout(() => {
+            restaurarEstadoEquipo();
+        }, 200);
+    };
+
+    verificarYRestaurar();
+}
+
+/* function restaurarDatosPaso3() {
+    // Aquí cargas los datos de los pasos anteriores para mostrar en confirmación
+    console.log("Restaurando datos para confirmación...");
+    
+    // Ejemplo: Obtener datos del localStorage o variables globales
+    const datosEmpresa = obtenerDatosEmpresa();
+    const datosIntegrantes = obtenerDatosIntegrantes();
+    
+    // Mostrar datos en el paso 3
+    mostrarDatosConfirmacion(datosEmpresa, datosIntegrantes);
+} */
+
+// Función para inicializar componentes específicos de cada paso
+function inicializarComponentesPaso(paso) {
+    fetch(`pasosPrimerUso/paso${paso}.html`)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("contenido-dinamico").innerHTML = html;
+            document.getElementById("paso-actual").textContent = paso;
+            actualizarIndicadorPaso();
+
+            setTimeout(() => {
+                inicializarInputsTelefono();
+
+                requestAnimationFrame(() => {
+                    // Ejecutar funciones específicas según el paso
+                    if (paso === 1) {
+                        restaurarDatosPaso1();
+                    }
+                    if (paso === 2) {
+                        restaurarDatosPaso2();
+
+                    }
+                    if (paso === 3) {
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                        initPaso3();
+                        // Restaurar datos después de que se hayan cargado los contactos
+                        setTimeout(() => {
+                            restaurarDatosPaso3();
+                        }, 500); // Dar tiempo para que se carguen los contactos
+                    }
+                    if (paso === 4) {
+                        restaurarDatosPaso4();
+                    }
+                });
+            }, 0);
+        });
+
+    // Mostrar/ocultar botón atrás
+    const btnAtras = document.getElementById("btn-atras");
+    if (btnAtras) {
+        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+    }
+}
+
+// NUEVA - Función principal unificada para navegar entre pasos
+function navegarAPaso(numeroPaso) {
+    const paso = parseInt(numeroPaso);
+
+    if (paso < 1 || paso > 3) {
+        console.error('Número de paso inválido:', paso);
+        return;
+    }
+
+    fetch(`pasosPrimerUso/paso${paso}.html`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.text();
+        })
+        .then(html => {
+            document.getElementById("main").innerHTML = html;
+
+            // Actualizar paso actual si existe la variable
+            if (typeof pasoActual !== 'undefined') {
+                pasoActual = paso;
+            }
+
+            // Usar las funciones existentes
+            actualizarIndicadorPaso(paso);
+            inicializarComponentesPaso(paso);
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            console.log(`Navegado al paso ${paso} exitosamente`);
+        })
+        .catch(err => {
+            console.error("Error al cargar paso:", err);
+            Swal.fire({
+                title: "Error",
+                text: `No se pudo cargar el paso ${paso}. Verifica que el archivo existe.`,
+                icon: "error",
+                confirmButtonText: "Entendido"
+            });
+        });
 }
 
 document.addEventListener("click", function (e) {
-  // Detecta si se hizo clic en uno de los botones que cargan pasos
-  const boton = e.target.closest("[data-paso]");
+    // Detectar navegación específica (para botones del paso 3)
+    const botonNavegar = e.target.closest("[data-navegar-paso]");
+    if (botonNavegar) {
+        const pasoDestino = botonNavegar.dataset.navegarPaso;
+        navegarAPaso(pasoDestino);
+        return;
+    }
 
-  if (boton) {
-    const paso = boton.dataset.paso;
-
-    fetch(`pasosPrimerUso/paso${paso}.html`)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById("main").innerHTML = html;
-        if (typeof inicializarPaso === "function") {
-          inicializarPaso(parseInt(paso)); // si tenés lógica por paso
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      })
-      .catch(err => {
-        console.error("Error al cargar paso:", err);
-        Swal.fire("Ups", "No se pudo cargar el paso. Verificá la ruta.", "error");
-      });
-  }
+    // Detectar navegación general (botones "Modificar", etc.)
+    const boton = e.target.closest("[data-paso]");
+    if (boton) {
+        const paso = boton.dataset.paso;
+        navegarAPaso(paso);
+    }
 });
+
+// OPCIONAL - Funciones específicas para mayor claridad
+function regresarAPaso1() {
+    navegarAPaso(1);
+}
+
+function regresarAPaso2() {
+    navegarAPaso(2);
+}

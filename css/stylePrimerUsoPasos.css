@@ -307,7 +307,8 @@ footer {
 
 .paso.activo .texto-1,
 .paso.activo .texto-2,
-.paso.activo .texto-3 {
+.paso.activo .texto-3,
+.paso.activo .texto-4 {
     color: #000000;
 }
 
@@ -328,7 +329,8 @@ footer {
 /* Texto por defecto en gris también */
 .paso .texto-1,
 .paso .texto-2,
-.paso .texto-3 {
+.paso .texto-3,
+.paso .texto-4 {
     font-size: clamp(0.85rem, 1.8vw, 1rem);
     color: #BDBDBD;
 }
@@ -454,7 +456,8 @@ footer {
 
     .texto-1,
     .texto-2,
-    .texto-3 {
+    .texto-3,
+    .texto-4 {
         font-size: 1.1rem !important;
         font-weight: 500;
         line-height: 1.3;
@@ -555,7 +558,8 @@ footer {
 
     .progreso-header .paso-indicador .paso.activo .texto-1,
     .progreso-header .paso-indicador .paso.activo .texto-2,
-    .progreso-header .paso-indicador .paso.activo .texto-3 {
+    .progreso-header .paso-indicador .paso.activo .texto-3,
+    .progreso-header .paso-indicador .paso.activo .texto-4 {
         font-size: 0.95rem !important;
         font-weight: 500;
         line-height: 1.2;
@@ -632,7 +636,8 @@ footer {
 
     .texto-1,
     .texto-2,
-    .texto-3 {
+    .texto-3,
+    .texto-4 {
         font-size: 0.8rem;
     }
 }
@@ -674,7 +679,8 @@ footer {
 
     .progreso-header .paso-indicador .paso.activo .texto-1,
     .progreso-header .paso-indicador .paso.activo .texto-2,
-    .progreso-header .paso-indicador .paso.activo .texto-3 {
+    .progreso-header .paso-indicador .paso.activo .texto-3,
+    .progreso-header .paso-indicador .paso.activo .texto-4 {
         font-size: 0.8rem !important;
         text-align: center !important;
         white-space: nowrap !important;
@@ -745,7 +751,8 @@ footer {
 
     .progreso-header .paso-indicador .paso.activo .texto-1,
     .progreso-header .paso-indicador .paso.activo .texto-2,
-    .progreso-header .paso-indicador .paso.activo .texto-3 {
+    .progreso-header .paso-indicador .paso.activo .texto-3,
+    .progreso-header .paso-indicador .paso.activo .texto-4 {
         font-size: 0.75rem !important;
         text-align: center !important;
         white-space: nowrap !important;
