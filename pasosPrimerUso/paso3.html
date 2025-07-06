@@ -131,7 +131,8 @@
 
     <main id="main" class="container position-relative">
         <h2 class="fw-semibold mb-2 text-center">Conforma tu equipo</h2>
-        <p class="text-muted mb-4 text-center">Invita a tu equipo y asígnales su departamento para empezar a trabajar juntos.</p>
+        <p class="text-muted mb-4 text-center">Invita a tu equipo y asígnales su categoría para empezar a trabajar
+            juntos.</p>
 
         <!-- Sección de búsqueda -->
         <div id="barraBusquedaSticky">
@@ -241,14 +242,11 @@
                     <input type="text" id="correoEquipo" class="form-control mb-2" disabled>
                     <input type="text" id="telefonoEquipo" class="form-control mb-2" disabled>
 
-                    <label for="rolEquipo" class="form-label mt-2">Rol asignado</label>
-                    <select id="rolEquipo" class="form-select" required>
-                        <option value="" disabled selected>Selecciona un rol</option>
-                        <option value="Administrador general">Administrador general</option>
-                        <option value="Supervisor / Jefe de área">Supervisor / Jefe de área</option>
-                        <option value="Agente de soporte / Técnico">Agente de soporte / Técnico</option>
-                        <option value="Colaborador interno">Colaborador interno</option>
+                    <label for="categoriaEquipo" class="form-label mt-2">Categoría asignada</label>
+                    <select id="categoriaDropdown" class="form-select" required>
+                        <option value="">Selecciona una categoría</option>
                     </select>
+
                 </div>
             </div>
 

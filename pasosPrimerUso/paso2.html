@@ -129,14 +129,14 @@
         crossorigin="anonymous"></script>
 
     <main id="main" class="container position-relative">
-        <h2 class="fw-semibold mb-2 text-center">Crea los departamentos de tu empresa</h2>
-        <p class="text-muted mb-4 text-center">Personaliza los departamentos clave para tu operación.</p>
+        <h2 class="fw-semibold mb-2 text-center">Crea las categorías de tu empresa</h2>
+        <p class="text-muted mb-4 text-center">Personaliza las categorías claves para tu operación.</p>
 
         <!-- Sección de búsqueda -->
         <div id="barraBusquedaSticky">
             <div class="input-group">
                 <input type="text" id="busquedaDepartamento" class="form-control"
-                    placeholder="Nombre del Departamento" />
+                    placeholder="Nombre de la categoría" />
                 <button class="btn" id="btnBuscar" type="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                         viewBox="0 0 16 16">
@@ -149,7 +149,7 @@
 
 
         <!-- Lista de Departamentos -->
-        <div id="lista-departamentos" class="d-flex flex-column gap-3">
+        <div id="lista-categorias" class="d-flex flex-column gap-3">
             <!-- Las cards de departamentos se inyectarán dinámicamente aquí -->
             <div class="d-flex justify-content-center spinner-wrapper">
                 <div class="spinner-border text-primary" role="status">
@@ -166,12 +166,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <!-- Modal AGREGAR Departamento -->
-    <dialog id="modal-agregar" class="modal-perfil">
+    <dialog id="modal-agregarcat" class="modal-perfil">
         <form id="frmAgregar" class="form-perfil">
-            <h5 class="titulo-modal">Agregar Departamento</h5>
+            <h5 class="titulo-modal">Agregar Categoría</h5>
 
             <div class="contenido-modal">
-                <input type="text" id="nombre" placeholder="Nombre del departamento" class="form-control mb-3" required>
+                <input type="text" id="nombre" placeholder="Nombre de la categoria" class="form-control mb-3" required>
             </div>
 
             <div class="botones-modal d-flex justify-content-end gap-2 mt-4">
@@ -182,9 +182,9 @@
     </dialog>
 
     <!-- Modal EDITAR Departamento -->
-    <dialog id="modal-editar" class="modal-perfil">
+    <dialog id="modal-editarcat" class="modal-perfil">
         <form id="frmEditar" class="form-perfil">
-            <h5 class="titulo-modal">Editar Departamento</h5>
+            <h5 class="titulo-modal">Editar Categoría</h5>
 
             <div class="contenido-modal">
                 <input type="hidden" id="idEditar">
@@ -201,7 +201,7 @@
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../js/scriptDepartamentos.js" defer></script>
+    <script src="js/scriptPasos.js" defer></script>
     </div>
     </div>
     <span id="paso-actual">2</span>
