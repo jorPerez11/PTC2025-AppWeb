@@ -29,6 +29,8 @@ function cargarPaso() {
                         restaurarDatosPaso1();
                     }
                     if (paso === 2) {
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                        initPaso2();
                         setTimeout(() => {
                             restaurarDatosPaso2();
                         }, 500); // Dar tiempo para que se carguen los Técnicos
@@ -313,6 +315,435 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 ///////////////////////// COSAS PARA EL PASO 2 /////////////////////////
+///////////////////////// SCRIPT FUNCIONAL PARA CATEGORÍAS /////////////////////////
+const API_URL2 = "https://retoolapi.dev/mNwaIw/categorias";
+
+// Variables globales
+let categorias = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    const observer = new MutationObserver(() => {
+        const contenedor = document.getElementById("lista-categorias");
+        if (contenedor) {
+            initPaso2();
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    if (document.getElementById("lista-categorias")) {
+        initPaso2();
+    }
+});
+
+function initPaso2() {
+    const contenedor = document.getElementById("lista-categorias");
+    if (!contenedor) {
+        return;
+    }
+
+    // Obtener categorías y configurar eventos
+    obtenerCategorias();
+    configurarEventos();
+
+    // Mostrar botón flotante
+    const btnFlotante = document.getElementById("btnFlotanteAgregar");
+    if (btnFlotante) {
+        btnFlotante.style.display = "block";
+    }
+}
+
+// Función para obtener categorías de la API
+async function obtenerCategorias() {
+    const contenedor = document.getElementById("lista-categorias");
+    if (!contenedor) {
+        return;
+    }
+
+    // Mostrar indicador de carga
+    contenedor.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando categorías...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando categorías...</p>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(API_URL2);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        categorias = data; // Actualizar la lista global
+        mostrarCategorias(data);
+
+    } catch (error) {
+        contenedor.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar las categorías. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerCategorias()">
+                    <i class="fas fa-redo me-1"></i>Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Función para mostrar categorías en el DOM
+function mostrarCategorias(categorias) {
+
+    const contenedor = document.getElementById('lista-categorias');
+    if (!contenedor) {
+        return;
+    }
+
+    // Limpiar contenido anterior
+    contenedor.innerHTML = '';
+
+    if (!categorias || categorias.length === 0) {
+        contenedor.innerHTML = `
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                No hay categorías registradas. ¡Agrega la primera!
+            </div>
+        `;
+        return;
+    }
+
+    // Crear cards para cada categoría
+    categorias.forEach(categoria => {
+        const card = document.createElement('div');
+        card.className = 'card shadow-sm mb-3';
+        card.innerHTML = `
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title mb-1">
+                        <i class="bi bi-collection-fill text-info"></i>
+                        ${categoria.nombreDepartamento || categoria.nombreCategoria || 'Sin nombre'}
+                    </h5>
+                    <small class="text-muted">ID: ${categoria.id}</small>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-primary btn-editar" 
+                            data-id="${categoria.id}" 
+                            data-nombre="${categoria.nombreDepartamento || categoria.nombreCategoria || ''}"
+                            title="Editar categoría">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-eliminar" 
+                            data-id="${categoria.id}" 
+                            data-nombre="${categoria.nombreDepartamento || categoria.nombreCategoria || ''}"
+                            title="Eliminar categoría">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        `;
+
+        contenedor.appendChild(card);
+    });
+
+    // Asignar eventos a los botones
+    asignarEventosBotones();
+}
+
+// Función para asignar eventos a los botones
+function asignarEventosBotones() {
+    // Eventos para botones editar
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const button = e.target.closest('.btn-editar');
+            const id = button.dataset.id;
+            const nombre = button.dataset.nombre;
+            abrirModalEditar(id, nombre);
+        });
+    });
+
+    // Eventos para botones eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const button = e.target.closest('.btn-eliminar');
+            const id = button.dataset.id;
+            const nombre = button.dataset.nombre;
+            eliminarCategoria(id, nombre);
+        });
+    });
+}
+
+// Función para abrir modal de agregar
+function abrirModalAgregar() {
+    const modal = document.getElementById('modal-agregarcat');
+    const input = document.getElementById('nombre');
+
+    if (modal && input) {
+        input.value = '';
+        modal.showModal();
+        input.focus();
+    }
+}
+
+// Función para abrir modal de editar
+function abrirModalEditar(id, nombre) {
+    const modal = document.getElementById('modal-editarcat');
+    const inputId = document.getElementById('idEditar');
+    const inputNombre = document.getElementById('nombreEditar');
+
+    if (modal && inputId && inputNombre) {
+        inputId.value = id;
+        inputNombre.value = nombre;
+        modal.showModal();
+        inputNombre.focus();
+    }
+}
+
+// Función para cerrar modales
+function cerrarModales() {
+    const modalAgregar = document.getElementById('modal-agregarcat');
+    const modalEditar = document.getElementById('modal-editarcat');
+
+    if (modalAgregar) modalAgregar.close();
+    if (modalEditar) modalEditar.close();
+}
+
+// Función para agregar categoría
+async function agregarCategoria(nombre) {
+    try {
+        const response = await fetch(API_URL2, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombreDepartamento: nombre
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const nuevaCategoria = await response.json();
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Categoría agregada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+        cerrarModales();
+
+    } catch (error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar categoría'
+            });
+        }
+    }
+}
+
+// Función para editar categoría
+async function editarCategoria(id, nombre) {
+    try {
+        const response = await fetch(`${API_URL2}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombreDepartamento: nombre
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const categoriaEditada = await response.json();
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Categoría actualizada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+        cerrarModales();
+
+    } catch (error) {
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al actualizar categoría'
+            });
+        }
+    }
+}
+
+// Función para eliminar categoría
+async function eliminarCategoria(id, nombre) {
+    if (typeof Swal !== 'undefined') {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar la categoría "${nombre}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+    }
+
+    try {
+
+        const response = await fetch(`${API_URL2}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'Categoría eliminada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+
+    } catch (error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al eliminar categoría'
+            });
+        }
+    }
+}
+
+// Función para filtrar categorías
+function filtrarCategorias(termino) {
+    const terminoLower = termino.toLowerCase();
+    const categoriasFiltradas = categorias.filter(categoria => {
+        const nombre = categoria.nombreDepartamento || categoria.nombreCategoria || '';
+        return nombre.toLowerCase().includes(terminoLower);
+    });
+
+    mostrarCategorias(categoriasFiltradas);
+}
+
+// Función para configurar eventos
+function configurarEventos() {
+    console.log('🔗 Configurando eventos...');
+
+    // Botón flotante agregar
+    const btnFlotante = document.getElementById('btnFlotanteAgregar');
+    if (btnFlotante) {
+        btnFlotante.addEventListener('click', abrirModalAgregar);
+    }
+
+    // Formulario agregar
+    const frmAgregar = document.getElementById('frmAgregar');
+    if (frmAgregar) {
+        frmAgregar.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            if (nombre) {
+                agregarCategoria(nombre);
+            }
+        });
+    }
+
+    // Formulario editar
+    const frmEditar = document.getElementById('frmEditar');
+    if (frmEditar) {
+        frmEditar.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('idEditar').value;
+            const nombre = document.getElementById('nombreEditar').value.trim();
+            if (id && nombre) {
+                editarCategoria(id, nombre);
+            }
+        });
+    }
+
+    // Botones cerrar modales
+    const btnCerrarModal = document.getElementById('btnCerrarModal');
+    const btnCerrarEditar = document.getElementById('btnCerrarEditar');
+
+    if (btnCerrarModal) {
+        btnCerrarModal.addEventListener('click', cerrarModales);
+    }
+
+    if (btnCerrarEditar) {
+        btnCerrarEditar.addEventListener('click', cerrarModales);
+    }
+
+    // Búsqueda
+    const inputBusqueda = document.getElementById('busquedaDepartamento');
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener('input', (e) => {
+            const termino = e.target.value.trim();
+            if (termino === '') {
+                mostrarCategorias(categorias);
+            } else {
+                filtrarCategorias(termino);
+            }
+        });
+    }
+
+    // Cerrar modales con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModales();
+        }
+    });
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPaso2);
+} else {
+    initPaso2();
+}
+
+///////////////////////// COSAS PARA EL PASO 3 /////////////////////////
 const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
 const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
 
@@ -1453,7 +1884,7 @@ function guardarDatosPaso2() {
 
 // Departamentos
 function restaurarDatosPaso2() {
-
+    obtenerCategorias()
 }
 
 // Función mejorada para el buscador
@@ -1558,18 +1989,6 @@ function restaurarDatosPaso3() {
     verificarYRestaurar();
 }
 
-/* function restaurarDatosPaso3() {
-    // Aquí cargas los datos de los pasos anteriores para mostrar en confirmación
-    console.log("Restaurando datos para confirmación...");
-    
-    // Ejemplo: Obtener datos del localStorage o variables globales
-    const datosEmpresa = obtenerDatosEmpresa();
-    const datosIntegrantes = obtenerDatosIntegrantes();
-    
-    // Mostrar datos en el paso 3
-    mostrarDatosConfirmacion(datosEmpresa, datosIntegrantes);
-} */
-
 // Función para inicializar componentes específicos de cada paso
 function inicializarComponentesPaso(paso) {
     fetch(`pasosPrimerUso/paso${paso}.html`)
@@ -1588,7 +2007,12 @@ function inicializarComponentesPaso(paso) {
                         restaurarDatosPaso1();
                     }
                     if (paso === 2) {
-                        restaurarDatosPaso2();
+                        // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
+                        initPaso2();
+                        // Restaurar datos después de que se hayan cargado las categorías
+                        setTimeout(() => {
+                            restaurarDatosPaso2();
+                        }, 500); // Dar tiempo para que se carguen las categorías
 
                     }
                     if (paso === 3) {
