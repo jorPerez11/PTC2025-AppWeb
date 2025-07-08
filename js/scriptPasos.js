@@ -29,15 +29,23 @@ function cargarPaso() {
                         restaurarDatosPaso1();
                     }
                     if (paso === 2) {
-                        // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
                         initPaso2();
-                        // Restaurar datos después de que se hayan cargado los contactos
                         setTimeout(() => {
                             restaurarDatosPaso2();
-                        }, 500); // Dar tiempo para que se carguen los contactos
+                        }, 500); // Dar tiempo para que se carguen los Técnicos
+
                     }
                     if (paso === 3) {
-                        restaurarDatosPaso3();
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                        initPaso3();
+                        // Restaurar datos después de que se hayan cargado los Técnicos
+                        setTimeout(() => {
+                            restaurarDatosPaso3();
+                        }, 500); // Dar tiempo para que se carguen los Técnicos
+                    }
+                    if (paso === 4) {
+                        restaurarDatosPaso4();
                     }
                 });
             }, 0);
@@ -62,7 +70,6 @@ function validarPaso1() {
     const adminCorreo = document.getElementById("correoAdmin")?.value.trim();
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
     const telefonoAdmin = telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null;
-    const rolAdmin = document.getElementById("rolAdmin")?.value.trim();
 
     // Validaciones básicas
     if (!correoEmpresa) errores.push("El correo de empresa no puede estar vacío.");
@@ -70,7 +77,6 @@ function validarPaso1() {
     if (!adminNombre) errores.push("El nombre del administrador es obligatorio.");
     if (!adminCorreo) errores.push("El correo del administrador no puede estar vacío.");
     if (!telefonoAdmin) errores.push("El teléfono del administrador es requerido.");
-    if (!rolAdmin) errores.push("Debes seleccionar un rol para el administrador.");
 
     // Validaciones de formato
     if (correoEmpresa && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoEmpresa)) {
@@ -115,9 +121,10 @@ function siguientePaso() {
     }
 
     if (paso === 2) guardarDatosPaso2();
-    if (paso === 3 && typeof guardarDatosPaso3 === 'function') guardarDatosPaso3();
+    if (paso === 3) guardarDatosPaso3();
+    if (paso === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
 
-    if (paso < 3) {
+    if (paso < 4) {
         paso++;
         cargarPaso();
     }
@@ -135,7 +142,6 @@ function guardarDatosPaso1() {
         adminNombre: document.getElementById("nombreAdmin")?.value,
         adminCorreo: document.getElementById("correoAdmin")?.value,
         telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
-        rolAdmin: document.getElementById("rolAdmin")?.value
     };
 
     sessionStorage.setItem("datosPaso1", JSON.stringify(datos));
@@ -150,7 +156,7 @@ function restaurarDatosPaso1() {
         sitioWeb: data.sitioWeb,
         nombreAdmin: data.adminNombre,
         correoAdmin: data.adminCorreo,
-        rolAdmin: data.rolAdmin
+        departamentoAdmin: data.departamentoAdmin
     };
 
     for (const [id, valor] of Object.entries(campos)) {
@@ -309,12 +315,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 ///////////////////////// COSAS PARA EL PASO 2 /////////////////////////
-const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
-const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
+///////////////////////// SCRIPT FUNCIONAL PARA CATEGORÍAS /////////////////////////
+const API_URL2 = "https://retoolapi.dev/mNwaIw/categorias";
+
+// Variables globales
+let categorias = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     const observer = new MutationObserver(() => {
-        const contenedor = document.getElementById("lista-contactos");
+        const contenedor = document.getElementById("lista-categorias");
         if (contenedor) {
             initPaso2();
             observer.disconnect();
@@ -323,13 +332,439 @@ document.addEventListener("DOMContentLoaded", () => {
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    if (document.getElementById("lista-contactos")) {
+    if (document.getElementById("lista-categorias")) {
         initPaso2();
-        observer.disconnect();
     }
 });
 
 function initPaso2() {
+    const contenedor = document.getElementById("lista-categorias");
+    if (!contenedor) {
+        return;
+    }
+
+    // Obtener categorías y configurar eventos
+    obtenerCategorias();
+    configurarEventos();
+
+    // Mostrar botón flotante
+    const btnFlotante = document.getElementById("btnFlotanteAgregar");
+    if (btnFlotante) {
+        btnFlotante.style.display = "block";
+    }
+}
+
+// Función para obtener categorías de la API
+async function obtenerCategorias() {
+    const contenedor = document.getElementById("lista-categorias");
+    if (!contenedor) {
+        return;
+    }
+
+    // Mostrar indicador de carga
+    contenedor.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando categorías...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando categorías...</p>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(API_URL2);
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        categorias = data; // Actualizar la lista global
+        mostrarCategorias(data);
+
+    } catch (error) {
+        contenedor.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error al cargar las categorías. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerCategorias()">
+                    <i class="fas fa-redo me-1"></i>Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Función para mostrar categorías en el DOM
+function mostrarCategorias(categorias) {
+
+    const contenedor = document.getElementById('lista-categorias');
+    if (!contenedor) {
+        return;
+    }
+
+    // Limpiar contenido anterior
+    contenedor.innerHTML = '';
+
+    if (!categorias || categorias.length === 0) {
+        contenedor.innerHTML = `
+            <div class="alert alert-warning text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                No hay categorías registradas. ¡Agrega la primera!
+            </div>
+        `;
+        return;
+    }
+
+    // Crear cards para cada categoría
+    categorias.forEach(categoria => {
+        const card = document.createElement('div');
+        card.className = 'card shadow-sm mb-3';
+        card.innerHTML = `
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title mb-1">
+                        <i class="bi bi-collection-fill text-info"></i>
+                        ${categoria.nombreDepartamento || categoria.nombreCategoria || 'Sin nombre'}
+                    </h5>
+                    <small class="text-muted">ID: ${categoria.id}</small>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-primary btn-editar" 
+                            data-id="${categoria.id}" 
+                            data-nombre="${categoria.nombreDepartamento || categoria.nombreCategoria || ''}"
+                            title="Editar categoría">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-eliminar" 
+                            data-id="${categoria.id}" 
+                            data-nombre="${categoria.nombreDepartamento || categoria.nombreCategoria || ''}"
+                            title="Eliminar categoría">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        `;
+
+        contenedor.appendChild(card);
+    });
+
+    // Asignar eventos a los botones
+    asignarEventosBotones();
+}
+
+// Función para asignar eventos a los botones
+function asignarEventosBotones() {
+    // Eventos para botones editar
+    document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const button = e.target.closest('.btn-editar');
+            const id = button.dataset.id;
+            const nombre = button.dataset.nombre;
+            abrirModalEditar(id, nombre);
+        });
+    });
+
+    // Eventos para botones eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const button = e.target.closest('.btn-eliminar');
+            const id = button.dataset.id;
+            const nombre = button.dataset.nombre;
+            eliminarCategoria(id, nombre);
+        });
+    });
+}
+
+// Función para abrir modal de agregar
+function abrirModalAgregar() {
+    const modal = document.getElementById('modal-agregarcat');
+    const input = document.getElementById('nombre');
+
+    if (modal && input) {
+        input.value = '';
+        modal.showModal();
+        input.focus();
+    }
+}
+
+// Función para abrir modal de editar
+function abrirModalEditar(id, nombre) {
+    const modal = document.getElementById('modal-editarcat');
+    const inputId = document.getElementById('idEditar');
+    const inputNombre = document.getElementById('nombreEditar');
+
+    if (modal && inputId && inputNombre) {
+        inputId.value = id;
+        inputNombre.value = nombre;
+        modal.showModal();
+        inputNombre.focus();
+    }
+}
+
+// Función para cerrar modales
+function cerrarModales() {
+    const modalAgregar = document.getElementById('modal-agregarcat');
+    const modalEditar = document.getElementById('modal-editarcat');
+
+    if (modalAgregar) modalAgregar.close();
+    if (modalEditar) modalEditar.close();
+}
+
+// Función para agregar categoría
+async function agregarCategoria(nombre) {
+    try {
+        const response = await fetch(API_URL2, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombreDepartamento: nombre
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const nuevaCategoria = await response.json();
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Categoría agregada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+        cerrarModales();
+
+    } catch (error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar categoría'
+            });
+        }
+    }
+}
+
+// Función para editar categoría
+async function editarCategoria(id, nombre) {
+    try {
+        const response = await fetch(`${API_URL2}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombreDepartamento: nombre
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const categoriaEditada = await response.json();
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Categoría actualizada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+        cerrarModales();
+
+    } catch (error) {
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al actualizar categoría'
+            });
+        }
+    }
+}
+
+// Función para eliminar categoría
+async function eliminarCategoria(id, nombre) {
+    if (typeof Swal !== 'undefined') {
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar la categoría "${nombre}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!result.isConfirmed) {
+            return;
+        }
+    }
+
+    try {
+
+        const response = await fetch(`${API_URL2}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Mostrar mensaje de éxito
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'Categoría eliminada correctamente',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        // Recargar lista
+        obtenerCategorias();
+
+    } catch (error) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al eliminar categoría'
+            });
+        }
+    }
+}
+
+// Función para filtrar categorías
+function filtrarCategorias(termino) {
+    const terminoLower = termino.toLowerCase();
+    const categoriasFiltradas = categorias.filter(categoria => {
+        const nombre = categoria.nombreDepartamento || categoria.nombreCategoria || '';
+        return nombre.toLowerCase().includes(terminoLower);
+    });
+
+    mostrarCategorias(categoriasFiltradas);
+}
+
+// Función para configurar eventos
+function configurarEventos() {
+    console.log('🔗 Configurando eventos...');
+
+    // Botón flotante agregar
+    const btnFlotante = document.getElementById('btnFlotanteAgregar');
+    if (btnFlotante) {
+        btnFlotante.addEventListener('click', abrirModalAgregar);
+    }
+
+    // Formulario agregar
+    const frmAgregar = document.getElementById('frmAgregar');
+    if (frmAgregar) {
+        frmAgregar.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value.trim();
+            if (nombre) {
+                agregarCategoria(nombre);
+            }
+        });
+    }
+
+    // Formulario editar
+    const frmEditar = document.getElementById('frmEditar');
+    if (frmEditar) {
+        frmEditar.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('idEditar').value;
+            const nombre = document.getElementById('nombreEditar').value.trim();
+            if (id && nombre) {
+                editarCategoria(id, nombre);
+            }
+        });
+    }
+
+    // Botones cerrar modales
+    const btnCerrarModal = document.getElementById('btnCerrarModal');
+    const btnCerrarEditar = document.getElementById('btnCerrarEditar');
+
+    if (btnCerrarModal) {
+        btnCerrarModal.addEventListener('click', cerrarModales);
+    }
+
+    if (btnCerrarEditar) {
+        btnCerrarEditar.addEventListener('click', cerrarModales);
+    }
+
+    // Búsqueda
+    const inputBusqueda = document.getElementById('busquedaDepartamento');
+    if (inputBusqueda) {
+        inputBusqueda.addEventListener('input', (e) => {
+            const termino = e.target.value.trim();
+            if (termino === '') {
+                mostrarCategorias(categorias);
+            } else {
+                filtrarCategorias(termino);
+            }
+        });
+    }
+
+    // Cerrar modales con Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            cerrarModales();
+        }
+    });
+}
+
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPaso2);
+} else {
+    initPaso2();
+}
+
+///////////////////////// COSAS PARA EL PASO 3 /////////////////////////
+const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
+const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
+
+document.addEventListener("DOMContentLoaded", () => {
+    const observer = new MutationObserver(() => {
+        const contenedor = document.getElementById("lista-contactos");
+        if (contenedor) {
+            initPaso3();
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    if (document.getElementById("lista-contactos")) {
+        initPaso3();
+        observer.disconnect();
+    }
+});
+
+function initPaso3() {
     const contenedor = document.getElementById("lista-contactos");
     if (!contenedor) {
         console.warn("No se encontró el contenedor de lista-contactos");
@@ -422,7 +857,7 @@ function mostrarDatos(contactos) {
     const headers = document.createElement("div");
     headers.className = "row align-items-center mb-2 px-2 headers-contacto";
     headers.innerHTML = `
-        <div class="col-auto text-center">Contacto</div>
+        <div class="col-auto text-center">Técnico</div>
         <div class="col text-end">Nombre</div>
         <div class="col text-end">Correo</div>
         <div class="col text-end">Teléfono</div>
@@ -1232,7 +1667,7 @@ function iniciarPaso() {
             break;
         case "2":
             console.log("Iniciando Paso 2");
-            initPaso2();
+            initPaso3();
             break;
         case "3":
             console.log("Iniciando Paso 3");
@@ -1447,82 +1882,9 @@ function guardarDatosPaso2() {
     sessionStorage.setItem("miEquipo", JSON.stringify(ids));
 }
 
-// CORRECCIÓN 9: Función mejorada para restaurar datos del paso 2
+// Departamentos
 function restaurarDatosPaso2() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
-
-    if (equipo.length === 0) return;
-
-    // Función para verificar y restaurar con reintentos
-    const verificarYRestaurar = (intentos = 0) => {
-        const contenedor = document.getElementById("lista-contactos");
-
-        if (!contenedor) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
-        }
-
-        // Verificar que los contactos estén renderizados
-        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
-
-        if (contactosRenderizados.length === 0) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
-        }
-
-        // Restaurar estado del equipo
-        setTimeout(() => {
-            restaurarEstadoEquipo();
-        }, 200);
-    };
-
-    verificarYRestaurar();
-}
-
-// Función mejorada para el buscador
-function inicializarBuscadorDeContactos() {
-    const inputBusqueda = document.getElementById("busquedaContacto");
-    const botonBuscar = document.getElementById("btnBuscar");
-
-    if (!inputBusqueda || !botonBuscar) return;
-
-    // Función de filtrado mejorada
-    const filtrarContactos = () => {
-        const query = inputBusqueda.value.trim().toLowerCase();
-        const filas = document.querySelectorAll(".contacto-fila");
-
-        let contactosVisibles = 0;
-
-        filas.forEach(fila => {
-            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
-            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
-            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
-
-            // Buscar en todos los campos
-            const coincide = query === "" ||
-                nombre.includes(query) ||
-                correo.includes(query) ||
-                telefono.includes(query);
-
-            if (coincide) {
-                fila.style.display = "flex";
-                contactosVisibles++;
-            } else {
-                fila.style.display = "none";
-            }
-        });
-
-        // Mostrar mensaje si no hay resultados
-        mostrarMensajeResultados(contactosVisibles, query);
-    };
-
-    // Asignar nuevos eventos
-    botonBuscar.addEventListener("click", filtrarContactos);
-    inputBusqueda.addEventListener("keyup", filtrarContactos);
+    obtenerCategorias()
 }
 
 // Función mejorada para el buscador
@@ -1583,29 +1945,162 @@ function accionSiguientePaso() {
 }
 
 //---------------------------------- PASO 3 ----------------------------------
+
+function guardarDatosPaso3() {
+    // Obtener todos los contactos que están marcados como parte del equipo
+    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
+    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+
+    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+}
+
 function restaurarDatosPaso3() {
-    // Aún no implementada, pero evita el error
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+
+    if (equipo.length === 0) return;
+
+    // Función para verificar y restaurar con reintentos
+    const verificarYRestaurar = (intentos = 0) => {
+        const contenedor = document.getElementById("lista-contactos");
+
+        if (!contenedor) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Verificar que los contactos estén renderizados
+        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
+
+        if (contactosRenderizados.length === 0) {
+            if (intentos < 30) {
+                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
+            }
+            return;
+        }
+
+        // Restaurar estado del equipo
+        setTimeout(() => {
+            restaurarEstadoEquipo();
+        }, 200);
+    };
+
+    verificarYRestaurar();
+}
+
+// Función para inicializar componentes específicos de cada paso
+function inicializarComponentesPaso(paso) {
+    fetch(`pasosPrimerUso/paso${paso}.html`)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("contenido-dinamico").innerHTML = html;
+            document.getElementById("paso-actual").textContent = paso;
+            actualizarIndicadorPaso();
+
+            setTimeout(() => {
+                inicializarInputsTelefono();
+
+                requestAnimationFrame(() => {
+                    // Ejecutar funciones específicas según el paso
+                    if (paso === 1) {
+                        restaurarDatosPaso1();
+                    }
+                    if (paso === 2) {
+                        // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
+                        initPaso2();
+                        // Restaurar datos después de que se hayan cargado las categorías
+                        setTimeout(() => {
+                            restaurarDatosPaso2();
+                        }, 500); // Dar tiempo para que se carguen las categorías
+
+                    }
+                    if (paso === 3) {
+                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                        initPaso3();
+                        // Restaurar datos después de que se hayan cargado los contactos
+                        setTimeout(() => {
+                            restaurarDatosPaso3();
+                        }, 500); // Dar tiempo para que se carguen los contactos
+                    }
+                    if (paso === 4) {
+                        restaurarDatosPaso4();
+                    }
+                });
+            }, 0);
+        });
+
+    // Mostrar/ocultar botón atrás
+    const btnAtras = document.getElementById("btn-atras");
+    if (btnAtras) {
+        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+    }
+}
+
+// NUEVA - Función principal unificada para navegar entre pasos
+function navegarAPaso(numeroPaso) {
+    const paso = parseInt(numeroPaso);
+
+    if (paso < 1 || paso > 3) {
+        console.error('Número de paso inválido:', paso);
+        return;
+    }
+
+    fetch(`pasosPrimerUso/paso${paso}.html`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.text();
+        })
+        .then(html => {
+            document.getElementById("main").innerHTML = html;
+
+            // Actualizar paso actual si existe la variable
+            if (typeof pasoActual !== 'undefined') {
+                pasoActual = paso;
+            }
+
+            // Usar las funciones existentes
+            actualizarIndicadorPaso(paso);
+            inicializarComponentesPaso(paso);
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            console.log(`Navegado al paso ${paso} exitosamente`);
+        })
+        .catch(err => {
+            console.error("Error al cargar paso:", err);
+            Swal.fire({
+                title: "Error",
+                text: `No se pudo cargar el paso ${paso}. Verifica que el archivo existe.`,
+                icon: "error",
+                confirmButtonText: "Entendido"
+            });
+        });
 }
 
 document.addEventListener("click", function (e) {
-  // Detecta si se hizo clic en uno de los botones que cargan pasos
-  const boton = e.target.closest("[data-paso]");
+    // Detectar navegación específica (para botones del paso 3)
+    const botonNavegar = e.target.closest("[data-navegar-paso]");
+    if (botonNavegar) {
+        const pasoDestino = botonNavegar.dataset.navegarPaso;
+        navegarAPaso(pasoDestino);
+        return;
+    }
 
-  if (boton) {
-    const paso = boton.dataset.paso;
-
-    fetch(`pasosPrimerUso/paso${paso}.html`)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById("main").innerHTML = html;
-        if (typeof inicializarPaso === "function") {
-          inicializarPaso(parseInt(paso)); // si tenés lógica por paso
-        }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      })
-      .catch(err => {
-        console.error("Error al cargar paso:", err);
-        Swal.fire("Ups", "No se pudo cargar el paso. Verificá la ruta.", "error");
-      });
-  }
+    // Detectar navegación general (botones "Modificar", etc.)
+    const boton = e.target.closest("[data-paso]");
+    if (boton) {
+        const paso = boton.dataset.paso;
+        navegarAPaso(paso);
+    }
 });
+
+// OPCIONAL - Funciones específicas para mayor claridad
+function regresarAPaso1() {
+    navegarAPaso(1);
+}
+
+function regresarAPaso2() {
+    navegarAPaso(2);
+}

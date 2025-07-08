@@ -11,9 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/stylePasos/stylePaso1.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.min.css" />
+    <link rel="stylesheet" href="css/stylePasos/stylePaso4.css">
 </head>
 
 <body>
@@ -126,91 +126,88 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
-    <div class="container mt-4">
-        <!-- Título principal -->
-        <h2 class="fw-semibold mb-2 text-center">Bienvenido a H2C Help Desk</h2>
-        <p class="text-muted mb-4 text-center">Vamos a comenzar. Por favor, ingrese los datos de su empresa</p>
 
-        <div class="row g-5">
-            <!-- Columna 1: Datos de Empresa -->
-            <div class="col-12 col-md-6">
-                <h5 class="fw-semibold border-bottom pb-2 mb-4">Datos de Empresa</h5>
+    <main id="main" class="container position-relative">
+        <h2 class="fw-semibold mb-2 text-center">Casi listo...</h2>
+        <p class="text-muted mb-4 text-center">Échale un vistazo a tu nuevo equipo. Confirma los datos para finalizar su
+            creación</p>
 
-                <div class="mb-3">
-                    <label class="form-label">Nombre de la empresa</label>
-                    <div class="form-control" style="background-color: #ffffff; color: #000000; cursor: not-allowed;">
-                        H2C - Help To Comply
-                    </div>
-                    <!-- Input hidden para enviar el valor con el formulario -->
-                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply">
+        <div id="paso1" class="border rounded p-3 mb-4 bg-white shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="w-100 border-bottom pb-2 mb-4">
+                    <h5 class="fw-semibold m-0">Datos de empresa</h5>
                 </div>
-
-                <div class="mb-3">
-                    <label for="correoEmpresa" class="form-label">Correo corporativo principal</label>
-                    <input type="email" class="form-control" id="correoEmpresa" placeholder="correo@empresa.com"
-                        maxlength="100">
-                </div>
-
-                <div class="mb-3">
-                    <label for="telefonoEmpresa" class="form-label">Teléfono de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoEmpresa">
-                </div>
-
-                <div class="mb-3">
-                    <label for="sitioWeb" class="form-label">Sitio web (opcional)</label>
-                    <input type="url" class="form-control" id="sitioWeb" placeholder="https://www.miempresa.com"
-                        maxlength="150">
-                </div>
+                <button class="btn btn-primary btn-Modificar" data-navegar-paso="1">Modificar</button>
             </div>
 
-            <!-- Columna 2: Datos de Administrador -->
-            <div class="col-12 col-md-6">
-                <h5 class="fw-semibold border-bottom pb-2 mb-4">Datos de Administrador</h5>
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Nombre:</div>
+                <div>H2C - Help To Comply</div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="nombreAdmin" class="form-label">Nombre completo</label>
-                    <input type="text" class="form-control" id="nombreAdmin" placeholder="Nombre del administrador"
-                        maxlength="90">
-                </div>
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Correo corporativo:</div>
+                <div>info@h2cgroup.com</div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="correoAdmin" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="correoAdmin" placeholder="correo@ejemplo.com"
-                        maxlength="100">
-                </div>
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Teléfono:</div>
+                <div>+503 2510-8403</div>
+            </div>
 
-                <div class="mb-3">
-                    <label for="telefonoAdmin" class="form-label">Número de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoAdmin">
-                </div>
-
-                <div class="mb-3">
-                    <label for="departamentoAdmin" class="form-label">Departamento</label>
-                    <div class="form-control" style="background-color: #ffffff; color: #000000; cursor: not-allowed;">
-                        CEO
-                    </div>
-                    <!-- Input hidden para enviar el valor con el formulario -->
-                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply">
-                </div>
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Sitio web:</div>
+                <div><a href="https://h2cgroup.com/#" target="_blank">h2cgroup.com</a></div>
             </div>
         </div>
-    </div>
-    </div>
 
 
+        <div id="paso1" class="border rounded p-3 mb-4 bg-white shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="w-100 border-bottom pb-2 mb-4">
+                    <h5 class="fw-semibold m-0">Datos del administrador</h5>
+                </div>
+                <button class="btn btn-primary btn-Modificar" data-navegar-paso="1">Modificar</button>
+            </div>
+
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Nombre:</div>
+                <div>Diego Armando Castillo Morales</div>
+            </div>
+
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Correo:</div>
+                <div>diegocastilloh2c@gmail.com</div>
+            </div>
+
+            <div class="mb-2 d-flex">
+                <div class="fw-semibold" style="min-width: 180px;">Teléfono:</div>
+                <div>+503 7777-7777</div>
+            </div>
+        </div>
+
+        <div id="paso2" class="border rounded p-3 mb-4 bg-white shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="w-100 border-bottom pb-2 mb-4">
+                    <h5 class="fw-semibold m-0">Integrantes del equipo</h5>
+                </div>
+                <button class="btn btn-primary btn-add" data-navegar-paso="2">
+                    <i class="bi bi-person-plus-fill me-1"></i>Añadir miembro
+                </button>
+            </div>
+
+            <div id="lista-integrantes">
+            </div>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
     <!-- JS -->
-    <!-- intl-tel-input scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/intlTelInput.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"></script>
-
-    <!-- SweetAlert -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Tu script personalizado -->
     <script src="js/scriptPasos.js"></script>
-
-    <span id="paso-actual">1</span>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </div>
+    </div>
+    <span id="paso-actual">4</span>
 </body>
 
 </html>
