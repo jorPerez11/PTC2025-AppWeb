@@ -1,6 +1,6 @@
 let paso = 1;
-let listaContactos = [];
 
+// Función para actualizar el indicador visual del paso actual
 function actualizarIndicadorPaso() {
     // Remover clase 'activo' de todos los pasos
     document.querySelectorAll('.paso').forEach(p => p.classList.remove('activo'));
@@ -12,6 +12,7 @@ function actualizarIndicadorPaso() {
     }
 }
 
+// Función principal para cargar el contenido de cada paso
 function cargarPaso() {
     fetch(`pasosPrimerUso/paso${paso}.html`)
         .then(res => res.text())
@@ -21,31 +22,24 @@ function cargarPaso() {
             actualizarIndicadorPaso();
 
             setTimeout(() => {
-                inicializarInputsTelefono();
+                inicializarInputsTelefono(); // Asegúrate de que esta función esté declarada si la usas
 
                 requestAnimationFrame(() => {
                     // Ejecutar funciones específicas según el paso
                     if (paso === 1) {
-                        restaurarDatosPaso1();
+                        restaurarDatosPaso1(); // Asegúrate de que esta función esté declarada si la usas
                     }
                     if (paso === 2) {
-                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
-                        initPaso2();
+                        initPaso2(); // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos. Asegúrate de que esta función esté declarada.
                         setTimeout(() => {
-                            restaurarDatosPaso2();
+                            restaurarDatosPaso2(); // Asegúrate de que esta función esté declarada si la usas
                         }, 500); // Dar tiempo para que se carguen los Técnicos
-
                     }
                     if (paso === 3) {
-                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
-                        initPaso3();
-                        // Restaurar datos después de que se hayan cargado los Técnicos
-                        setTimeout(() => {
-                            restaurarDatosPaso3();
-                        }, 500); // Dar tiempo para que se carguen los Técnicos
+                        initPaso3(); // initPaso3 ahora se encarga de todo el flujo asíncrono
                     }
                     if (paso === 4) {
-                        restaurarDatosPaso4();
+                        restaurarDatosPaso4(); // Asegúrate de que esta función esté declarada si la usas
                     }
                 });
             }, 0);
@@ -156,7 +150,7 @@ function restaurarDatosPaso1() {
         sitioWeb: data.sitioWeb,
         nombreAdmin: data.adminNombre,
         correoAdmin: data.adminCorreo,
-        departamentoAdmin: data.departamentoAdmin
+        rolAdmin: data.rolAdmin
     };
 
     for (const [id, valor] of Object.entries(campos)) {
@@ -743,13 +737,31 @@ if (document.readyState === 'loading') {
     initPaso2();
 }
 
+function guardarDatosPaso2() {
+    // Obtener todos los contactos que están marcados como parte del equipo
+    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
+    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+
+    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+}
+
+// Departamentos
+function restaurarDatosPaso2() {
+    obtenerCategorias()
+}
+
 ///////////////////////// COSAS PARA EL PASO 3 /////////////////////////
-const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
+const API_URL = "https://retoolapi.dev/bRqmHj/tecnicoData";
 const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
+
+let listaTecnicos = [];
+let tecnicosAgregados = [];
+let listaCategorias = []; // Para almacenar las categorías obtenidas de la API
+let miEquipo = []; // Global variable to hold the team members' IDs (from sessionStorage)
 
 document.addEventListener("DOMContentLoaded", () => {
     const observer = new MutationObserver(() => {
-        const contenedor = document.getElementById("lista-contactos");
+        const contenedor = document.getElementById("lista-tecnicos");
         if (contenedor) {
             initPaso3();
             observer.disconnect();
@@ -758,22 +770,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    if (document.getElementById("lista-contactos")) {
+    if (document.getElementById("lista-tecnicos")) {
         initPaso3();
         observer.disconnect();
     }
 });
 
+// Función para inicializar el Paso 3
 function initPaso3() {
-    const contenedor = document.getElementById("lista-contactos");
+    const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) {
-        console.warn("No se encontró el contenedor de lista-contactos");
+        console.warn("No se encontró el contenedor de lista-tecnicos");
         return;
     }
 
-    obtenerContactos();
-    configurarEventosModales();
+    // Encadenar las promesas para asegurar el orden de ejecución:
+    // 1. Obtener categorías
+    // 2. Obtener técnicos (y que internamente se llamará a mostrarDatos para renderizarlos)
+    // 3. Luego, restaurar el estado visual y configurar eventos.
+    obtenerCategorias3()
+        .then(() => obtenerTecnicos()) // obtenerTecnicos ya llama a mostrarDatos(data) para renderizar
+        .then(() => {
+            // *** PUNTO CRÍTICO: Aquí los técnicos ya están en el DOM. ***
+            restaurarDatosPaso3(); // Es seguro llamar a la función de restauración ahora.
+            configurarEventosModales(); // Configurar eventos que dependen de elementos ya renderizados.
+            console.log("Paso 3 inicializado y estado de técnicos restaurado.");
+        })
+        .catch(error => {
+            console.error("Error en la inicialización del Paso 3:", error);
+            Swal.fire({
+                title: "Error de Carga",
+                text: "No se pudieron cargar los técnicos o las categorías.",
+                icon: "error",
+                confirmButtonText: "Entendido"
+            });
+        });
 
+    // Lógica para el botón flotante (no depende de la carga de técnicos, se puede ejecutar de inmediato)
     const btnFlotante = document.getElementById("btnFlotanteAgregar");
     if (btnFlotante) {
         btnFlotante.style.display = "block";
@@ -784,18 +817,61 @@ function initPaso3() {
     }
 }
 
-// Función para obtener y mostrar personas desde la API
-async function obtenerContactos() {
-    const contenedor = document.getElementById("lista-contactos");
+// Función para obtener categorías desde la API
+async function obtenerCategorias3() {
+    try {
+        const res = await fetch(API_URL2);
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+        const data = await res.json();
+        listaCategorias = data;
+        cargarCategoriasEnDropdown();
+    } catch (error) {
+        console.error("Error al obtener categorías:", error);
+        // Agregar categorías por defecto en caso de error
+        listaCategorias = [
+            { id: 1, nombre: "Supervisor" },
+            { id: 2, nombre: "Técnico Senior" },
+            { id: 3, nombre: "Técnico Junior" },
+            { id: 4, nombre: "Especialista" }
+        ];
+        cargarCategoriasEnDropdown();
+    }
+}
+
+// Función para cargar las categorías en el dropdown
+function cargarCategoriasEnDropdown() {
+    const dropdown = document.getElementById("categoriaDropdown");
+    if (!dropdown) {
+        console.warn("Elemento 'categoriaDropdown' no encontrado en el DOM.");
+        return;
+    }
+
+    // Limpiar opciones existentes excepto la primera (que suele ser un placeholder)
+    dropdown.innerHTML = '<option value="">Selecciona una categoría</option>';
+
+    // Agregar categorías
+    listaCategorias.forEach(categoria => {
+        const option = document.createElement("option");
+        option.value = categoria.id;
+        option.textContent = categoria.nombreDepartamento;
+        dropdown.appendChild(option);
+    });
+}
+
+// Función para obtener y mostrar técnicos desde la API
+async function obtenerTecnicos() {
+    const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) return;
 
     // Mostrar indicador de carga
     contenedor.innerHTML = `
         <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando contactos...</span>
+                <span class="visually-hidden">Cargando técnicos...</span>
             </div>
-            <p class="mt-2 text-muted">Cargando contactos...</p>
+            <p class="mt-2 text-muted">Cargando técnicos...</p>
         </div>
     `;
 
@@ -807,15 +883,17 @@ async function obtenerContactos() {
         }
 
         const data = await res.json();
-        listaContactos = data; // Actualizar la lista global
+        listaTecnicos = data; // Actualizar la lista global
+        console.log("Técnicos cargados:", listaTecnicos); // Debug
 
         mostrarDatos(data);
+        return data; // Retornar los datos para poder usar .then()
     } catch (error) {
-        console.error("Error al obtener contactos:", error);
+        console.error("Error al obtener técnicos:", error);
         contenedor.innerHTML = `
             <div class="alert alert-danger">
-                Error al cargar los contactos. Por favor, intenta nuevamente.
-                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerContactos()">
+                Error al cargar los técnicos. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerTecnicos()">
                     Reintentar
                 </button>
             </div>
@@ -823,14 +901,14 @@ async function obtenerContactos() {
     }
 }
 
-function mostrarDatos(contactos) {
-    const contenedor = document.getElementById("lista-contactos");
+function mostrarDatos(tecnicos) {
+    const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) return;
 
-    if (!contactos || contactos.length === 0) {
+    if (!tecnicos || tecnicos.length === 0) {
         contenedor.innerHTML = `
             <div class="alert alert-warning text-center">
-                No hay contactos disponibles.
+                No hay técnicos disponibles.
             </div>
         `;
         return;
@@ -839,12 +917,12 @@ function mostrarDatos(contactos) {
     contenedor.innerHTML = "";
 
     // Crear buscador si no existe
-    if (!document.getElementById("busquedaContacto")) {
+    if (!document.getElementById("busquedaTecnico")) {
         const buscadorContainer = document.createElement("div");
         buscadorContainer.className = "mb-4";
         buscadorContainer.innerHTML = `
             <div class="input-group">
-                <input type="text" id="busquedaContacto" class="form-control" 
+                <input type="text" id="busquedaTecnico" class="form-control" 
                        placeholder="Buscar por nombre, correo o teléfono...">
                 <button class="btn btn-outline-secondary" type="button" id="btnBuscar">
                     <i class="bi bi-search"></i>
@@ -855,7 +933,7 @@ function mostrarDatos(contactos) {
     }
 
     const headers = document.createElement("div");
-    headers.className = "row align-items-center mb-2 px-2 headers-contacto";
+    headers.className = "row align-items-center mb-2 px-2 headers-tecnico";
     headers.innerHTML = `
         <div class="col-auto text-center">Técnico</div>
         <div class="col text-end">Nombre</div>
@@ -866,53 +944,57 @@ function mostrarDatos(contactos) {
 
     contenedor.appendChild(headers);
 
-    contactos.forEach((contacto) => {
-        const imgSrc = contacto.Foto && contacto.Foto.trim()
-            ? contacto.Foto
+    // Obtener el equipo actual ANTES de renderizar
+    const equipoActual = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    console.log("Equipo actual al renderizar:", equipoActual);
+
+    tecnicos.forEach((tecnico) => {
+        const imgSrc = tecnico.Foto && tecnico.Foto.trim()
+            ? tecnico.Foto
             : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-        const nombreLimpio = limpiarTexto(contacto.Nombre);
-        const telefonoFormateado = formatearTelefonoInteligente(contacto["Número de tel."]);
+        const nombreLimpio = limpiarTexto(tecnico.Nombre);
+        const telefonoFormateado = formatearTelefonoInteligente(tecnico["Número de tel."]);
 
         const fila = document.createElement("div");
-        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white contacto-fila";
-        fila.setAttribute("data-id", contacto.id);
+        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white tecnico-fila";
+        fila.setAttribute("data-id", tecnico.id);
         fila.innerHTML = `
             <div class="col-auto d-flex justify-content-center align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
                 <img src="${imgSrc}" 
                      alt="Foto de ${nombreLimpio}" 
-                     class="rounded-circle foto-contacto"
+                     class="rounded-circle foto-tecnico"
                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 fw-semibold nombre-contacto">
+                <div class="w-100 fw-semibold nombre-tecnico">
                     ${nombreLimpio || "Sin nombre"}
                 </div>
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 text-muted small correo-contacto">
-                    ${contacto["Correo Electrónico"] || contacto["Correo Elect."] || "Sin correo"}
+                <div class="w-100 text-muted small correo-tecnico">
+                    ${tecnico["Correo Electrónico"] || tecnico["Correo Elect."] || "Sin correo"}
                 </div>
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 text-muted small telefono-contacto">
+                <div class="w-100 text-muted small telefono-tecnico">
                     ${telefonoFormateado}
                 </div>
             </div>
 
             <div class="col d-flex justify-content-end align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${contacto.id}">
-                    <button class="btn btn-sm btn-accion añadir" data-id="${contacto.id}" title="Añadir al equipo">
+                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${tecnico.id}">
+                    <button class="btn btn-sm btn-accion añadir" data-id="${tecnico.id}" title="Añadir al equipo">
                         <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
                     </button>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-accion editar" data-id="${contacto.id}" title="Editar">
+                        <button class="btn btn-sm btn-accion editar" data-id="${tecnico.id}" title="Editar">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
-                        <button class="btn btn-sm btn-accion eliminar" data-id="${contacto.id}" title="Eliminar">
+                        <button class="btn btn-sm btn-accion eliminar" data-id="${tecnico.id}" title="Eliminar">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </div>
@@ -922,67 +1004,82 @@ function mostrarDatos(contactos) {
 
         contenedor.appendChild(fila);
 
-        // Eventos
-        const editarBtn = fila.querySelector(".editar");
-        const eliminarBtn = fila.querySelector(".eliminar");
-        const añadirBtn = fila.querySelector(".añadir");
-
-        if (editarBtn) {
-            editarBtn.addEventListener("click", () => {
-                AbrirModalEditar(
-                    contacto.id,
-                    contacto.Nombre,
-                    contacto["Correo Electrónico"] || contacto["Correo Elect."],
-                    contacto["Número de tel."],
-                    contacto.Foto
-                );
-            });
+        // Verificar si este técnico está en el equipo INMEDIATAMENTE
+        const miembroEquipo = equipoActual.find(miembro => miembro.id == tecnico.id);
+        const contenedorAcciones = document.getElementById(`acciones-${tecnico.id}`);
+        
+        if (miembroEquipo && contenedorAcciones) {
+            console.log(`Restaurando técnico ${tecnico.id} inmediatamente`);
+            marcarTecnicoComoAñadidoVisual(tecnico.id, contenedorAcciones, true);
         }
 
-        if (eliminarBtn) {
-            eliminarBtn.addEventListener("click", () => {
-                Swal.fire({
-                    title: `¿Eliminar a ${contacto.Nombre}?`,
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#6c757d",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: "Cancelar"
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        eliminarContacto(contacto.id);
-                    }
+        // Eventos para botones normales (solo si no está en el equipo)
+        if (!miembroEquipo) {
+            const editarBtn = fila.querySelector(".editar");
+            const eliminarBtn = fila.querySelector(".eliminar");
+            const añadirBtn = fila.querySelector(".añadir");
+
+            if (editarBtn) {
+                editarBtn.addEventListener("click", () => {
+                    AbrirModalEditar(
+                        tecnico.id,
+                        tecnico.Nombre,
+                        tecnico["Correo Electrónico"] || tecnico["Correo Elect."],
+                        tecnico["Número de tel."],
+                        tecnico.Foto
+                    );
                 });
-            });
-        }
+            }
 
-        if (añadirBtn) {
-            añadirBtn.addEventListener("click", () => {
-                abrirModalAgregarEquipo(contacto);
-            });
+            if (eliminarBtn) {
+                eliminarBtn.addEventListener("click", () => {
+                    Swal.fire({
+                        title: `¿Eliminar a ${tecnico.Nombre}?`,
+                        text: "Esta acción no se puede deshacer.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#6c757d",
+                        confirmButtonText: "Sí, eliminar",
+                        cancelButtonText: "Cancelar"
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            eliminarTecnico(tecnico.id);
+                        }
+                    });
+                });
+            }
+
+            if (añadirBtn) {
+                añadirBtn.addEventListener("click", () => {
+                    abrirModalAgregarEquipo(tecnico);
+                });
+            }
         }
     });
 
-    // Inicializar el buscador después de renderizar
+    // Inicializar buscador al final
     setTimeout(() => {
-        inicializarBuscadorDeContactos();
-        // Restaurar estado del equipo
-        restaurarEstadoEquipo();
+        inicializarBuscadorDeTecnicos();
     }, 100);
 }
 
-// CORRECCIÓN 5: Función mejorada para restaurar el estado del equipo
+
 function restaurarEstadoEquipo() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    console.log("Restaurando equipo desde localStorage:", equipo); // Debug
 
     if (equipo.length === 0) return;
 
-    equipo.forEach(id => {
-        const contenedorAcciones = document.getElementById(`acciones-${id}`);
-        if (contenedorAcciones) {
-            marcarContactoComoAñadidoVisual(id, contenedorAcciones);
+    equipo.forEach(miembro => {
+        if (miembro && miembro.id) {
+            const contenedorAcciones = document.getElementById(`acciones-${miembro.id}`);
+            if (contenedorAcciones) {
+                console.log(`Restaurando técnico ${miembro.id} con categoría ${miembro.categoria}`);
+                marcarTecnicoComoAñadidoVisual(miembro.id, contenedorAcciones, true);
+            } else {
+                console.warn(`No se encontró contenedor de acciones para técnico ${miembro.id}`);
+            }
         }
     });
 }
@@ -1054,40 +1151,40 @@ function formatearTelefonoInteligente(telefono) {
     return `${codigoPais} ${numero}`.trim();
 }
 
-function eliminarContacto(id) {
+function eliminarTecnico(id) {
     fetch(`${API_URL}/${id}`, {
         method: "DELETE"
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error("No se pudo eliminar el contacto.");
+                throw new Error("No se pudo eliminar el técnico.");
             }
             return response.json();
         })
         .then(() => {
             Swal.fire({
                 icon: "success",
-                title: "Contacto eliminado",
-                text: "El contacto ha sido eliminado correctamente.",
+                title: "Técnico eliminado",
+                text: "El técnico ha sido eliminado correctamente.",
                 timer: 1500,
                 showConfirmButton: false
             });
 
-            // Opcional: recargar lista de contactos o avanzar
-            obtenerContactos?.(); // solo si existe esa función
+            // Opcional: recargar lista de técnicos o avanzar
+            obtenerTecnicos?.();
         })
         .catch(error => {
             console.error(error);
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Ocurrió un problema al eliminar el contacto."
+                text: "Ocurrió un problema al eliminar el técnico."
             });
         });
 }
 
 function configurarEventosModales() {
-    // Modal AGREGAR CONTACTO
+    // Modal AGREGAR TÉCNICO
     const modalAgregar = document.getElementById("modal-agregar");
     const btnAbrirModalAgregar = document.getElementById("btnAbrirModal");
     const btnFlotante = document.getElementById("btnFlotanteAgregar");
@@ -1097,7 +1194,7 @@ function configurarEventosModales() {
         btnAbrirModalAgregar.addEventListener("click", () => {
             if (modalAgregar) {
                 modalAgregar.showModal();
-                setTimeout(() => inicializarTelefonosPaso2(), 100);
+                setTimeout(() => inicializarTelefonosPaso3(), 100);
             }
         });
     }
@@ -1106,7 +1203,7 @@ function configurarEventosModales() {
         btnFlotante.addEventListener("click", () => {
             if (modalAgregar) {
                 modalAgregar.showModal();
-                setTimeout(() => inicializarTelefonosPaso2(), 100);
+                setTimeout(() => inicializarTelefonosPaso3(), 100);
             }
         });
     }
@@ -1119,11 +1216,11 @@ function configurarEventosModales() {
     if (frmAgregar) {
         frmAgregar.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await agregarContacto();
+            await agregarTecnico();
         });
     }
 
-    // Modal EDITAR CONTACTO
+    // Modal EDITAR TÉCNICO
     const modalEditar = document.getElementById("modal-editar");
     const btnCerrarEditar = document.getElementById("btnCerrarEditar");
 
@@ -1135,7 +1232,7 @@ function configurarEventosModales() {
     if (frmEditar) {
         frmEditar.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await editarContacto();
+            await editarTecnico();
         });
     }
 
@@ -1166,35 +1263,35 @@ function configurarEventosModales() {
         frmAgregarEquipo.addEventListener("submit", (e) => {
             e.preventDefault();
 
-            const rol = document.getElementById("rolEquipo")?.value;
-            const id = frmAgregarEquipo.dataset.idContacto;
+            const categoria = document.getElementById("categoriaDropdown")?.value;
+            const id = frmAgregarEquipo.dataset.idTecnico;
 
-            if (!rol) {
+            if (!categoria) {
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         icon: "warning",
-                        title: "Rol requerido",
-                        text: "Por favor, selecciona un rol antes de continuar.",
+                        title: "Categoría requerida",
+                        text: "Por favor, selecciona una categoría antes de continuar.",
                         confirmButtonColor: "#007bff"
                     });
                 } else {
-                    alert("Por favor, selecciona un rol antes de continuar.");
+                    alert("Por favor, selecciona una categoría antes de continuar.");
                 }
                 return;
             }
 
-            marcarContactoComoAñadido(id);
+            marcarTecnicoComoAñadido(id, categoria);
 
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
                     icon: "success",
                     title: "¡Añadido!",
-                    text: "El contacto se ha añadido exitosamente al equipo.",
+                    text: "El técnico se ha añadido exitosamente al equipo.",
                     timer: 2000,
                     showConfirmButton: false
                 });
             } else {
-                alert("El contacto se ha añadido exitosamente al equipo.");
+                alert("El técnico se ha añadido exitosamente al equipo.");
             }
 
             if (modalEquipo) modalEquipo.close();
@@ -1202,7 +1299,7 @@ function configurarEventosModales() {
     }
 }
 
-async function agregarContacto() {
+async function agregarTecnico() {
     const nombre = document.getElementById("nombre")?.value.trim();
     const correo = document.getElementById("email")?.value.trim();
     const archivoFoto = document.getElementById("foto")?.files[0];
@@ -1254,11 +1351,10 @@ async function agregarContacto() {
     }
 
     // Proceder con el guardado
-    await enviarContacto(nombre, correo, telefono, archivoFoto);
+    await enviarTecnico(nombre, correo, telefono, archivoFoto);
 }
 
-async function enviarContacto(nombre, correo, telefono, archivoFoto) {
-
+async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
     try {
         // Subir imagen si fue seleccionada
         let urlFoto = "";
@@ -1266,7 +1362,7 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
             urlFoto = await subirImagen(archivoFoto);
         }
 
-        const nuevoContacto = {
+        const nuevoTecnico = {
             Nombre: nombre,
             "Correo Electrónico": correo,
             "Número de tel.": telefono,
@@ -1276,7 +1372,7 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
         const res = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuevoContacto)
+            body: JSON.stringify(nuevoTecnico)
         });
 
         if (!res.ok) {
@@ -1287,8 +1383,8 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
 
         Swal.fire({
             icon: "success",
-            title: "¡Contacto agregado!",
-            text: "El contacto ha sido guardado exitosamente.",
+            title: "¡Técnico agregado!",
+            text: "El técnico ha sido guardado exitosamente.",
             timer: 1500,
             showConfirmButton: false
         });
@@ -1305,15 +1401,15 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
         if (modalAgregar) modalAgregar.close();
 
         // Recargar lista
-        obtenerContactos();
+        obtenerTecnicos();
 
     } catch (error) {
-        console.error("Error al agregar contacto:", error);
+        console.error("Error al agregar técnico:", error);
 
         Swal.fire({
             icon: "error",
             title: "Ups...",
-            text: "Ocurrió un problema al guardar el contacto. Por favor, intenta nuevamente.",
+            text: "Ocurrió un problema al guardar el técnico. Por favor, intenta nuevamente.",
             confirmButtonText: "Entendido"
         });
     }
@@ -1363,7 +1459,7 @@ function validarTelefonoIndividual(idInput) {
     return esValido;
 }
 
-// CORRECCIÓN 4: Función AbrirModalEditar corregida
+// Función AbrirModalEditar corregida
 function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
     // Limpiar el nombre de caracteres problemáticos
     const nombreLimpio = limpiarTexto(nombre);
@@ -1383,7 +1479,7 @@ function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 
         // Inicializar teléfonos después de abrir el modal
         setTimeout(() => {
-            inicializarTelefonosPaso2();
+            inicializarTelefonosPaso3();
 
             // Establecer el número de teléfono después de inicializar
             setTimeout(() => {
@@ -1402,10 +1498,10 @@ function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 }
 
 // Para renderizar en el paso 2:
-async function obtenerContactosPaso2() {
+async function obtenerTecnicosPaso3() {
     const res = await fetch(API_URL);
-    listaContactos = await res.json();
-    renderizarContactos(listaContactos);
+    listaTecnicos = await res.json();
+    renderizarTecnicos(listaTecnicos);
 }
 
 // CORRECCIÓN 2: Función mejorada para obtener teléfono con prefijo
@@ -1427,9 +1523,6 @@ function obtenerTelefonoConPrefijo(idInput) {
             // Intentar obtener el número con intlTelInput
             const numeroCompleto = iti.getNumber();
             const paisSeleccionado = iti.getSelectedCountryData();
-
-            /* console.log('IntlTelInput - Número completo:', numeroCompleto);
-            console.log('IntlTelInput - País:', paisSeleccionado); */
 
             if (numeroCompleto && numeroCompleto.trim() !== '') {
                 numeroFinal = numeroCompleto.trim();
@@ -1477,12 +1570,13 @@ function formatearTelefonoParaMostrar(telefono) {
     return telefono;
 }
 
-function renderizarContactos(contactos) {
-    const contenedor = document.getElementById("lista-contactos");
+
+function renderizarTecnicos(tecnicos) {
+    const contenedor = document.getElementById("lista-tecnicos");
     contenedor.innerHTML = "";
 
-    if (!contactos || contactos.length === 0) {
-        contenedor.innerHTML = `<p class='text-muted'>No hay contactos registrados aún.</p>`;
+    if (!tecnicos || tecnicos.length === 0) {
+        contenedor.innerHTML = `<p class='text-muted'>No hay técnicos registrados aún.</p>`;
         return;
     }
 
@@ -1490,74 +1584,81 @@ function renderizarContactos(contactos) {
     const spinner = contenedor.querySelector(".spinner-wrapper");
     if (spinner) spinner.remove();
 
-    contactos.forEach(contacto => {
+    // Obtener técnicos ya añadidos al equipo - NORMALIZAR A STRINGS
+    /* const equipoActual = JSON.parse(sessionStorage.getItem("miEquipo") || "[]").map(id => String(id)); */
+
+    tecnicos.forEach(tecnico => {
         const card = document.createElement("div");
         card.className = "card p-3 shadow-sm";
 
         card.innerHTML = `
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-3">
-          <img src="${contacto.Foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
-               alt="Foto de ${contacto.Nombre}" class="rounded-circle border"
-               width="56" height="56" style="object-fit: cover; background-color: #f3f3f3;">
-          <div>
-            <h6 class="mb-0">${contacto.Nombre}</h6>
-            <small class="text-muted">${contacto["Correo Electrónico"]}</small><br>
-            <small>${contacto["Número de tel."]}</small>
-          </div>
-        </div>
-        <div class="d-flex flex-column align-items-end gap-2">
-          <button class="btn btn-sm btn-accion añadir" data-id="${contacto.id}">
-            <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
-          </button>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-accion editar" title="Editar"
-              onclick="AbrirModalEditar(
-                '${contacto.id}',
-                \`${contacto.Nombre}\`,
-                \`${contacto["Correo Electrónico"]}\`,
-                \`${contacto["Número de tel."]}\`,
-                \`${contacto.Foto || ""}\`)">
-              <i class="bi bi-pencil-fill"></i>
-            </button>
-            <button class="btn btn-sm btn-accion eliminar" title="Eliminar"
-              onclick="eliminarContacto('${contacto.id}')">
-              <i class="bi bi-trash-fill"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="${tecnico.Foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
+                         alt="Foto de ${tecnico.Nombre}" class="rounded-circle border"
+                         width="56" height="56" style="object-fit: cover; background-color: #f3f3f3;">
+                    <div>
+                        <h6 class="mb-0 nombre-tecnico">${tecnico.Nombre}</h6>
+                        <small class="text-muted correo-tecnico">${tecnico["Correo Electrónico"]}</small><br>
+                        <small class="telefono-tecnico">${tecnico["Número de tel."]}</small>
+                    </div>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${tecnico.id}">
+                <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${tecnico.id}">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Parte de tu equipo
+                            <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
+                        </div> :
+                <button class="btn btn-sm btn-accion añadir" data-id="${tecnico.id}">
+                            <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
+                        </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-accion editar" title="Editar"
+                          onclick="AbrirModalEditar(
+                            '${tecnico.id}',
+                            \`${tecnico.Nombre}\`,
+                            \`${tecnico["Correo Electrónico"]}\`,
+                            \`${tecnico["Número de tel."]}\`,
+                            \`${tecnico.Foto || ""}\`)">
+                          <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button class="btn btn-sm btn-accion eliminar" title="Eliminar"
+                          onclick="eliminarTecnico('${tecnico.id}')">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 
         contenedor.appendChild(card);
     });
 }
 
-function obtenerContactoPorId(id) {
-    const contacto = listaContactos?.find(c => c.id == id);
-    return contacto;
+function obtenerTecnicoPorId(id) {
+    const tecnico = listaTecnicos?.find(t => t.id == id);
+    return tecnico;
 }
 
-// 2. Función modificada para abrir modal y guardar ID correctamente
-function abrirModalAgregarEquipo(contacto) {
-    document.getElementById("imgEquipo").src = contacto.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    document.getElementById("nombreEquipo").value = contacto.Nombre || "";
-    document.getElementById("correoEquipo").value = contacto["Correo Electrónico"] || "";
-    document.getElementById("telefonoEquipo").value = contacto["Número de tel."] || "";
-    document.getElementById("rolEquipo").value = "";
+// Función para abrir modal y guardar ID correctamente
+function abrirModalAgregarEquipo(tecnico) {
+    document.getElementById("imgEquipo").src = tecnico.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    document.getElementById("nombreEquipo").value = tecnico.Nombre || "";
+    document.getElementById("correoEquipo").value = tecnico["Correo Electrónico"] || "";
+    document.getElementById("telefonoEquipo").value = formatearTelefonoParaMostrar(tecnico["Número de tel."]) || "";
+    document.getElementById("categoriaDropdown").value = "";
 
     // IMPORTANTE: Guardar el ID en el formulario para usarlo después
     const frmAgregarEquipo = document.getElementById("frmAgregarEquipo");
     if (frmAgregarEquipo) {
-        frmAgregarEquipo.dataset.idContacto = contacto.id;
+        frmAgregarEquipo.dataset.idTecnico = tecnico.id;
     }
 
     document.getElementById("modal-agregar-equipo").showModal();
 }
 
-
-// CORRECCIÓN 6: Función editarContacto corregida
-async function editarContacto() {
+// CORRECCIÓN 6: Función editarTecnico corregida
+async function editarTecnico() {
     const id = document.getElementById("idEditar").value;
     const nombre = limpiarTexto(document.getElementById("nombreEditar").value.trim());
     const correo = document.getElementById("emailEditar").value.trim();
@@ -1603,56 +1704,87 @@ async function editarContacto() {
         if (res.ok) {
             Swal.fire({
                 icon: "success",
-                title: "Contacto actualizado",
-                text: "El contacto ha sido actualizado exitosamente.",
+                title: "Técnico actualizado",
+                text: "El técnico ha sido actualizado exitosamente.",
                 timer: 1500,
                 showConfirmButton: false
             });
 
             document.getElementById("modal-editar").close();
-            obtenerContactos(); // Recargar la lista
+            obtenerTecnicos(); // Recargar la lista
         } else {
-            throw new Error("Error al actualizar el contacto");
+            throw new Error("Error al actualizar el técnico");
         }
     } catch (error) {
         console.error("Error:", error);
         Swal.fire({
             icon: "error",
             title: "Algo salió mal",
-            text: "No se pudo actualizar el contacto.",
+            text: "No se pudo actualizar el técnico.",
             confirmButtonText: "Entendido"
         });
     }
 }
 
+// Define una función asíncrona llamada subirImagen que recibe un 'file' (archivo) como argumento.
 async function subirImagen(file) {
+    // Inicia un bloque try...catch para manejar posibles errores durante el proceso.
     try {
+        // 1. CONVERTIR IMAGEN A BASE64
+        // Espera (await) a que la función 'toBase64' termine de convertir el archivo a una cadena de texto Base64.
         const base64 = await toBase64(file);
+
+        // 2. PREPARAR DATOS PARA EL ENVÍO
+        // Crea un objeto FormData, que es la forma estándar de enviar datos de un formulario (como archivos) a un servidor.
         const formData = new FormData();
+
+        // Agrega la imagen al FormData.
+        // 'base64.split(",")[1]' extrae solo los datos de la imagen, eliminando el prefijo "data:image/jpeg;base64,".
         formData.append("image", base64.split(",")[1]);
 
+        // 3. ENVIAR IMAGEN AL SERVIDOR (API)
+        // Realiza una petición (fetch) a la URL del servidor (guardada en la constante IMG_API_URL).
         const res = await fetch(IMG_API_URL, {
-            method: "POST",
-            body: formData
+            method: "POST", // Especifica que es una petición POST para enviar datos.
+            body: formData   // Asigna el FormData (con la imagen) como el cuerpo de la petición.
         });
 
+        // 4. PROCESAR LA RESPUESTA DEL SERVIDOR
+        // Espera la respuesta del servidor y la convierte a un objeto JSON.
         const data = await res.json();
+
+        // Devuelve la URL de la imagen subida.
+        // Usa encadenamiento opcional (?.) para evitar errores si 'data' o 'data.data' no existen.
+        // Si no encuentra la URL, devuelve una cadena vacía "".
         return data?.data?.url || "";
+
     } catch (error) {
-        console.error("Error al subir imagen:", error);
-        return "";
+        // Si ocurre cualquier error en el bloque 'try', se ejecuta este bloque.
+        console.error("Error al subir imagen:", error); // Muestra el error en la consola del navegador.
+        return ""; // Devuelve una cadena vacía para indicar que la subida falló.
     }
 }
 
+// Define una función que recibe un 'file' y devuelve una Promesa.
 function toBase64(file) {
+    // Una Promesa es un objeto que representa la eventual finalización (o fallo) de una operación asíncrona.
     return new Promise((resolve, reject) => {
+        // Crea una instancia de FileReader, una API del navegador para leer archivos.
         const reader = new FileReader();
+
+        // Define qué hacer cuando el archivo se haya leído correctamente.
+        // El 'reader.result' contendrá la cadena en formato Base64.
+        // 'resolve' se llama para cumplir la promesa con el resultado.
         reader.onload = () => resolve(reader.result);
+
+        // Define qué hacer si ocurre un error durante la lectura.
+        // 'reject' se llama para rechazar la promesa, indicando un fallo.
         reader.onerror = reject;
+
+        // Inicia la lectura del archivo. El resultado será una URL de datos (formato Base64).
         reader.readAsDataURL(file);
     });
 }
-
 
 function iniciarPaso() {
     const elPaso = document.getElementById("paso-actual");
@@ -1667,10 +1799,14 @@ function iniciarPaso() {
             break;
         case "2":
             console.log("Iniciando Paso 2");
-            initPaso3();
+            initPaso2();
             break;
         case "3":
             console.log("Iniciando Paso 3");
+            initPaso3();
+            break;
+        case "4":
+            console.log("Iniciando Paso 4");
             break;
         default:
             console.warn(`Paso no reconocido: ${paso}`);
@@ -1691,9 +1827,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
-
 });
-
 
 // Efecto de entrada suave del botón
 window.addEventListener('load', function () {
@@ -1709,7 +1843,7 @@ window.addEventListener('load', function () {
     }
 });
 
-function inicializarTelefonosPaso2() {
+function inicializarTelefonosPaso3() {
     const inputs = ["#telefonoAgregar", "#telefonoEditar"];
 
     inputs.forEach(selector => {
@@ -1753,63 +1887,92 @@ function validarAntesDeEnviar(idInput) {
     return true;
 }
 
-function actualizarEquipoEnStorage(id, accion) {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+function actualizarEquipoEnStorage(id, accion, categoria) {
+    let equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
 
-    if (accion === "agregar" && !equipo.includes(id)) {
-        equipo.push(id);
+    const index = equipo.findIndex(miembro => miembro.id == id);
+
+    if (accion === 'agregar') {
+        if (index === -1) {
+            equipo.push({ id: id, categoria: categoria });
+        } else {
+            equipo[index].categoria = categoria;
+        }
+    } else if (accion === 'eliminar') {
+        if (index !== -1) {
+            equipo.splice(index, 1);
+        }
     }
 
-    if (accion === "eliminar") {
-        const index = equipo.indexOf(id);
-        if (index !== -1) equipo.splice(index, 1);
-    }
-
-    sessionStorage.setItem("miEquipo", JSON.stringify(equipo));
+    localStorage.setItem("miEquipo", JSON.stringify(equipo)); // Cambiado a localStorage
+    console.log("Equipo actualizado en localStorage:", equipo); // Debug
 }
 
-
-// CORRECCIÓN 8: Función mejorada para marcar contacto como añadido
-function marcarContactoComoAñadido(idContacto, restaurando = false) {
-    const contenedorAcciones = document.getElementById(`acciones-${idContacto}`);
+// CORRECCIÓN: Función para marcar técnico como añadido (igual que contactos)
+function marcarTecnicoComoAñadido(idTecnico, categoria, restaurando = false) {
+    const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
+    if (!btnAñadir) return;
+    const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
     if (!contenedorAcciones) return;
 
     // Actualizar storage solo si no se está restaurando
     if (!restaurando) {
-        actualizarEquipoEnStorage(idContacto, "agregar");
+        actualizarEquipoEnStorage(idTecnico, "agregar", categoria);
     }
 
     // Marcar visualmente
-    marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones);
+    marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, restaurando);
 }
 
-// CORRECCIÓN 6: Función separada para marcar visualmente como añadido
-function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
-    if (!contenedorAcciones) return;
+function obtenerCategoriaTecnico(id) {
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    const tecnico = equipo.find(item => {
+        if (typeof item === 'object') {
+            return item.id == id; // Usar == para comparación de tipo suelto si IDs pueden ser string/number
+        }
+        return false;
+    });
+    return tecnico ? tecnico.categoria : null;
+}
 
+function marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, restaurando = false) {
+    if (!contenedorAcciones) {
+        console.warn(`No se encontró contenedor de acciones para técnico ${idTecnico}`);
+        return;
+    }
+
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    const miembroDelEquipo = equipo.find(item => item.id == idTecnico);
+    const categoriaId = miembroDelEquipo ? miembroDelEquipo.categoria : '';
+    
+    // Buscar la categoría en la lista
+    const categoriaInfo = listaCategorias.find(c => c.id == categoriaId);
+    const nombreCategoria = categoriaInfo ? `(${categoriaInfo.nombreDepartamento})` : '';
+
+    // Actualizar el HTML del contenedor
     contenedorAcciones.innerHTML = `
-        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idContacto}">
+        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idTecnico}">
             <i class="bi bi-check-circle-fill me-2"></i>
-            Parte de tu equipo
+            Parte de tu equipo ${nombreCategoria}
             <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
         </div>
     `;
 
-    // Reconfigurar eventos para los botones de editar y eliminar
+    // Asignar eventos a los botones
     const editarBtn = contenedorAcciones.querySelector(".editar");
     const eliminarBtn = contenedorAcciones.querySelector(".eliminar");
     const removerBtn = contenedorAcciones.querySelector(".btn-remover");
 
     if (editarBtn) {
         editarBtn.addEventListener("click", () => {
-            const contacto = listaContactos.find(c => c.id == idContacto);
-            if (contacto) {
+            const tecnico = listaTecnicos.find(t => t.id == idTecnico);
+            if (tecnico) {
                 AbrirModalEditar(
-                    contacto.id,
-                    contacto.Nombre,
-                    contacto["Correo Electrónico"] || contacto["Correo Elect."],
-                    contacto["Número de tel."],
-                    contacto.Foto
+                    tecnico.id,
+                    tecnico.Nombre,
+                    tecnico["Correo Electrónico"] || tecnico["Correo Elect."],
+                    tecnico["Número de tel."],
+                    tecnico.Foto
                 );
             }
         });
@@ -1817,10 +1980,10 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
 
     if (eliminarBtn) {
         eliminarBtn.addEventListener("click", () => {
-            const contacto = listaContactos.find(c => c.id == idContacto);
-            if (contacto) {
+            const tecnico = listaTecnicos.find(t => t.id == idTecnico);
+            if (tecnico) {
                 Swal.fire({
-                    title: `¿Eliminar a ${contacto.Nombre}?`,
+                    title: `¿Eliminar a ${tecnico.Nombre}?`,
                     text: "Esta acción no se puede deshacer.",
                     icon: "warning",
                     showCancelButton: true,
@@ -1830,7 +1993,7 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
                     cancelButtonText: "Cancelar"
                 }).then(result => {
                     if (result.isConfirmed) {
-                        eliminarContacto(idContacto);
+                        eliminarTecnico(idTecnico);
                     }
                 });
             }
@@ -1839,13 +2002,56 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
 
     if (removerBtn) {
         removerBtn.addEventListener("click", () => {
-            removerDelEquipo(idContacto);
+            removerDelEquipo(idTecnico);
         });
     }
 }
 
-// CORRECCIÓN 7: Función para remover del equipo
-function removerDelEquipo(idContacto) {
+// CORRECCIÓN: Función obtenerTecnicos simplificada
+async function obtenerTecnicos() {
+    const contenedor = document.getElementById("lista-tecnicos");
+    if (!contenedor) return;
+
+    // Mostrar indicador de carga
+    contenedor.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando técnicos...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando técnicos...</p>
+        </div>
+    `;
+
+    try {
+        const res = await fetch(API_URL);
+
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+
+        const data = await res.json();
+        listaTecnicos = data; // Actualizar la lista global
+        console.log("Técnicos cargados:", listaTecnicos);
+
+        // Mostrar datos Y restaurar estado automáticamente
+        mostrarDatos(data);
+        
+        return data;
+    } catch (error) {
+        console.error("Error al obtener técnicos:", error);
+        contenedor.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar los técnicos. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerTecnicos()">
+                    Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// CORRECCIÓN: Función para remover técnico del equipo
+function removerDelEquipo(idTecnico) {
     Swal.fire({
         title: '¿Remover del equipo?',
         text: 'Esta persona ya no formará parte de tu equipo de trabajo.',
@@ -1858,10 +2064,10 @@ function removerDelEquipo(idContacto) {
     }).then((result) => {
         if (result.isConfirmed) {
             // Actualizar storage
-            actualizarEquipoEnStorage(idContacto, "eliminar");
+            actualizarEquipoEnStorage(idTecnico, "eliminar");
 
             // Refrescar la vista
-            obtenerContactos();
+            obtenerTecnicos();
 
             Swal.fire({
                 icon: 'success',
@@ -1874,37 +2080,59 @@ function removerDelEquipo(idContacto) {
     });
 }
 
-function guardarDatosPaso2() {
-    // Obtener todos los contactos que están marcados como parte del equipo
+function guardarDatosPaso3() {
+    // Obtener todos los técnicos que están marcados como parte del equipo
     const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
-    const ids = Array.from(equipoActual).map(el => el.dataset.id);
 
-    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+    // Mapear los elementos para crear un array de objetos con id y categoría
+    const miEquipoCompleto = Array.from(equipoActual).map(el => {
+        return {
+            id: el.dataset.id,
+            categoria: el.dataset.categoria
+        };
+    });
+
+    // ¡Cambio clave aquí! Guardar el array de objetos en localStorage
+    localStorage.setItem("miEquipo", JSON.stringify(miEquipoCompleto));
+
+    console.log("Datos del equipo guardados en localStorage:", miEquipoCompleto);
 }
 
-// Departamentos
-function restaurarDatosPaso2() {
-    obtenerCategorias()
+function restaurarDatosPaso3() {
+    // ¡Cambio clave aquí! Obtener el equipo de localStorage
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+
+    if (equipo.length === 0) {
+        console.log("No hay equipo guardado en localStorage para restaurar.");
+        return;
+    }
+
+    // Directamente llamar a restaurarEstadoEquipo.
+    // La función restaurarEstadoEquipo es la que itera sobre 'miEquipo'
+    // y llama a marcarTecnicoComoAñadidoVisual por cada miembro,
+    // que a su vez buscará los elementos específicos por su ID de acción.
+    restaurarEstadoEquipo();
+    console.log("Estado del equipo restaurado visualmente desde localStorage.");
 }
 
 // Función mejorada para el buscador
-function inicializarBuscadorDeContactos() {
-    const inputBusqueda = document.getElementById("busquedaContacto");
+function inicializarBuscadorDeTecnicos() {
+    const inputBusqueda = document.getElementById("busquedaTecnico");
     const botonBuscar = document.getElementById("btnBuscar");
 
     if (!inputBusqueda || !botonBuscar) return;
 
     // Función de filtrado mejorada
-    const filtrarContactos = () => {
+    const filtrarTecnicos = () => {
         const query = inputBusqueda.value.trim().toLowerCase();
-        const filas = document.querySelectorAll(".contacto-fila");
+        const filas = document.querySelectorAll(".tecnico-fila");
 
-        let contactosVisibles = 0;
+        let tecnicosVisibles = 0;
 
         filas.forEach(fila => {
-            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
-            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
-            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
+            const nombre = fila.querySelector(".nombre-tecnico")?.textContent.toLowerCase() || "";
+            const correo = fila.querySelector(".correo-tecnico")?.textContent.toLowerCase() || "";
+            const telefono = fila.querySelector(".telefono-tecnico")?.textContent.toLowerCase() || "";
 
             // Buscar en todos los campos
             const coincide = query === "" ||
@@ -1914,22 +2142,21 @@ function inicializarBuscadorDeContactos() {
 
             if (coincide) {
                 fila.style.display = "flex";
-                contactosVisibles++;
+                tecnicosVisibles++;
             } else {
                 fila.style.display = "none";
             }
         });
 
         // Mostrar mensaje si no hay resultados
-        mostrarMensajeResultados(contactosVisibles, query);
+        mostrarMensajeResultados(tecnicosVisibles, query);
     };
 
     // Asignar nuevos eventos
-    botonBuscar.addEventListener("click", filtrarContactos);
-    inputBusqueda.addEventListener("keyup", filtrarContactos);
+    botonBuscar.addEventListener("click", filtrarTecnicos);
+    inputBusqueda.addEventListener("keyup", filtrarTecnicos);
 }
 
-// CORRECCIÓN 1: Función para limpiar caracteres especiales en nombres
 function limpiarTexto(texto) {
     if (!texto) return "";
 
@@ -1944,50 +2171,55 @@ function accionSiguientePaso() {
     siguientePaso();
 }
 
-//---------------------------------- PASO 3 ----------------------------------
-
-function guardarDatosPaso3() {
-    // Obtener todos los contactos que están marcados como parte del equipo
-    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
-    const ids = Array.from(equipoActual).map(el => el.dataset.id);
-
-    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+// FUNCIONES PARA VERIFICAR EL STORAGE:
+/* 
+// 1. Ver todo el equipo actual
+function verEquipoActual() {
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    console.log("Equipo completo:", equipo);
+    return equipo;
 }
 
-function restaurarDatosPaso3() {
+// 2. Ver un técnico específico con su categoría
+function verTecnicoEnEquipo(idTecnico) {
+    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    const tecnico = equipo.find(item => {
+        if (typeof item === 'object') {
+            return item.id === idTecnico;
+        }
+        return false;
+    });
+
+    if (tecnico) {
+        console.log(`Técnico ${idTecnico}:`, {
+            id: tecnico.id,
+            categoria: tecnico.categoria,
+            fechaAgregado: tecnico.fechaAgregado
+        });
+    } else {
+        console.log(`Técnico ${idTecnico} no está en el equipo`);
+    }
+
+    return tecnico;
+}
+
+// 3. Listar todos los técnicos con sus categorías
+function listarEquipoConCategorias() {
     const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
 
-    if (equipo.length === 0) return;
-
-    // Función para verificar y restaurar con reintentos
-    const verificarYRestaurar = (intentos = 0) => {
-        const contenedor = document.getElementById("lista-contactos");
-
-        if (!contenedor) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
+    console.log("=== EQUIPO ACTUAL ===");
+    equipo.forEach((miembro, index) => {
+        if (typeof miembro === 'object') {
+            console.log(`${index + 1}. ID: ${miembro.id} - Categoría: ${miembro.categoria}`);
+        } else {
+            console.log(`${index + 1}. ID: ${miembro} - Categoría: Sin categoría (formato antiguo)`);
         }
+    });
 
-        // Verificar que los contactos estén renderizados
-        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
+    return equipo;
+} */
 
-        if (contactosRenderizados.length === 0) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
-        }
-
-        // Restaurar estado del equipo
-        setTimeout(() => {
-            restaurarEstadoEquipo();
-        }, 200);
-    };
-
-    verificarYRestaurar();
-}
+//---------------------------------- PASO 4 ----------------------------------
 
 // Función para inicializar componentes específicos de cada paso
 function inicializarComponentesPaso(paso) {
