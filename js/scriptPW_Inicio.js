@@ -105,7 +105,7 @@ $(document).ready(function() {
             },
             background: 'transparent' // Fondo transparente
         },
-        labels: ['Tickets Atendidos', 'Tickets en Proceso', 'Tickets Cerrados'], // Etiquetas para la leyenda
+        labels: ['Tickets en Espera', 'Tickets en Proceso', 'Tickets Cerrados'], // Etiquetas para la leyenda
         colors: ['#2196F3', '#00BCD4', '#00E396'], // Colores para cada sección del donut
         dataLabels: {
             enabled: false // Desactivar etiquetas de datos en las porciones (para que solo se vea "Total 100%")
