@@ -10,6 +10,33 @@ function actualizarIndicadorPaso() {
     if (pasos[paso - 1]) {
         pasos[paso - 1].classList.add('activo');
     }
+    console.log("Paso actual: " + paso);
+}
+
+function actualizarIndicadorPaso4(paso) {
+    let maincontenedor = (document.getElementById("contenido-dinamico"));
+    limpiarFormulario();
+    // Remover clase 'activo' de todos los pasos
+    document.querySelectorAll('.paso').forEach(p => p.classList.remove('activo'));
+
+    // Agregar clase 'activo' al paso actual
+    const pasos = document.querySelectorAll('.paso');
+    if (pasos[paso - 1]) {
+        pasos[paso - 1].classList.add('activo');
+    }
+    console.log("Paso actual: " + paso);
+}
+
+function limpiarFormulario() {
+    const contenedor = document.getElementById("contenido-dinamico");
+    if (contenedor) {
+        const formularios = contenedor.getElementsByTagName('form');
+        for (let i = 0; i < formularios.length; i++) {
+            formularios[i].reset();
+        }
+    } else {
+        console.error(`Contenedor con ID '${contenedor}' no encontrado.`);
+    }
 }
 
 // Función principal para cargar el contenido de cada paso
@@ -27,18 +54,22 @@ function cargarPaso() {
                 requestAnimationFrame(() => {
                     // Ejecutar funciones específicas según el paso
                     if (paso === 1) {
+                        actualizarIndicadorPaso();
                         restaurarDatosPaso1(); // Asegúrate de que esta función esté declarada si la usas
                     }
                     if (paso === 2) {
+                        actualizarIndicadorPaso();
                         initPaso2(); // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos. Asegúrate de que esta función esté declarada.
                         setTimeout(() => {
                             restaurarDatosPaso2(); // Asegúrate de que esta función esté declarada si la usas
                         }, 500); // Dar tiempo para que se carguen los Técnicos
                     }
                     if (paso === 3) {
+                        actualizarIndicadorPaso();
                         initPaso3(); // initPaso3 ahora se encarga de todo el flujo asíncrono
                     }
                     if (paso === 4) {
+                        actualizarIndicadorPaso();
                         restaurarDatosPaso4(); // Asegúrate de que esta función esté declarada si la usas
                     }
                 });
@@ -129,28 +160,34 @@ function guardarDatosPaso1() {
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
 
     const datos = {
-        empresa: document.querySelector('input[name="nombreEmpresa"]')?.value,
-        correoEmpresa: document.getElementById("correoEmpresa")?.value,
+        // Asegúrate de que tu input para el nombre de empresa tenga el ID "nombreEmpresaInput"
+        nombreEmpresa: document.getElementById("nombreEmpresaInput")?.value || '',
+        correoEmpresa: document.getElementById("correoEmpresa")?.value || '',
         telefonoEmpresa: telefonoEmpresaEl ? window.intlTelInputGlobals?.getInstance(telefonoEmpresaEl)?.getNumber() : null,
-        sitioWeb: document.getElementById("sitioWeb")?.value,
-        adminNombre: document.getElementById("nombreAdmin")?.value,
-        adminCorreo: document.getElementById("correoAdmin")?.value,
+        sitioWeb: document.getElementById("sitioWeb")?.value || '',
+        adminNombre: document.getElementById("nombreAdmin")?.value || '',
+        adminCorreo: document.getElementById("correoAdmin")?.value || '',
         telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
     };
 
-    sessionStorage.setItem("datosPaso1", JSON.stringify(datos));
+    // Usar localStorage en lugar de sessionStorage
+    localStorage.setItem("datosPaso1", JSON.stringify(datos));
+    console.log("Datos del Paso 1 guardados en localStorage:", datos);
 }
 
 function restaurarDatosPaso1() {
-    const data = JSON.parse(sessionStorage.getItem("datosPaso1") || "{}");
+    // Obtener datos de localStorage
+    const data = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
 
+    // Mapeo de los datos obtenidos a los campos de entrada del formulario del Paso 1
+    // Asumiendo que tus inputs del Paso 1 tienen estos IDs
     const campos = {
-        nombreEmpresa: data.empresa,
+        nombreEmpresaInput: data.nombreEmpresa, // Asegúrate de que el ID sea correcto para el input
         correoEmpresa: data.correoEmpresa,
         sitioWeb: data.sitioWeb,
         nombreAdmin: data.adminNombre,
         correoAdmin: data.adminCorreo,
-        rolAdmin: data.rolAdmin
+        // rolAdmin: data.rolAdmin, // Si tienes este campo en el Paso 1
     };
 
     for (const [id, valor] of Object.entries(campos)) {
@@ -784,16 +821,11 @@ function initPaso3() {
         return;
     }
 
-    // Encadenar las promesas para asegurar el orden de ejecución:
-    // 1. Obtener categorías
-    // 2. Obtener técnicos (y que internamente se llamará a mostrarDatos para renderizarlos)
-    // 3. Luego, restaurar el estado visual y configurar eventos.
     obtenerCategorias3()
-        .then(() => obtenerTecnicos()) // obtenerTecnicos ya llama a mostrarDatos(data) para renderizar
+        .then(() => obtenerTecnicos())
         .then(() => {
-            // *** PUNTO CRÍTICO: Aquí los técnicos ya están en el DOM. ***
-            restaurarDatosPaso3(); // Es seguro llamar a la función de restauración ahora.
-            configurarEventosModales(); // Configurar eventos que dependen de elementos ya renderizados.
+            restaurarDatosPaso3();
+            configurarEventosModales();
             console.log("Paso 3 inicializado y estado de técnicos restaurado.");
         })
         .catch(error => {
@@ -806,7 +838,6 @@ function initPaso3() {
             });
         });
 
-    // Lógica para el botón flotante (no depende de la carga de técnicos, se puede ejecutar de inmediato)
     const btnFlotante = document.getElementById("btnFlotanteAgregar");
     if (btnFlotante) {
         btnFlotante.style.display = "block";
@@ -861,47 +892,8 @@ function cargarCategoriasEnDropdown() {
 }
 
 // Función para obtener y mostrar técnicos desde la API
-async function obtenerTecnicos() {
-    const contenedor = document.getElementById("lista-tecnicos");
-    if (!contenedor) return;
-
-    // Mostrar indicador de carga
-    contenedor.innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando técnicos...</span>
-            </div>
-            <p class="mt-2 text-muted">Cargando técnicos...</p>
-        </div>
-    `;
-
-    try {
-        const res = await fetch(API_URL);
-
-        if (!res.ok) {
-            throw new Error(`Error HTTP: ${res.status}`);
-        }
-
-        const data = await res.json();
-        listaTecnicos = data; // Actualizar la lista global
-        console.log("Técnicos cargados:", listaTecnicos); // Debug
-
-        mostrarDatos(data);
-        return data; // Retornar los datos para poder usar .then()
-    } catch (error) {
-        console.error("Error al obtener técnicos:", error);
-        contenedor.innerHTML = `
-            <div class="alert alert-danger">
-                Error al cargar los técnicos. Por favor, intenta nuevamente.
-                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerTecnicos()">
-                    Reintentar
-                </button>
-            </div>
-        `;
-    }
-}
-
 function mostrarDatos(tecnicos) {
+    console.log("%c[DEBUG mostrarDatos] INICIANDO RENDERIZADO DE TECNICOS", 'background: #FFD700; color: black; font-weight: bold;');
     const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) return;
 
@@ -944,8 +936,8 @@ function mostrarDatos(tecnicos) {
 
     contenedor.appendChild(headers);
 
-    // Obtener el equipo actual ANTES de renderizar
-    const equipoActual = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    // ¡¡¡CAMBIO CLAVE AQUÍ!!! Leer de localStorage
+    const equipoActual = JSON.parse(localStorage.getItem("miEquipo") || "[]");
     console.log("Equipo actual al renderizar:", equipoActual);
 
     tecnicos.forEach((tecnico) => {
@@ -1007,7 +999,7 @@ function mostrarDatos(tecnicos) {
         // Verificar si este técnico está en el equipo INMEDIATAMENTE
         const miembroEquipo = equipoActual.find(miembro => miembro.id == tecnico.id);
         const contenedorAcciones = document.getElementById(`acciones-${tecnico.id}`);
-        
+
         if (miembroEquipo && contenedorAcciones) {
             console.log(`Restaurando técnico ${tecnico.id} inmediatamente`);
             marcarTecnicoComoAñadidoVisual(tecnico.id, contenedorAcciones, true);
@@ -1066,6 +1058,7 @@ function mostrarDatos(tecnicos) {
 
 
 function restaurarEstadoEquipo() {
+    console.log("%c[DEBUG restaurarEstadoEquipo] INICIANDO RESTAURACIÓN DE ESTADO DEL EQUIPO", 'background: #ADD8E6; color: black; font-weight: bold;');
     const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
     console.log("Restaurando equipo desde localStorage:", equipo); // Debug
 
@@ -1936,20 +1929,54 @@ function obtenerCategoriaTecnico(id) {
 }
 
 function marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, restaurando = false) {
+
+    // Inicia un grupo de logs para esta llamada, se puede expandir/contraer en la consola
+    console.groupCollapsed(`%c[marcarTecnicoComoAñadidoVisual] Llamada para técnico ${idTecnico}`, 'color: purple; font-weight: bold;');
+
+    // Rastrea la pila de llamadas para saber quién la invocó
+    console.trace("Pila de llamadas para marcarTecnicoComoAñadidoVisual");
+
+    if (!contenedorAcciones) {
+        console.warn(`No se encontró contenedor de acciones para técnico ${idTecnico}`);
+        console.groupEnd(); // Cierra el grupo si hay error
+        return;
+    }
+
     if (!contenedorAcciones) {
         console.warn(`No se encontró contenedor de acciones para técnico ${idTecnico}`);
         return;
     }
 
-    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
     const miembroDelEquipo = equipo.find(item => item.id == idTecnico);
-    const categoriaId = miembroDelEquipo ? miembroDelEquipo.categoria : '';
-    
-    // Buscar la categoría en la lista
-    const categoriaInfo = listaCategorias.find(c => c.id == categoriaId);
-    const nombreCategoria = categoriaInfo ? `(${categoriaInfo.nombreDepartamento})` : '';
 
-    // Actualizar el HTML del contenedor
+    // *** CAMBIO CRÍTICO AQUÍ: Aplicar .trim() al ID de localStorage ***
+    // Aseguramos que sea string y luego le quitamos espacios/caracteres invisibles
+    const categoriaId = miembroDelEquipo ? String(miembroDelEquipo.categoria).trim() : '';
+
+    console.log(`%c[DEBUG marcarTecnico] Para técnico ${idTecnico}:`, 'color: #007bff; font-weight: bold;');
+    console.log(`%c  - ID de categoría de localStorage (categoriaId) (¡TRIMEADO!): '${categoriaId}' (Tipo: ${typeof categoriaId})`, 'color: #007bff;');
+
+    console.log("%c  - Contenido completo de listaCategorias (global) JUSTO ANTES DE FIND:", 'color: #28a745; font-weight: bold;', JSON.parse(JSON.stringify(listaCategorias || [])));
+
+    const categoriaInfo = listaCategorias.find(c => {
+        // *** CAMBIO CRÍTICO AQUÍ: Aplicar .trim() al ID de la categoría de listaCategorias ***
+        const trimmed_c_id = String(c.id).trim(); // Aseguramos que sea string y luego le quitamos espacios/caracteres invisibles
+
+        console.log(`%c    > Comparando elemento TRIMEADO '${trimmed_c_id}' (Tipo: ${typeof trimmed_c_id}) con ID buscado TRIMEADO '${categoriaId}' (Tipo: ${typeof categoriaId})`, 'color: #ffc107;');
+        const comparisonResult = (trimmed_c_id == categoriaId); // La comparación ahora debería funcionar
+        const strictComparisonResult = (trimmed_c_id === categoriaId);
+        console.log(`%c      Resultado (==): ${comparisonResult}, Resultado (===): ${strictComparisonResult}`, 'color: #ffc107;');
+        return comparisonResult;
+    });
+
+    console.log(`%c[DEBUG marcarTecnico] Resultado FINAL de la búsqueda en listaCategorias para ID '${categoriaId}':`, 'color: #dc3545; font-weight: bold;', categoriaInfo);
+
+    const nombreCategoria = categoriaInfo
+        ? `(${categoriaInfo.nombreDepartamento || categoriaInfo.nombre || 'Categoría no definida'})`
+        : '';
+    console.log(`%c[DEBUG marcarTecnico] Nombre final de categoría a mostrar: '${nombreCategoria}'`, 'color: #6f42c1; font-weight: bold;');
+
     contenedorAcciones.innerHTML = `
         <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idTecnico}">
             <i class="bi bi-check-circle-fill me-2"></i>
@@ -1957,6 +1984,9 @@ function marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, restaura
             <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
         </div>
     `;
+
+    // *** NUEVO LOG AQUÍ ***
+    console.log(`%c[DEBUG marcarTecnico] HTML FINAL insertado para técnico ${idTecnico}:`, 'color: #008000; font-weight: bold;', contenedorAcciones.innerHTML);
 
     // Asignar eventos a los botones
     const editarBtn = contenedorAcciones.querySelector(".editar");
@@ -2035,7 +2065,7 @@ async function obtenerTecnicos() {
 
         // Mostrar datos Y restaurar estado automáticamente
         mostrarDatos(data);
-        
+
         return data;
     } catch (error) {
         console.error("Error al obtener técnicos:", error);
@@ -2221,6 +2251,141 @@ function listarEquipoConCategorias() {
 
 //---------------------------------- PASO 4 ----------------------------------
 
+function restaurarDatosPaso4() {
+    console.log("[restaurarDatosPaso4] Iniciando restauración de datos del Paso 1.");
+
+    const datosPaso1 = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
+    const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // También para los técnicos
+
+    // **Datos de la empresa**
+    const displayNombreEmpresa = document.getElementById("displayNombreEmpresa");
+    if (displayNombreEmpresa) displayNombreEmpresa.textContent = datosPaso1.nombreEmpresa || "H2C - Help To Comply";
+
+    const displayCorreoEmpresa = document.getElementById("displayCorreoEmpresa");
+    if (displayCorreoEmpresa) displayCorreoEmpresa.textContent = datosPaso1.correoEmpresa || "N/A";
+
+    const displayTelefonoEmpresa = document.getElementById("displayTelefonoEmpresa");
+    if (displayTelefonoEmpresa) {
+        displayTelefonoEmpresa.textContent = formatoLegibleTelefono(datosPaso1.telefonoEmpresa);
+    }
+
+    const displaySitioWebEmpresa = document.getElementById("displaySitioWebEmpresa");
+    if (displaySitioWebEmpresa) {
+        // Asegúrate de manejar el caso donde no hay sitio web para evitar enlaces rotos
+        if (datosPaso1.sitioWeb && datosPaso1.sitioWeb.trim() !== "") {
+            displaySitioWebEmpresa.innerHTML = `<a href="${datosPaso1.sitioWeb}" target="_blank">${datosPaso1.sitioWeb}</a>`;
+        } else {
+            displaySitioWebEmpresa.textContent = "N/A";
+        }
+    }
+
+    // **Datos del administrador**
+    const displayNombreAdmin = document.getElementById("displayNombreAdmin");
+    if (displayNombreAdmin) displayNombreAdmin.textContent = datosPaso1.adminNombre || "N/A";
+
+    const displayCorreoAdmin = document.getElementById("displayCorreoAdmin");
+    if (displayCorreoAdmin) displayCorreoAdmin.textContent = datosPaso1.adminCorreo || "N/A";
+
+    const displayTelefonoAdmin = document.getElementById("displayTelefonoAdmin");
+    if (displayTelefonoAdmin) {
+        displayTelefonoAdmin.textContent = formatoLegibleTelefono(datosPaso1.telefonoAdmin);
+    }
+
+    // **Integrantes del equipo (resumen del Paso 3)**
+    const listaIntegrantesPaso4 = document.getElementById("lista-integrantes-paso4");
+    if (listaIntegrantesPaso4) {
+        if (equipoGuardado.length === 0) {
+            listaIntegrantesPaso4.innerHTML = `
+                <div class="alert alert-info text-center">
+                    No se han añadido técnicos al equipo.
+                </div>
+            `;
+        } else {
+            // Aquí deberías tener una forma de obtener los nombres/correos de los técnicos
+            // Si tienes `listaTecnicos` disponible globalmente (cargada del API), puedes usarla
+            // Si no, necesitarías recargar la lista de técnicos o guardar más información en "miEquipo"
+            let htmlIntegrantes = '<ul class="list-group">';
+            equipoGuardado.forEach(miembro => {
+                // Si listaTecnicos es global y accesible, puedes buscar el nombre
+                const tecnicoCompleto = typeof listaTecnicos !== 'undefined' ? listaTecnicos.find(t => t.id == miembro.id) : null;
+                const nombreTecnico = tecnicoCompleto ? (tecnicoCompleto.Nombre || "Nombre Desconocido") : `ID: ${miembro.id}`;
+                const categoriaTecnico = miembro.categoria || "Sin Categoría"; // Puedes mostrar la categoría si la guardas
+                htmlIntegrantes += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                        ${nombreTecnico}
+                                        <span class="badge bg-primary rounded-pill">${categoriaTecnico}</span>
+                                    </li>`;
+            });
+            htmlIntegrantes += '</ul>';
+            listaIntegrantesPaso4.innerHTML = htmlIntegrantes;
+        }
+    }
+
+    console.log("[restaurarDatosPaso4] Datos del Paso 1 y equipo restaurados.");
+}
+
+/**
+ * Formatea un número de teléfono con prefijo internacional para una mejor legibilidad.
+ * Intenta aplicar un formato común como +CCC NNNN-NNNN (para 8 dígitos en ES)
+ * o añadir espacios después del prefijo.
+ * @param {string} telefono El número de teléfono, preferiblemente con prefijo internacional (ej. "+50377777777").
+ * @returns {string} El número de teléfono formateado.
+ */
+function formatoLegibleTelefono(telefono) {
+    if (!telefono) return "N/A";
+
+    // 1. Limpiar el número: Remover espacios, guiones y cualquier caracter no dígito,
+    //    pero preservar el '+' si está al inicio.
+    let numeroLimpio = telefono.replace(/[^\d+]/g, '');
+
+    // Si el '+' no está al inicio, moverlo o eliminarlo si es erróneo.
+    if (numeroLimpio.indexOf('+') > 0) {
+        numeroLimpio = numeroLimpio.replace(/\+/g, ''); // Eliminar todos los '+'
+        // No añadimos uno al inicio aquí, lo manejaremos en el siguiente paso.
+    }
+
+    // 2. Asegurarse de que tiene un prefijo internacional válido.
+    //    Si no comienza con '+', intenta inferir un prefijo.
+    if (!numeroLimpio.startsWith('+')) {
+        // Asumimos El Salvador (+503) si es un número de 8 dígitos o más que no tiene prefijo.
+        // O si intl-tel-input lo guarda como "50377777777" sin el '+'.
+        if (numeroLimpio.length >= 8 && numeroLimpio.startsWith('503')) {
+            numeroLimpio = '+' + numeroLimpio; // Añadir '+' si ya parece un número con código de país.
+        } else if (numeroLimpio.length >= 7) { // Si es un número sin código, añadir el de ES por defecto.
+            numeroLimpio = '+503' + numeroLimpio;
+        }
+    }
+
+    // 3. Extraer el prefijo y los dígitos.
+    const match = numeroLimpio.match(/^(\+\d+)(\d+)$/); // Esperamos "+PREFIJO" + "DIGITOS"
+
+    if (match) {
+        const prefijo = match[1]; // Ej: "+503"
+        const digitos = match[2]; // Ej: "77777777"
+
+        // 4. Aplicar el formato legible según la longitud de los dígitos.
+        if (digitos.length === 8) { // Formato común de 8 dígitos para El Salvador (XXXX-XXXX)
+            return `${prefijo} ${digitos.substring(0, 4)}-${digitos.substring(4)}`;
+        } else if (digitos.length === 10 && prefijo === "+1") { // Formato común de 10 dígitos para Norteamérica (+1 (XXX) XXX-XXXX)
+            return `${prefijo} (${digitos.substring(0, 3)}) ${digitos.substring(3, 6)}-${digitos.substring(6)}`;
+        } else if (digitos.length > 0) {
+            // Formato genérico: prefijo + espacio + dígitos restantes (sin guiones)
+            return `${prefijo} ${digitos}`;
+        }
+    }
+
+    // Fallback si el número no pudo ser procesado por la lógica de prefijo/dígitos
+    // Esto podría ocurrir si es solo una cadena de texto sin formato numérico claro después de limpiar
+    const soloDigitosFallback = telefono.replace(/\D/g, ''); // Solo dígitos del original para un último intento
+    if (soloDigitosFallback.length === 8) { // Formato 8 dígitos, asumimos +503
+        return `+503 ${soloDigitosFallback.substring(0, 4)}-${soloDigitosFallback.substring(4)}`;
+    } else if (soloDigitosFallback.length > 0) {
+        return `+503 ${soloDigitosFallback}`; // Último intento con +503 y solo dígitos
+    }
+
+
+    return telefono; // Si todo falla, devolver el valor original
+}
+
 // Función para inicializar componentes específicos de cada paso
 function inicializarComponentesPaso(paso) {
     fetch(`pasosPrimerUso/paso${paso}.html`)
@@ -2250,10 +2415,6 @@ function inicializarComponentesPaso(paso) {
                     if (paso === 3) {
                         // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
                         initPaso3();
-                        // Restaurar datos después de que se hayan cargado los contactos
-                        setTimeout(() => {
-                            restaurarDatosPaso3();
-                        }, 500); // Dar tiempo para que se carguen los contactos
                     }
                     if (paso === 4) {
                         restaurarDatosPaso4();
@@ -2294,7 +2455,7 @@ function navegarAPaso(numeroPaso) {
             }
 
             // Usar las funciones existentes
-            actualizarIndicadorPaso(paso);
+            actualizarIndicadorPaso4(paso);
             inicializarComponentesPaso(paso);
 
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2317,6 +2478,7 @@ document.addEventListener("click", function (e) {
     if (botonNavegar) {
         const pasoDestino = botonNavegar.dataset.navegarPaso;
         navegarAPaso(pasoDestino);
+        actualizarIndicadorPaso4();
         return;
     }
 
@@ -2325,14 +2487,17 @@ document.addEventListener("click", function (e) {
     if (boton) {
         const paso = boton.dataset.paso;
         navegarAPaso(paso);
+        actualizarIndicadorPaso4();
     }
 });
 
 // OPCIONAL - Funciones específicas para mayor claridad
 function regresarAPaso1() {
     navegarAPaso(1);
+    actualizarIndicadorPaso4();
 }
 
 function regresarAPaso2() {
     navegarAPaso(2);
+    actualizarIndicadorPaso4();
 }
