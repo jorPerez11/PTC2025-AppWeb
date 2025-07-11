@@ -460,7 +460,6 @@ function mostrarCategorias(categorias) {
                         <i class="bi bi-collection-fill text-info"></i>
                         ${categoria.nombreDepartamento || categoria.nombreCategoria || 'Sin nombre'}
                     </h5>
-                    <small class="text-muted">ID: ${categoria.id}</small>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-sm btn-primary btn-editar" 
@@ -2217,193 +2216,214 @@ function accionSiguientePaso() {
 function restaurarDatosPaso4() {
     console.log("[restaurarDatosPaso4] Iniciando restauración de datos del Paso 4.");
 
+    // 1. Recuperar datos de localStorage
     const datosPaso1 = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
-    // Obtenemos los IDs de los miembros guardados en localStorage
     const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]");
-
-    // **Datos de la empresa**
-    const displayNombreEmpresa = document.getElementById("displayNombreEmpresa");
-    if (displayNombreEmpresa) displayNombreEmpresa.textContent = datosPaso1.nombreEmpresa || "H2C - Help To Comply";
-
-    const displayCorreoEmpresa = document.getElementById("displayCorreoEmpresa");
-    if (displayCorreoEmpresa) displayCorreoEmpresa.textContent = datosPaso1.correoEmpresa || "N/A";
-
-    const displayTelefonoEmpresa = document.getElementById("displayTelefonoEmpresa");
-    if (displayTelefonoEmpresa) {
-        displayTelefonoEmpresa.textContent = formatoLegibleTelefono(datosPaso1.telefonoEmpresa);
-    }
-
-    const displaySitioWebEmpresa = document.getElementById("displaySitioWebEmpresa");
-    if (displaySitioWebEmpresa) {
-        if (datosPaso1.sitioWeb && datosPaso1.sitioWeb.trim() !== "") {
-            const url = datosPaso1.sitioWeb.startsWith('http://') || datosPaso1.sitioWeb.startsWith('https://') ? datosPaso1.sitioWeb : `https://${datosPaso1.sitioWeb}`;
-            displaySitioWebEmpresa.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${datosPaso1.sitioWeb}</a>`;
-        } else {
-            displaySitioWebEmpresa.textContent = "N/A";
-        }
-    }
-
-    // **Datos del administrador**
-    const displayNombreAdmin = document.getElementById("displayNombreAdmin");
-    if (displayNombreAdmin) displayNombreAdmin.textContent = datosPaso1.adminNombre || "N/A";
-
-    const displayCorreoAdmin = document.getElementById("displayCorreoAdmin");
-    if (displayCorreoAdmin) displayCorreoAdmin.textContent = datosPaso1.adminCorreo || "N/A";
-
-    const displayTelefonoAdmin = document.getElementById("displayTelefonoAdmin");
-    if (displayTelefonoAdmin) {
-        displayTelefonoAdmin.textContent = formatoLegibleTelefono(datosPaso1.telefonoAdmin);
-    }
-
-    // **Integrantes del equipo (resumen del Paso 3) - LÓGICA DE TARJETAS AGRUPADAS**
-    const listaIntegrantesPaso4 = document.getElementById("lista-integrantes-paso4");
-    if (!listaIntegrantesPaso4) {
-        console.error("[restaurarDatosPaso4] Elemento 'lista-integrantes-paso4' no encontrado.");
+    const contenedor = document.getElementById("lista-integrantes-paso4");
+    if (!contenedor) {
+        console.error("[restaurarDatosPaso4] 'lista-integrantes-paso4' no encontrado.");
         return;
     }
 
-    const tecnicosPorCategoria = {}; // Objeto para agrupar técnicos por nombre de categoría
+    // 2. Mostrar datos de empresa (con valor por defecto)
+    const defaultEmpresa = "H2C - Help To Comply";
+    const nombreEmpresa = datosPaso1.empresaNombre?.trim() || defaultEmpresa;
+    document.getElementById("displayNombreEmpresa").textContent = nombreEmpresa;
 
-    // Verificar que las listas de técnicos y categorías existan y no estén vacías
-    if (equipoGuardado.length > 0 && listaTecnicos.length > 0 && listaCategorias.length > 0) {
-        equipoGuardado.forEach(miembro => {
-            const tecnicoCompleto = listaTecnicos.find(t => t.id == miembro.id); // Buscar el técnico completo por ID
+    document.getElementById("displayCorreoEmpresa").textContent =
+        datosPaso1.correoEmpresa?.trim() || "N/A";
 
-            if (tecnicoCompleto) {
-                const categoriaObj = listaCategorias.find(cat => cat.id == miembro.categoria);
-                const nombreCategoria = categoriaObj ? categoriaObj.nombre : "Sin Categoría Asignada";
+    const telEmpRaw = datosPaso1.telefonoEmpresa?.trim() || "";
+    document.getElementById("displayTelefonoEmpresa").textContent =
+        telEmpRaw ? formatoLegibleTelefono(telEmpRaw) : "N/A";
 
-                if (!tecnicosPorCategoria[nombreCategoria]) {
-                    tecnicosPorCategoria[nombreCategoria] = [];
-                }
-                tecnicosPorCategoria[nombreCategoria].push(tecnicoCompleto);
-            } else {
-                console.warn(`[Paso 4] No se encontraron detalles completos para el técnico con ID: ${miembro.id}. Se mostrará con datos básicos.`);
-                const categoriaObj = listaCategorias.find(cat => cat.id == miembro.categoria);
-                const nombreCategoria = categoriaObj ? categoriaObj.nombre : "Sin Categoría Asignada";
-                if (!tecnicosPorCategoria[nombreCategoria]) {
-                    tecnicosPorCategoria[nombreCategoria] = [];
-                }
-                tecnicosPorCategoria[nombreCategoria].push({
-                    id: miembro.id,
-                    Nombre: `Técnico Desconocido (ID: ${miembro.id})`,
-                    Correo: 'N/A',
-                    Telefono: 'N/A',
-                });
-            }
-        });
+    const sitio = datosPaso1.sitioWeb?.trim();
+    const dispWeb = document.getElementById("displaySitioWebEmpresa");
+    if (dispWeb) {
+        if (sitio) {
+            const href = sitio.match(/^https?:\/\//) ? sitio : `https://${sitio}`;
+            dispWeb.innerHTML = `<a href="${href}" target="_blank" rel="noopener">${sitio}</a>`;
+        } else {
+            dispWeb.textContent = "N/A";
+        }
     }
 
-    // Generar el HTML para los integrantes del equipo
-    if (Object.keys(tecnicosPorCategoria).length === 0) {
-        listaIntegrantesPaso4.innerHTML = `
-            <div class="alert alert-info text-center">
-                No se han añadido técnicos al equipo o no se pudieron cargar sus detalles.
-            </div>
-        `;
+    // 3. Mostrar datos del administrador
+    document.getElementById("displayNombreAdmin").textContent =
+        datosPaso1.adminNombre?.trim() || "N/A";
+    document.getElementById("displayCorreoAdmin").textContent =
+        datosPaso1.adminCorreo?.trim() || "N/A";
+
+    const telAdminRaw = datosPaso1.telefonoAdmin?.trim() || "";
+    document.getElementById("displayTelefonoAdmin").textContent =
+        telAdminRaw ? formatoLegibleTelefono(telAdminRaw) : "N/A";
+
+    // 4. Agrupar técnicos por categoría
+    const grupos = {};
+    equipoGuardado.forEach(({ id, categoria }) => {
+        const t = listaTecnicos.find(x => x.id == id);
+        if (!t) return;
+        const catObj = listaCategorias.find(c => c.id == categoria);
+        const catNombre = catObj?.nombreDepartamento || catObj?.nombre || "Sin categoría";
+        if (!grupos[catNombre]) grupos[catNombre] = [];
+        grupos[catNombre].push(t);
+    });
+
+    // 5. Colores fijos (hex) según tu paleta
+    const catColors = {
+        "Redes": "#0D122B",
+        "Gestión de Usuarios": "#6a040f",
+        "Incidentes críticos": "#dc2f02",
+        "Gestión de Usuarios": "#f48c06",
+        "Soporte Técnico": "#ffba08"
+    };
+    const defaultColor = "#ffba08";
+
+    // 6. Construir el HTML
+    let html = "";
+
+    if (Object.keys(grupos).length === 0) {
+        html = `
+      <div class="alert alert-info text-center">
+        No hay integrantes agregados al equipo.
+      </div>
+    `;
     } else {
-        let htmlIntegrantes = '';
-        // Puedes ordenar las categorías si deseas un orden específico
-        const categoriasOrdenadas = Object.keys(tecnicosPorCategoria).sort();
+        Object.keys(grupos).sort().forEach(catNombre => {
+            const color = catColors[catNombre] || defaultColor;
 
-        categoriasOrdenadas.forEach(categoriaNombre => {
-            htmlIntegrantes += `
-                <div class="mb-5">
-                    <h5 class="fw-bold mb-3 border-bottom pb-2">${categoriaNombre}</h5>
-                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-            `;
-            tecnicosPorCategoria[categoriaNombre].forEach(tecnico => {
-                htmlIntegrantes += `
-                    <div class="col">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-body">
-                                <h6 class="card-title fw-semibold text-primary mb-2">${tecnico.Nombre || 'Sin Nombre'}</h6>
-                                <p class="card-text mb-1"><i class="bi bi-envelope-fill me-2 text-muted"></i> ${tecnico.Correo || 'N/A'}</p>
-                                <p class="card-text mb-1"><i class="bi bi-phone-fill me-2 text-muted"></i> ${formatoLegibleTelefono(tecnico.Telefono)}</p>
-                                </div>
-                        </div>
-                    </div>
-                `;
+            // Título de sección con color
+            html += `
+        <div class="mb-4">
+          <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
+            ${catNombre}
+          </h5>
+      `;
+
+            grupos[catNombre].forEach(tecnico => {
+                const foto = tecnico.Foto?.trim()
+                    ? tecnico.Foto
+                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                const correo = tecnico["Correo Electrónico"] || tecnico.Correo || "N/A";
+                const telefono = tecnico["Número de tel."] || tecnico.Telefono || "";
+
+                html += `
+          <div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
+            <div class="row g-0 align-items-center">
+
+              <div class="col-auto p-3">
+                <img 
+                  src="${foto}" 
+                  alt="Foto de ${tecnico.Nombre}" 
+                  class="rounded-circle"
+                  width="56" height="56"
+                >
+              </div>
+
+              <div class="col px-3">
+                <h6 class="mb-1">${tecnico.Nombre}</h6>
+                <p class="mb-1 text-muted small">
+                  <i class="bi bi-envelope-at" style="color: #dc2f02;"></i>  ${correo}
+                </p>
+                <p class="mb-0 text-muted small">
+                  <i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
+                </p>
+              </div>
+
+              <div class="col-auto pe-3">
+                <i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
+              </div>
+
+            </div>
+          </div>
+        `;
             });
-            htmlIntegrantes += `
-                    </div>
-                </div>
-            `;
+
+            html += `</div>`;
         });
-        listaIntegrantesPaso4.innerHTML = htmlIntegrantes;
     }
 
-    console.log("[restaurarDatosPaso4] Datos de la empresa, administrador y equipo restaurados.");
+    // 7. Inyectar en el DOM
+    contenedor.innerHTML = html;
+    console.log("[restaurarDatosPaso4] Renderizado completado.");
 }
 
+
 /**
- * Formatea un número de teléfono con prefijo internacional para una mejor legibilidad.
- * Intenta aplicar un formato común como +CCC NNNN-NNNN (para 8 dígitos en ES)
- * o añadir espacios después del prefijo.
- * @param {string} telefono El número de teléfono, preferiblemente con prefijo internacional (ej. "+50377777777").
- * @returns {string} El número de teléfono formateado.
+ * Formatea un número de teléfono pegado en bloques legibles
+ * según el prefijo de país más común en tu app.
+ * +503 → +503 XXXX-XXXX
+ * +1   → +1 (AAA) BBB-CCCC
+ * +52  → +52 AA BBBB BBBB
+ * +57  → +57 AAA BBB CCCC
+ * Otros → agrupa de 3 en 3
  */
 function formatoLegibleTelefono(telefono) {
     if (!telefono) return "N/A";
 
-    // 1. Limpiar el número: Remover espacios, guiones y cualquier caracter no dígito,
-    //    pero preservar el '+' si está al inicio.
-    let numeroLimpio = telefono.replace(/[^\d+]/g, '');
+    // 1. Limpiar todo menos dígitos y '+'
+    let t = telefono.replace(/[^\d+]/g, "");
 
-    // Si el '+' no está al inicio, moverlo o eliminarlo si es erróneo.
-    if (numeroLimpio.indexOf('+') > 0) {
-        numeroLimpio = numeroLimpio.replace(/\+/g, ''); // Eliminar todos los '+'
-        // No añadimos uno al inicio aquí, lo manejaremos en el siguiente paso.
-    }
-
-    // 2. Asegurarse de que tiene un prefijo internacional válido.
-    //    Si no comienza con '+', intenta inferir un prefijo.
-    if (!numeroLimpio.startsWith('+')) {
-        // Asumimos El Salvador (+503) si es un número de 8 dígitos o más que no tiene prefijo.
-        // O si intl-tel-input lo guarda como "50377777777" sin el '+'.
-        if (numeroLimpio.length >= 8 && numeroLimpio.startsWith('503')) {
-            numeroLimpio = '+' + numeroLimpio; // Añadir '+' si ya parece un número con código de país.
-        } else if (numeroLimpio.length >= 7) { // Si es un número sin código, añadir el de ES por defecto.
-            numeroLimpio = '+503' + numeroLimpio;
+    // 2. Asegurarnos de que empiece por '+'
+    if (!t.startsWith("+")) {
+        // Si viene con código 503 al inicio, lo convertimos
+        if (t.startsWith("503")) {
+            t = "+" + t;
+        }
+        // Si son 8 dígitos puros, asumimos +503
+        else if (/^\d{8}$/.test(t)) {
+            t = "+503" + t;
+        }
+        // Si no, ante la duda, anteponemos '+'
+        else {
+            t = "+" + t;
         }
     }
 
-    // 3. Extraer el prefijo y los dígitos.
-    const match = numeroLimpio.match(/^(\+\d+)(\d+)$/); // Esperamos "+PREFIJO" + "DIGITOS"
+    // 3. Separar prefijo + resto
+    const partes = t.match(/^(\+\d{1,3})(\d+)$/);
+    if (!partes) return telefono;
+    const [, prefijo, resto] = partes;
 
-    if (match) {
-        const prefijo = match[1]; // Ej: "+503"
-        const digitos = match[2]; // Ej: "77777777"
+    // 4. Dar formato según prefijo
+    switch (prefijo) {
+        case "+503": // El Salvador
+            if (resto.length === 8) {
+                return `${prefijo} ${resto.substr(0, 4)}-${resto.substr(4)}`;
+            }
+            break;
 
-        // 4. Aplicar el formato legible según la longitud de los dígitos.
-        if (digitos.length === 8) { // Formato común de 8 dígitos para El Salvador (XXXX-XXXX)
-            return `${prefijo} ${digitos.substring(0, 4)}-${digitos.substring(4)}`;
-        } else if (digitos.length === 10 && prefijo === "+1") { // Formato común de 10 dígitos para Norteamérica (+1 (XXX) XXX-XXXX)
-            return `${prefijo} (${digitos.substring(0, 3)}) ${digitos.substring(3, 6)}-${digitos.substring(6)}`;
-        } else if (digitos.length > 0) {
-            // Formato genérico: prefijo + espacio + dígitos restantes (sin guiones)
-            return `${prefijo} ${digitos}`;
-        }
+        case "+1": // USA/Canadá
+            if (resto.length === 10) {
+                return `${prefijo} (${resto.substr(0, 3)}) ${resto.substr(3, 3)}-${resto.substr(6)}`;
+            }
+            break;
+
+        case "+52": // México
+            if (resto.length === 10) {
+                return `${prefijo} ${resto.substr(0, 2)} ${resto.substr(2, 4)} ${resto.substr(6)}`;
+            }
+            break;
+
+        case "+57": // Colombia
+            if (resto.length === 10) {
+                return `${prefijo} ${resto.substr(0, 3)} ${resto.substr(3, 3)} ${resto.substr(6)}`;
+            }
+            break;
     }
 
-    // Fallback si el número no pudo ser procesado por la lógica de prefijo/dígitos
-    const soloDigitosFallback = telefono.replace(/\D/g, ''); // Solo dígitos del original para un último intento
-    if (soloDigitosFallback.length === 8) { // Formato 8 dígitos, asumimos +503
-        return `+503 ${soloDigitosFallback.substring(0, 4)}-${soloDigitosFallback.substring(4)}`;
-    } else if (soloDigitosFallback.length > 0) {
-        return `+503 ${soloDigitosFallback}`; // Último intento con +503 y solo dígitos
-    }
-
-    return telefono; // Si todo falla, devolver el valor original
+    // 5. Fallback genérico: agrupar de 3 en 3
+    const grupos = resto.match(/.{1,3}/g) || [resto];
+    return `${prefijo} ${grupos.join(" ")}`;
 }
 
 // Función para inicializar componentes específicos de cada paso
-function inicializarComponentesPaso(paso) {
-    fetch(`pasosPrimerUso/paso${paso}.html`)
+function inicializarComponentesPaso(pasoActualGlobal) {
+    fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`)
         .then(res => res.text())
         .then(html => {
             document.getElementById("contenido-dinamico").innerHTML = html;
-            document.getElementById("paso-actual").textContent = paso;
+            document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPaso();
 
             setTimeout(() => {
@@ -2411,10 +2431,10 @@ function inicializarComponentesPaso(paso) {
 
                 requestAnimationFrame(() => {
                     // Ejecutar funciones específicas según el paso
-                    if (paso === 1) {
+                    if (pasoActualGlobal === 1) {
                         restaurarDatosPaso1();
                     }
-                    if (paso === 2) {
+                    if (pasoActualGlobal === 2) {
                         // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
                         initPaso2();
                         // Restaurar datos después de que se hayan cargado las categorías
@@ -2423,11 +2443,11 @@ function inicializarComponentesPaso(paso) {
                         }, 500); // Dar tiempo para que se carguen las categorías
 
                     }
-                    if (paso === 3) {
+                    if (pasoActualGlobal === 3) {
                         // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
                         initPaso3();
                     }
-                    if (paso === 4) {
+                    if (pasoActualGlobal === 4) {
                         restaurarDatosPaso4();
                     }
                 });
@@ -2437,7 +2457,7 @@ function inicializarComponentesPaso(paso) {
     // Mostrar/ocultar botón atrás
     const btnAtras = document.getElementById("btn-atras");
     if (btnAtras) {
-        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+        btnAtras.style.display = pasoActualGlobal === 1 ? "none" : "inline-flex";
     }
 }
 
@@ -2457,7 +2477,7 @@ function navegarAPaso(numeroPasoDestino) {
     fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`) // Usa la variable global actualizada
         .then(res => {
             if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
+                throw new Error(`HTTP error! status: ${res.status} `);
             }
             return res.text();
         })
