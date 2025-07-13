@@ -1,50 +1,76 @@
-let paso = 1;
-let listaContactos = [];
+// Variable global que almacena el paso actual. Es la única fuente de verdad.
+let pasoActualGlobal = 1;
 
+// Función para actualizar el indicador visual del paso actual
 function actualizarIndicadorPaso() {
     // Remover clase 'activo' de todos los pasos
     document.querySelectorAll('.paso').forEach(p => p.classList.remove('activo'));
 
     // Agregar clase 'activo' al paso actual
     const pasos = document.querySelectorAll('.paso');
-    if (pasos[paso - 1]) {
-        pasos[paso - 1].classList.add('activo');
+    if (pasos[pasoActualGlobal - 1]) {
+        pasos[pasoActualGlobal - 1].classList.add('activo');
+    }
+    console.log("Paso actual: " + pasoActualGlobal);
+}
+
+// Función unificada para actualizar el indicador visual del paso actual
+function actualizarIndicadorPasoVisual() {
+    // Remover clase 'activo' de todos los pasos
+    document.querySelectorAll('.paso').forEach(p => p.classList.remove('activo'));
+
+    // Agregar clase 'activo' al paso actual
+    const pasos = document.querySelectorAll('.paso');
+    if (pasos[pasoActualGlobal - 1]) { // Usa la variable global
+        pasos[pasoActualGlobal - 1].classList.add('activo');
+    }
+    // Este console.log puede quedarse si te ayuda a depurar o eliminar si ya no es necesario
+    console.log("Indicador actualizado para el Paso: " + pasoActualGlobal);
+}
+
+function limpiarFormulario() {
+    const contenedor = document.getElementById("contenido-dinamico"); // Asumiendo este es tu contenedor principal
+    if (contenedor) {
+        const formularios = contenedor.getElementsByTagName('form');
+        for (let i = 0; i < formularios.length; i++) {
+            formularios[i].reset();
+        }
+    } else {
+        // Corrección del mensaje de error para que sea preciso
+        console.error(`Contenedor con ID 'contenido-dinamico' no encontrado para limpiar formularios.`);
     }
 }
 
+// Función principal para cargar el contenido de cada paso (usada al inicio o para navegación secuencial)
 function cargarPaso() {
-    fetch(`pasosPrimerUso/paso${paso}.html`)
+    fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`) // Usa pasoActualGlobal
         .then(res => res.text())
         .then(html => {
-            document.getElementById("contenido-dinamico").innerHTML = html;
-            document.getElementById("paso-actual").textContent = paso;
-            actualizarIndicadorPaso();
+            document.getElementById("contenido-dinamico").innerHTML = html; // Usar siempre "contenido-dinamico"
+            document.getElementById("paso-actual").textContent = pasoActualGlobal; // Actualiza el texto del número de paso
+
+            // Llama a la función unificada para actualizar el indicador visual
+            actualizarIndicadorPasoVisual();
 
             setTimeout(() => {
                 inicializarInputsTelefono();
 
                 requestAnimationFrame(() => {
-                    // Ejecutar funciones específicas según el paso
-                    if (paso === 1) {
+                    // Ejecutar funciones específicas según el paso (ahora usando pasoActualGlobal)
+                    // Elimina las llamadas redundantes a actualizarIndicadorPaso() aquí
+                    if (pasoActualGlobal === 1) {
                         restaurarDatosPaso1();
                     }
-                    if (paso === 2) {
-                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                    if (pasoActualGlobal === 2) {
                         initPaso2();
                         setTimeout(() => {
                             restaurarDatosPaso2();
-                        }, 500); // Dar tiempo para que se carguen los Técnicos
-
+                        }, 500);
                     }
-                    if (paso === 3) {
-                        // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
+                    if (pasoActualGlobal === 3) {
                         initPaso3();
-                        // Restaurar datos después de que se hayan cargado los Técnicos
-                        setTimeout(() => {
-                            restaurarDatosPaso3();
-                        }, 500); // Dar tiempo para que se carguen los Técnicos
                     }
-                    if (paso === 4) {
+                    if (pasoActualGlobal === 4) { // Asegúrate de que este bloque exista para tu Paso 4
                         restaurarDatosPaso4();
                     }
                 });
@@ -54,7 +80,7 @@ function cargarPaso() {
     // Mostrar/ocultar botón atrás
     const btnAtras = document.getElementById("btn-atras");
     if (btnAtras) {
-        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+        btnAtras.style.display = pasoActualGlobal === 1 ? "none" : "inline-flex";
     }
 }
 
@@ -115,17 +141,17 @@ function validarPaso1() {
 
 function siguientePaso() {
     // Validar solo si estamos en paso 1
-    if (paso === 1) {
+    if (pasoActualGlobal === 1) {
         if (!validarPaso1()) return;
         guardarDatosPaso1();
     }
 
-    if (paso === 2) guardarDatosPaso2();
-    if (paso === 3) guardarDatosPaso3();
-    if (paso === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
+    if (pasoActualGlobal === 2) guardarDatosPaso2();
+    if (pasoActualGlobal === 3) guardarDatosPaso3();
+    if (pasoActualGlobal === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
 
-    if (paso < 4) {
-        paso++;
+    if (pasoActualGlobal < 4) {
+        pasoActualGlobal++;
         cargarPaso();
     }
 }
@@ -135,28 +161,34 @@ function guardarDatosPaso1() {
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
 
     const datos = {
-        empresa: document.querySelector('input[name="nombreEmpresa"]')?.value,
-        correoEmpresa: document.getElementById("correoEmpresa")?.value,
+        // Asegúrate de que tu input para el nombre de empresa tenga el ID "nombreEmpresaInput"
+        nombreEmpresa: document.getElementById("nombreEmpresaInput")?.value || '',
+        correoEmpresa: document.getElementById("correoEmpresa")?.value || '',
         telefonoEmpresa: telefonoEmpresaEl ? window.intlTelInputGlobals?.getInstance(telefonoEmpresaEl)?.getNumber() : null,
-        sitioWeb: document.getElementById("sitioWeb")?.value,
-        adminNombre: document.getElementById("nombreAdmin")?.value,
-        adminCorreo: document.getElementById("correoAdmin")?.value,
+        sitioWeb: document.getElementById("sitioWeb")?.value || '',
+        adminNombre: document.getElementById("nombreAdmin")?.value || '',
+        adminCorreo: document.getElementById("correoAdmin")?.value || '',
         telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
     };
 
-    sessionStorage.setItem("datosPaso1", JSON.stringify(datos));
+    // Usar localStorage en lugar de sessionStorage
+    localStorage.setItem("datosPaso1", JSON.stringify(datos));
+    console.log("Datos del Paso 1 guardados en localStorage:", datos);
 }
 
 function restaurarDatosPaso1() {
-    const data = JSON.parse(sessionStorage.getItem("datosPaso1") || "{}");
+    // Obtener datos de localStorage
+    const data = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
 
+    // Mapeo de los datos obtenidos a los campos de entrada del formulario del Paso 1
+    // Asumiendo que tus inputs del Paso 1 tienen estos IDs
     const campos = {
-        nombreEmpresa: data.empresa,
+        nombreEmpresaInput: data.nombreEmpresa, // Asegúrate de que el ID sea correcto para el input
         correoEmpresa: data.correoEmpresa,
         sitioWeb: data.sitioWeb,
         nombreAdmin: data.adminNombre,
         correoAdmin: data.adminCorreo,
-        departamentoAdmin: data.departamentoAdmin
+        // rolAdmin: data.rolAdmin, // Si tienes este campo en el Paso 1
     };
 
     for (const [id, valor] of Object.entries(campos)) {
@@ -263,15 +295,15 @@ function siguientePaso1() {
 
     // Guardar los datos y avanzar
     guardarDatosPaso1();
-    if (paso < 3) {
-        paso++;
+    if (pasoActualGlobal < 3) {
+        pasoActualGlobal++;
         cargarPaso();
     }
 }
 
 function anteriorPaso() {
-    if (paso > 1) {
-        paso--;
+    if (pasoActualGlobal > 1) {
+        pasoActualGlobal--;
         cargarPaso();
     }
 }
@@ -428,7 +460,6 @@ function mostrarCategorias(categorias) {
                         <i class="bi bi-collection-fill text-info"></i>
                         ${categoria.nombreDepartamento || categoria.nombreCategoria || 'Sin nombre'}
                     </h5>
-                    <small class="text-muted">ID: ${categoria.id}</small>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-sm btn-primary btn-editar" 
@@ -743,13 +774,31 @@ if (document.readyState === 'loading') {
     initPaso2();
 }
 
+function guardarDatosPaso2() {
+    // Obtener todos los contactos que están marcados como parte del equipo
+    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
+    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+
+    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+}
+
+// Departamentos
+function restaurarDatosPaso2() {
+    obtenerCategorias()
+}
+
 ///////////////////////// COSAS PARA EL PASO 3 /////////////////////////
-const API_URL = "https://retoolapi.dev/SuMLlc/contactosDatos";
+const API_URL = "https://retoolapi.dev/bRqmHj/tecnicoData";
 const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
+
+let listaTecnicos = [];
+let tecnicosAgregados = [];
+let listaCategorias = []; // Para almacenar las categorías obtenidas de la API
+let miEquipo = []; // Global variable to hold the team members' IDs (from sessionStorage)
 
 document.addEventListener("DOMContentLoaded", () => {
     const observer = new MutationObserver(() => {
-        const contenedor = document.getElementById("lista-contactos");
+        const contenedor = document.getElementById("lista-tecnicos");
         if (contenedor) {
             initPaso3();
             observer.disconnect();
@@ -758,21 +807,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     observer.observe(document.body, { childList: true, subtree: true });
 
-    if (document.getElementById("lista-contactos")) {
+    if (document.getElementById("lista-tecnicos")) {
         initPaso3();
         observer.disconnect();
     }
 });
 
+// Función para inicializar el Paso 3
 function initPaso3() {
-    const contenedor = document.getElementById("lista-contactos");
+    const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) {
-        console.warn("No se encontró el contenedor de lista-contactos");
+        console.warn("No se encontró el contenedor de lista-tecnicos");
         return;
     }
 
-    obtenerContactos();
-    configurarEventosModales();
+    obtenerCategorias3()
+        .then(() => obtenerTecnicos())
+        .then(() => {
+            restaurarDatosPaso3();
+            configurarEventosModales();
+            console.log("Paso 3 inicializado y estado de técnicos restaurado.");
+        })
+        .catch(error => {
+            console.error("Error en la inicialización del Paso 3:", error);
+            Swal.fire({
+                title: "Error de Carga",
+                text: "No se pudieron cargar los técnicos o las categorías.",
+                icon: "error",
+                confirmButtonText: "Entendido"
+            });
+        });
 
     const btnFlotante = document.getElementById("btnFlotanteAgregar");
     if (btnFlotante) {
@@ -784,53 +848,59 @@ function initPaso3() {
     }
 }
 
-// Función para obtener y mostrar personas desde la API
-async function obtenerContactos() {
-    const contenedor = document.getElementById("lista-contactos");
-    if (!contenedor) return;
-
-    // Mostrar indicador de carga
-    contenedor.innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando contactos...</span>
-            </div>
-            <p class="mt-2 text-muted">Cargando contactos...</p>
-        </div>
-    `;
-
+// Función para obtener categorías desde la API
+async function obtenerCategorias3() {
     try {
-        const res = await fetch(API_URL);
-
+        const res = await fetch(API_URL2);
         if (!res.ok) {
             throw new Error(`Error HTTP: ${res.status}`);
         }
-
         const data = await res.json();
-        listaContactos = data; // Actualizar la lista global
-
-        mostrarDatos(data);
+        listaCategorias = data;
+        cargarCategoriasEnDropdown();
     } catch (error) {
-        console.error("Error al obtener contactos:", error);
-        contenedor.innerHTML = `
-            <div class="alert alert-danger">
-                Error al cargar los contactos. Por favor, intenta nuevamente.
-                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerContactos()">
-                    Reintentar
-                </button>
-            </div>
-        `;
+        console.error("Error al obtener categorías:", error);
+        // Agregar categorías por defecto en caso de error
+        listaCategorias = [
+            { id: 1, nombre: "Supervisor" },
+            { id: 2, nombre: "Técnico Senior" },
+            { id: 3, nombre: "Técnico Junior" },
+            { id: 4, nombre: "Especialista" }
+        ];
+        cargarCategoriasEnDropdown();
     }
 }
 
-function mostrarDatos(contactos) {
-    const contenedor = document.getElementById("lista-contactos");
+// Función para cargar las categorías en el dropdown
+function cargarCategoriasEnDropdown() {
+    const dropdown = document.getElementById("categoriaDropdown");
+    if (!dropdown) {
+        console.warn("Elemento 'categoriaDropdown' no encontrado en el DOM.");
+        return;
+    }
+
+    // Limpiar opciones existentes excepto la primera (que suele ser un placeholder)
+    dropdown.innerHTML = '<option value="">Selecciona una categoría</option>';
+
+    // Agregar categorías
+    listaCategorias.forEach(categoria => {
+        const option = document.createElement("option");
+        option.value = categoria.id;
+        option.textContent = categoria.nombreDepartamento;
+        dropdown.appendChild(option);
+    });
+}
+
+// Función para obtener y mostrar técnicos desde la API
+function mostrarDatos(tecnicos) {
+    console.log("%c[DEBUG mostrarDatos] INICIANDO RENDERIZADO DE TECNICOS", 'background: #FFD700; color: black; font-weight: bold;');
+    const contenedor = document.getElementById("lista-tecnicos");
     if (!contenedor) return;
 
-    if (!contactos || contactos.length === 0) {
+    if (!tecnicos || tecnicos.length === 0) {
         contenedor.innerHTML = `
             <div class="alert alert-warning text-center">
-                No hay contactos disponibles.
+                No hay técnicos disponibles.
             </div>
         `;
         return;
@@ -839,12 +909,12 @@ function mostrarDatos(contactos) {
     contenedor.innerHTML = "";
 
     // Crear buscador si no existe
-    if (!document.getElementById("busquedaContacto")) {
+    if (!document.getElementById("busquedaTecnico")) {
         const buscadorContainer = document.createElement("div");
         buscadorContainer.className = "mb-4";
         buscadorContainer.innerHTML = `
             <div class="input-group">
-                <input type="text" id="busquedaContacto" class="form-control" 
+                <input type="text" id="busquedaTecnico" class="form-control" 
                        placeholder="Buscar por nombre, correo o teléfono...">
                 <button class="btn btn-outline-secondary" type="button" id="btnBuscar">
                     <i class="bi bi-search"></i>
@@ -855,7 +925,7 @@ function mostrarDatos(contactos) {
     }
 
     const headers = document.createElement("div");
-    headers.className = "row align-items-center mb-2 px-2 headers-contacto";
+    headers.className = "row align-items-center mb-2 px-2 headers-tecnico";
     headers.innerHTML = `
         <div class="col-auto text-center">Técnico</div>
         <div class="col text-end">Nombre</div>
@@ -866,53 +936,57 @@ function mostrarDatos(contactos) {
 
     contenedor.appendChild(headers);
 
-    contactos.forEach((contacto) => {
-        const imgSrc = contacto.Foto && contacto.Foto.trim()
-            ? contacto.Foto
+    // ¡¡¡CAMBIO CLAVE AQUÍ!!! Leer de localStorage
+    const equipoActual = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+    console.log("Equipo actual al renderizar:", equipoActual);
+
+    tecnicos.forEach((tecnico) => {
+        const imgSrc = tecnico.Foto && tecnico.Foto.trim()
+            ? tecnico.Foto
             : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-        const nombreLimpio = limpiarTexto(contacto.Nombre);
-        const telefonoFormateado = formatearTelefonoInteligente(contacto["Número de tel."]);
+        const nombreLimpio = limpiarTexto(tecnico.Nombre);
+        const telefonoFormateado = formatearTelefonoInteligente(tecnico["Número de tel."]);
 
         const fila = document.createElement("div");
-        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white contacto-fila";
-        fila.setAttribute("data-id", contacto.id);
+        fila.className = "row align-items-center py-2 px-2 shadow-sm border rounded mb-2 bg-white tecnico-fila";
+        fila.setAttribute("data-id", tecnico.id);
         fila.innerHTML = `
             <div class="col-auto d-flex justify-content-center align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
                 <img src="${imgSrc}" 
                      alt="Foto de ${nombreLimpio}" 
-                     class="rounded-circle foto-contacto"
+                     class="rounded-circle foto-tecnico"
                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 fw-semibold nombre-contacto">
+                <div class="w-100 fw-semibold nombre-tecnico">
                     ${nombreLimpio || "Sin nombre"}
                 </div>
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 text-muted small correo-contacto">
-                    ${contacto["Correo Electrónico"] || contacto["Correo Elect."] || "Sin correo"}
+                <div class="w-100 text-muted small correo-tecnico">
+                    ${tecnico["Correo Electrónico"] || tecnico["Correo Elect."] || "Sin correo"}
                 </div>
             </div>
 
             <div class="col d-flex align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="w-100 text-muted small telefono-contacto">
+                <div class="w-100 text-muted small telefono-tecnico">
                     ${telefonoFormateado}
                 </div>
             </div>
 
             <div class="col d-flex justify-content-end align-items-center" style="min-height: clamp(48px, 4vw, 64px);">
-                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${contacto.id}">
-                    <button class="btn btn-sm btn-accion añadir" data-id="${contacto.id}" title="Añadir al equipo">
+                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${tecnico.id}">
+                    <button class="btn btn-sm btn-accion añadir" data-id="${tecnico.id}" title="Añadir al equipo">
                         <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
                     </button>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-accion editar" data-id="${contacto.id}" title="Editar">
+                        <button class="btn btn-sm btn-accion editar" data-id="${tecnico.id}" title="Editar">
                             <i class="bi bi-pencil-fill"></i>
                         </button>
-                        <button class="btn btn-sm btn-accion eliminar" data-id="${contacto.id}" title="Eliminar">
+                        <button class="btn btn-sm btn-accion eliminar" data-id="${tecnico.id}" title="Eliminar">
                             <i class="bi bi-trash-fill"></i>
                         </button>
                     </div>
@@ -922,67 +996,83 @@ function mostrarDatos(contactos) {
 
         contenedor.appendChild(fila);
 
-        // Eventos
-        const editarBtn = fila.querySelector(".editar");
-        const eliminarBtn = fila.querySelector(".eliminar");
-        const añadirBtn = fila.querySelector(".añadir");
+        // Verificar si este técnico está en el equipo INMEDIATAMENTE
+        const miembroEquipo = equipoActual.find(miembro => miembro.id == tecnico.id);
+        const contenedorAcciones = document.getElementById(`acciones-${tecnico.id}`);
 
-        if (editarBtn) {
-            editarBtn.addEventListener("click", () => {
-                AbrirModalEditar(
-                    contacto.id,
-                    contacto.Nombre,
-                    contacto["Correo Electrónico"] || contacto["Correo Elect."],
-                    contacto["Número de tel."],
-                    contacto.Foto
-                );
-            });
+        if (miembroEquipo && contenedorAcciones) {
+            console.log(`Restaurando técnico ${tecnico.id} inmediatamente`);
+            marcarTecnicoComoAñadidoVisual(tecnico.id, contenedorAcciones, true);
         }
 
-        if (eliminarBtn) {
-            eliminarBtn.addEventListener("click", () => {
-                Swal.fire({
-                    title: `¿Eliminar a ${contacto.Nombre}?`,
-                    text: "Esta acción no se puede deshacer.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#6c757d",
-                    confirmButtonText: "Sí, eliminar",
-                    cancelButtonText: "Cancelar"
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        eliminarContacto(contacto.id);
-                    }
+        // Eventos para botones normales (solo si no está en el equipo)
+        if (!miembroEquipo) {
+            const editarBtn = fila.querySelector(".editar");
+            const eliminarBtn = fila.querySelector(".eliminar");
+            const añadirBtn = fila.querySelector(".añadir");
+
+            if (editarBtn) {
+                editarBtn.addEventListener("click", () => {
+                    AbrirModalEditar(
+                        tecnico.id,
+                        tecnico.Nombre,
+                        tecnico["Correo Electrónico"] || tecnico["Correo Elect."],
+                        tecnico["Número de tel."],
+                        tecnico.Foto
+                    );
                 });
-            });
-        }
+            }
 
-        if (añadirBtn) {
-            añadirBtn.addEventListener("click", () => {
-                abrirModalAgregarEquipo(contacto);
-            });
+            if (eliminarBtn) {
+                eliminarBtn.addEventListener("click", () => {
+                    Swal.fire({
+                        title: `¿Eliminar a ${tecnico.Nombre}?`,
+                        text: "Esta acción no se puede deshacer.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#6c757d",
+                        confirmButtonText: "Sí, eliminar",
+                        cancelButtonText: "Cancelar"
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            eliminarTecnico(tecnico.id);
+                        }
+                    });
+                });
+            }
+
+            if (añadirBtn) {
+                añadirBtn.addEventListener("click", () => {
+                    abrirModalAgregarEquipo(tecnico);
+                });
+            }
         }
     });
 
-    // Inicializar el buscador después de renderizar
+    // Inicializar buscador al final
     setTimeout(() => {
-        inicializarBuscadorDeContactos();
-        // Restaurar estado del equipo
-        restaurarEstadoEquipo();
+        inicializarBuscadorDeTecnicos();
     }, 100);
 }
 
-// CORRECCIÓN 5: Función mejorada para restaurar el estado del equipo
+
 function restaurarEstadoEquipo() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+    console.log("%c[DEBUG restaurarEstadoEquipo] INICIANDO RESTAURACIÓN DE ESTADO DEL EQUIPO", 'background: #ADD8E6; color: black; font-weight: bold;');
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    console.log("Restaurando equipo desde localStorage:", equipo); // Debug
 
     if (equipo.length === 0) return;
 
-    equipo.forEach(id => {
-        const contenedorAcciones = document.getElementById(`acciones-${id}`);
-        if (contenedorAcciones) {
-            marcarContactoComoAñadidoVisual(id, contenedorAcciones);
+    equipo.forEach(miembro => {
+        if (miembro && miembro.id) {
+            const contenedorAcciones = document.getElementById(`acciones-${miembro.id}`);
+            if (contenedorAcciones) {
+                console.log(`Restaurando técnico ${miembro.id} con categoría ${miembro.categoria}`);
+                marcarTecnicoComoAñadidoVisual(miembro.id, contenedorAcciones, true);
+            } else {
+                console.warn(`No se encontró contenedor de acciones para técnico ${miembro.id}`);
+            }
         }
     });
 }
@@ -1054,40 +1144,40 @@ function formatearTelefonoInteligente(telefono) {
     return `${codigoPais} ${numero}`.trim();
 }
 
-function eliminarContacto(id) {
+function eliminarTecnico(id) {
     fetch(`${API_URL}/${id}`, {
         method: "DELETE"
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error("No se pudo eliminar el contacto.");
+                throw new Error("No se pudo eliminar el técnico.");
             }
             return response.json();
         })
         .then(() => {
             Swal.fire({
                 icon: "success",
-                title: "Contacto eliminado",
-                text: "El contacto ha sido eliminado correctamente.",
+                title: "Técnico eliminado",
+                text: "El técnico ha sido eliminado correctamente.",
                 timer: 1500,
                 showConfirmButton: false
             });
 
-            // Opcional: recargar lista de contactos o avanzar
-            obtenerContactos?.(); // solo si existe esa función
+            // Opcional: recargar lista de técnicos o avanzar
+            obtenerTecnicos?.();
         })
         .catch(error => {
             console.error(error);
             Swal.fire({
                 icon: "error",
                 title: "Error",
-                text: "Ocurrió un problema al eliminar el contacto."
+                text: "Ocurrió un problema al eliminar el técnico."
             });
         });
 }
 
 function configurarEventosModales() {
-    // Modal AGREGAR CONTACTO
+    // Modal AGREGAR TÉCNICO
     const modalAgregar = document.getElementById("modal-agregar");
     const btnAbrirModalAgregar = document.getElementById("btnAbrirModal");
     const btnFlotante = document.getElementById("btnFlotanteAgregar");
@@ -1097,7 +1187,7 @@ function configurarEventosModales() {
         btnAbrirModalAgregar.addEventListener("click", () => {
             if (modalAgregar) {
                 modalAgregar.showModal();
-                setTimeout(() => inicializarTelefonosPaso2(), 100);
+                setTimeout(() => inicializarTelefonosPaso3(), 100);
             }
         });
     }
@@ -1106,7 +1196,7 @@ function configurarEventosModales() {
         btnFlotante.addEventListener("click", () => {
             if (modalAgregar) {
                 modalAgregar.showModal();
-                setTimeout(() => inicializarTelefonosPaso2(), 100);
+                setTimeout(() => inicializarTelefonosPaso3(), 100);
             }
         });
     }
@@ -1119,11 +1209,11 @@ function configurarEventosModales() {
     if (frmAgregar) {
         frmAgregar.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await agregarContacto();
+            await agregarTecnico();
         });
     }
 
-    // Modal EDITAR CONTACTO
+    // Modal EDITAR TÉCNICO
     const modalEditar = document.getElementById("modal-editar");
     const btnCerrarEditar = document.getElementById("btnCerrarEditar");
 
@@ -1135,7 +1225,7 @@ function configurarEventosModales() {
     if (frmEditar) {
         frmEditar.addEventListener("submit", async (e) => {
             e.preventDefault();
-            await editarContacto();
+            await editarTecnico();
         });
     }
 
@@ -1163,46 +1253,40 @@ function configurarEventosModales() {
     const frmAgregarEquipo = document.getElementById("frmAgregarEquipo");
 
     if (frmAgregarEquipo) {
-        frmAgregarEquipo.addEventListener("submit", (e) => {
-            e.preventDefault();
+        // → Sitúa esto **en lugar** del bloque anterior
+        const frmAgregarEquipo = document.getElementById("frmAgregarEquipo");
+        if (frmAgregarEquipo) {
+            frmAgregarEquipo.addEventListener("submit", e => {
+                e.preventDefault();
 
-            const rol = document.getElementById("rolEquipo")?.value;
-            const id = frmAgregarEquipo.dataset.idContacto;
+                // 1. Leer ID y username del dataset del formulario
+                const frm = e.target;
+                const idTec = frm.dataset.idTecnico;
+                const username = frm.dataset.usernameTec;
 
-            if (!rol) {
-                if (typeof Swal !== 'undefined') {
+                // 2. Leer categoría seleccionada
+                const categoria = document.getElementById("categoriaDropdown").value;
+                if (!categoria) {
                     Swal.fire({
                         icon: "warning",
-                        title: "Rol requerido",
-                        text: "Por favor, selecciona un rol antes de continuar.",
-                        confirmButtonColor: "#007bff"
+                        title: "Categoría requerida",
+                        text: "Selecciona una categoría antes de continuar."
                     });
-                } else {
-                    alert("Por favor, selecciona un rol antes de continuar.");
+                    return;
                 }
-                return;
-            }
 
-            marcarContactoComoAñadido(id);
+                // 3. Llamar a tu función de marcado pasando id, categoría y username
+                marcarTecnicoComoAñadido(idTec, categoria, username);
 
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: "success",
-                    title: "¡Añadido!",
-                    text: "El contacto se ha añadido exitosamente al equipo.",
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            } else {
-                alert("El contacto se ha añadido exitosamente al equipo.");
-            }
-
-            if (modalEquipo) modalEquipo.close();
-        });
+                // 4. Cerrar el modal
+                const modalEquipo = document.getElementById("modal-agregar-equipo");
+                if (modalEquipo) modalEquipo.close();
+            });
+        }
     }
 }
 
-async function agregarContacto() {
+async function agregarTecnico() {
     const nombre = document.getElementById("nombre")?.value.trim();
     const correo = document.getElementById("email")?.value.trim();
     const archivoFoto = document.getElementById("foto")?.files[0];
@@ -1254,11 +1338,10 @@ async function agregarContacto() {
     }
 
     // Proceder con el guardado
-    await enviarContacto(nombre, correo, telefono, archivoFoto);
+    await enviarTecnico(nombre, correo, telefono, archivoFoto);
 }
 
-async function enviarContacto(nombre, correo, telefono, archivoFoto) {
-
+async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
     try {
         // Subir imagen si fue seleccionada
         let urlFoto = "";
@@ -1266,7 +1349,7 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
             urlFoto = await subirImagen(archivoFoto);
         }
 
-        const nuevoContacto = {
+        const nuevoTecnico = {
             Nombre: nombre,
             "Correo Electrónico": correo,
             "Número de tel.": telefono,
@@ -1276,7 +1359,7 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
         const res = await fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuevoContacto)
+            body: JSON.stringify(nuevoTecnico)
         });
 
         if (!res.ok) {
@@ -1287,8 +1370,8 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
 
         Swal.fire({
             icon: "success",
-            title: "¡Contacto agregado!",
-            text: "El contacto ha sido guardado exitosamente.",
+            title: "¡Técnico agregado!",
+            text: "El técnico ha sido guardado exitosamente.",
             timer: 1500,
             showConfirmButton: false
         });
@@ -1305,15 +1388,15 @@ async function enviarContacto(nombre, correo, telefono, archivoFoto) {
         if (modalAgregar) modalAgregar.close();
 
         // Recargar lista
-        obtenerContactos();
+        obtenerTecnicos();
 
     } catch (error) {
-        console.error("Error al agregar contacto:", error);
+        console.error("Error al agregar técnico:", error);
 
         Swal.fire({
             icon: "error",
             title: "Ups...",
-            text: "Ocurrió un problema al guardar el contacto. Por favor, intenta nuevamente.",
+            text: "Ocurrió un problema al guardar el técnico. Por favor, intenta nuevamente.",
             confirmButtonText: "Entendido"
         });
     }
@@ -1363,7 +1446,7 @@ function validarTelefonoIndividual(idInput) {
     return esValido;
 }
 
-// CORRECCIÓN 4: Función AbrirModalEditar corregida
+// Función AbrirModalEditar corregida
 function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
     // Limpiar el nombre de caracteres problemáticos
     const nombreLimpio = limpiarTexto(nombre);
@@ -1383,7 +1466,7 @@ function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 
         // Inicializar teléfonos después de abrir el modal
         setTimeout(() => {
-            inicializarTelefonosPaso2();
+            inicializarTelefonosPaso3();
 
             // Establecer el número de teléfono después de inicializar
             setTimeout(() => {
@@ -1402,10 +1485,10 @@ function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 }
 
 // Para renderizar en el paso 2:
-async function obtenerContactosPaso2() {
+async function obtenerTecnicosPaso3() {
     const res = await fetch(API_URL);
-    listaContactos = await res.json();
-    renderizarContactos(listaContactos);
+    listaTecnicos = await res.json();
+    renderizarTecnicos(listaTecnicos);
 }
 
 // CORRECCIÓN 2: Función mejorada para obtener teléfono con prefijo
@@ -1427,9 +1510,6 @@ function obtenerTelefonoConPrefijo(idInput) {
             // Intentar obtener el número con intlTelInput
             const numeroCompleto = iti.getNumber();
             const paisSeleccionado = iti.getSelectedCountryData();
-
-            /* console.log('IntlTelInput - Número completo:', numeroCompleto);
-            console.log('IntlTelInput - País:', paisSeleccionado); */
 
             if (numeroCompleto && numeroCompleto.trim() !== '') {
                 numeroFinal = numeroCompleto.trim();
@@ -1477,12 +1557,13 @@ function formatearTelefonoParaMostrar(telefono) {
     return telefono;
 }
 
-function renderizarContactos(contactos) {
-    const contenedor = document.getElementById("lista-contactos");
+
+function renderizarTecnicos(tecnicos) {
+    const contenedor = document.getElementById("lista-tecnicos");
     contenedor.innerHTML = "";
 
-    if (!contactos || contactos.length === 0) {
-        contenedor.innerHTML = `<p class='text-muted'>No hay contactos registrados aún.</p>`;
+    if (!tecnicos || tecnicos.length === 0) {
+        contenedor.innerHTML = `<p class='text-muted'>No hay técnicos registrados aún.</p>`;
         return;
     }
 
@@ -1490,74 +1571,105 @@ function renderizarContactos(contactos) {
     const spinner = contenedor.querySelector(".spinner-wrapper");
     if (spinner) spinner.remove();
 
-    contactos.forEach(contacto => {
+    // Obtener técnicos ya añadidos al equipo - NORMALIZAR A STRINGS
+    /* const equipoActual = JSON.parse(sessionStorage.getItem("miEquipo") || "[]").map(id => String(id)); */
+
+    tecnicos.forEach(tecnico => {
         const card = document.createElement("div");
         card.className = "card p-3 shadow-sm";
 
         card.innerHTML = `
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-3">
-          <img src="${contacto.Foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
-               alt="Foto de ${contacto.Nombre}" class="rounded-circle border"
-               width="56" height="56" style="object-fit: cover; background-color: #f3f3f3;">
-          <div>
-            <h6 class="mb-0">${contacto.Nombre}</h6>
-            <small class="text-muted">${contacto["Correo Electrónico"]}</small><br>
-            <small>${contacto["Número de tel."]}</small>
-          </div>
-        </div>
-        <div class="d-flex flex-column align-items-end gap-2">
-          <button class="btn btn-sm btn-accion añadir" data-id="${contacto.id}">
-            <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
-          </button>
-          <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-accion editar" title="Editar"
-              onclick="AbrirModalEditar(
-                '${contacto.id}',
-                \`${contacto.Nombre}\`,
-                \`${contacto["Correo Electrónico"]}\`,
-                \`${contacto["Número de tel."]}\`,
-                \`${contacto.Foto || ""}\`)">
-              <i class="bi bi-pencil-fill"></i>
-            </button>
-            <button class="btn btn-sm btn-accion eliminar" title="Eliminar"
-              onclick="eliminarContacto('${contacto.id}')">
-              <i class="bi bi-trash-fill"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="${tecnico.Foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
+                         alt="Foto de ${tecnico.Nombre}" class="rounded-circle border"
+                         width="56" height="56" style="object-fit: cover; background-color: #f3f3f3;">
+                    <div>
+                        <h6 class="mb-0 nombre-tecnico">${tecnico.Nombre}</h6>
+                        <small class="text-muted correo-tecnico">${tecnico["Correo Electrónico"]}</small><br>
+                        <small class="telefono-tecnico">${tecnico["Número de tel."]}</small>
+                    </div>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-2" id="acciones-${tecnico.id}">
+                <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${tecnico.id}">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Parte de tu equipo ${nombreCategoria}
+                            <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
+                        </div> :
+                <button class="btn btn-sm btn-accion añadir" data-id="${tecnico.id}">
+                            <i class="bi bi-person-plus-fill me-1"></i> Añadir al equipo
+                        </button>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-accion editar" title="Editar"
+                          onclick="AbrirModalEditar(
+                            '${tecnico.id}',
+                            \`${tecnico.Nombre}\`,
+                            \`${tecnico["Correo Electrónico"]}\`,
+                            \`${tecnico["Número de tel."]}\`,
+                            \`${tecnico.Foto || ""}\`)">
+                          <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button class="btn btn-sm btn-accion eliminar" title="Eliminar"
+                          onclick="eliminarTecnico('${tecnico.id}')">
+                          <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
 
         contenedor.appendChild(card);
     });
 }
 
-function obtenerContactoPorId(id) {
-    const contacto = listaContactos?.find(c => c.id == id);
-    return contacto;
+function obtenerTecnicoPorId(id) {
+    const tecnico = listaTecnicos?.find(t => t.id == id);
+    return tecnico;
 }
 
-// 2. Función modificada para abrir modal y guardar ID correctamente
-function abrirModalAgregarEquipo(contacto) {
-    document.getElementById("imgEquipo").src = contacto.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    document.getElementById("nombreEquipo").value = contacto.Nombre || "";
-    document.getElementById("correoEquipo").value = contacto["Correo Electrónico"] || "";
-    document.getElementById("telefonoEquipo").value = contacto["Número de tel."] || "";
-    document.getElementById("rolEquipo").value = "";
+// Función para abrir modal y guardar ID correctamente
+function abrirModalAgregarEquipo(tecnico) {
+    document.getElementById("imgEquipo").src = tecnico.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    document.getElementById("nombreEquipo").value = tecnico.Nombre || "";
+    document.getElementById("correoEquipo").value = tecnico["Correo Electrónico"] || "";
+    document.getElementById("telefonoEquipo").value = formatearTelefonoParaMostrar(tecnico["Número de tel."]) || "";
+    document.getElementById("categoriaDropdown").value = "";
+
+    // 1. Divide el nombre completo en palabras:
+    const partes = tecnico.Nombre.trim().split(/\s+/);
+    const primerNombre = partes[0] || '';
+    const primerApellido = partes[partes.length - 1] || '';
+
+    // 2. Función para quitar tildes y caracteres especiales:
+    const normalizar = str => str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+
+    const username = `${normalizar(primerNombre)}.${normalizar(primerApellido)}`;
+
+    // 3. Asigna el valor al input readonly
+    const inputUser = document.getElementById("usernameEquipo");
+    if (inputUser) inputUser.value = username;
+
+    // Guarda el ID y el username en el formulario para usarlo luego
+    const frm = document.getElementById("frmAgregarEquipo");
+    if (frm) {
+        frm.dataset.idTecnico = tecnico.id;
+        frm.dataset.usernameTec = username;
+    }
 
     // IMPORTANTE: Guardar el ID en el formulario para usarlo después
     const frmAgregarEquipo = document.getElementById("frmAgregarEquipo");
     if (frmAgregarEquipo) {
-        frmAgregarEquipo.dataset.idContacto = contacto.id;
+        frmAgregarEquipo.dataset.idTecnico = tecnico.id;
     }
 
     document.getElementById("modal-agregar-equipo").showModal();
 }
 
-
-// CORRECCIÓN 6: Función editarContacto corregida
-async function editarContacto() {
+// CORRECCIÓN 6: Función editarTecnico corregida
+async function editarTecnico() {
     const id = document.getElementById("idEditar").value;
     const nombre = limpiarTexto(document.getElementById("nombreEditar").value.trim());
     const correo = document.getElementById("emailEditar").value.trim();
@@ -1603,56 +1715,87 @@ async function editarContacto() {
         if (res.ok) {
             Swal.fire({
                 icon: "success",
-                title: "Contacto actualizado",
-                text: "El contacto ha sido actualizado exitosamente.",
+                title: "Técnico actualizado",
+                text: "El técnico ha sido actualizado exitosamente.",
                 timer: 1500,
                 showConfirmButton: false
             });
 
             document.getElementById("modal-editar").close();
-            obtenerContactos(); // Recargar la lista
+            obtenerTecnicos(); // Recargar la lista
         } else {
-            throw new Error("Error al actualizar el contacto");
+            throw new Error("Error al actualizar el técnico");
         }
     } catch (error) {
         console.error("Error:", error);
         Swal.fire({
             icon: "error",
             title: "Algo salió mal",
-            text: "No se pudo actualizar el contacto.",
+            text: "No se pudo actualizar el técnico.",
             confirmButtonText: "Entendido"
         });
     }
 }
 
+// Define una función asíncrona llamada subirImagen que recibe un 'file' (archivo) como argumento.
 async function subirImagen(file) {
+    // Inicia un bloque try...catch para manejar posibles errores durante el proceso.
     try {
+        // 1. CONVERTIR IMAGEN A BASE64
+        // Espera (await) a que la función 'toBase64' termine de convertir el archivo a una cadena de texto Base64.
         const base64 = await toBase64(file);
+
+        // 2. PREPARAR DATOS PARA EL ENVÍO
+        // Crea un objeto FormData, que es la forma estándar de enviar datos de un formulario (como archivos) a un servidor.
         const formData = new FormData();
+
+        // Agrega la imagen al FormData.
+        // 'base64.split(",")[1]' extrae solo los datos de la imagen, eliminando el prefijo "data:image/jpeg;base64,".
         formData.append("image", base64.split(",")[1]);
 
+        // 3. ENVIAR IMAGEN AL SERVIDOR (API)
+        // Realiza una petición (fetch) a la URL del servidor (guardada en la constante IMG_API_URL).
         const res = await fetch(IMG_API_URL, {
-            method: "POST",
-            body: formData
+            method: "POST", // Especifica que es una petición POST para enviar datos.
+            body: formData   // Asigna el FormData (con la imagen) como el cuerpo de la petición.
         });
 
+        // 4. PROCESAR LA RESPUESTA DEL SERVIDOR
+        // Espera la respuesta del servidor y la convierte a un objeto JSON.
         const data = await res.json();
+
+        // Devuelve la URL de la imagen subida.
+        // Usa encadenamiento opcional (?.) para evitar errores si 'data' o 'data.data' no existen.
+        // Si no encuentra la URL, devuelve una cadena vacía "".
         return data?.data?.url || "";
+
     } catch (error) {
-        console.error("Error al subir imagen:", error);
-        return "";
+        // Si ocurre cualquier error en el bloque 'try', se ejecuta este bloque.
+        console.error("Error al subir imagen:", error); // Muestra el error en la consola del navegador.
+        return ""; // Devuelve una cadena vacía para indicar que la subida falló.
     }
 }
 
+// Define una función que recibe un 'file' y devuelve una Promesa.
 function toBase64(file) {
+    // Una Promesa es un objeto que representa la eventual finalización (o fallo) de una operación asíncrona.
     return new Promise((resolve, reject) => {
+        // Crea una instancia de FileReader, una API del navegador para leer archivos.
         const reader = new FileReader();
+
+        // Define qué hacer cuando el archivo se haya leído correctamente.
+        // El 'reader.result' contendrá la cadena en formato Base64.
+        // 'resolve' se llama para cumplir la promesa con el resultado.
         reader.onload = () => resolve(reader.result);
+
+        // Define qué hacer si ocurre un error durante la lectura.
+        // 'reject' se llama para rechazar la promesa, indicando un fallo.
         reader.onerror = reject;
+
+        // Inicia la lectura del archivo. El resultado será una URL de datos (formato Base64).
         reader.readAsDataURL(file);
     });
 }
-
 
 function iniciarPaso() {
     const elPaso = document.getElementById("paso-actual");
@@ -1667,10 +1810,14 @@ function iniciarPaso() {
             break;
         case "2":
             console.log("Iniciando Paso 2");
-            initPaso3();
+            initPaso2();
             break;
         case "3":
             console.log("Iniciando Paso 3");
+            initPaso3();
+            break;
+        case "4":
+            console.log("Iniciando Paso 4");
             break;
         default:
             console.warn(`Paso no reconocido: ${paso}`);
@@ -1691,9 +1838,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
-
 });
-
 
 // Efecto de entrada suave del botón
 window.addEventListener('load', function () {
@@ -1709,7 +1854,7 @@ window.addEventListener('load', function () {
     }
 });
 
-function inicializarTelefonosPaso2() {
+function inicializarTelefonosPaso3() {
     const inputs = ["#telefonoAgregar", "#telefonoEditar"];
 
     inputs.forEach(selector => {
@@ -1753,63 +1898,129 @@ function validarAntesDeEnviar(idInput) {
     return true;
 }
 
-function actualizarEquipoEnStorage(id, accion) {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
+function actualizarEquipoEnStorage(id, accion, categoria, username = '') {
+    let equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+    const idx = equipo.findIndex(m => m.id == id);
 
-    if (accion === "agregar" && !equipo.includes(id)) {
-        equipo.push(id);
+    if (accion === 'agregar') {
+        const nuevo = { id, categoria, username };
+        if (idx === -1) equipo.push(nuevo);
+        else equipo[idx] = nuevo;
+    }
+    else if (accion === 'eliminar' && idx !== -1) {
+        equipo.splice(idx, 1);
     }
 
-    if (accion === "eliminar") {
-        const index = equipo.indexOf(id);
-        if (index !== -1) equipo.splice(index, 1);
-    }
-
-    sessionStorage.setItem("miEquipo", JSON.stringify(equipo));
+    localStorage.setItem("miEquipo", JSON.stringify(equipo));
 }
 
-
-// CORRECCIÓN 8: Función mejorada para marcar contacto como añadido
-function marcarContactoComoAñadido(idContacto, restaurando = false) {
-    const contenedorAcciones = document.getElementById(`acciones-${idContacto}`);
+// CORRECCIÓN: Función para marcar técnico como añadido (igual que contactos)
+function marcarTecnicoComoAñadido(idTecnico, categoria, username, restaurando = false) {
+    const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
+    if (!btnAñadir) return;
+    const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
     if (!contenedorAcciones) return;
 
     // Actualizar storage solo si no se está restaurando
     if (!restaurando) {
-        actualizarEquipoEnStorage(idContacto, "agregar");
+        actualizarEquipoEnStorage(idTecnico, "agregar", categoria, username);
     }
-
     // Marcar visualmente
-    marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones);
+    const accionesContainer = document.getElementById(`acciones-${idTecnico}`);
+    marcarTecnicoComoAñadidoVisual(
+        idTecnico,
+        accionesContainer,
+        restaurando,
+        username
+    );
 }
 
-// CORRECCIÓN 6: Función separada para marcar visualmente como añadido
-function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
-    if (!contenedorAcciones) return;
+function obtenerCategoriaTecnico(id) {
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]"); // Cambiado a localStorage
+    const tecnico = equipo.find(item => {
+        if (typeof item === 'object') {
+            return item.id == id; // Usar == para comparación de tipo suelto si IDs pueden ser string/number
+        }
+        return false;
+    });
+    return tecnico ? tecnico.categoria : null;
+}
+
+function marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, restaurando = false, username = '') {
+
+    // Inicia un grupo de logs para esta llamada, se puede expandir/contraer en la consola
+    console.groupCollapsed(`%c[marcarTecnicoComoAñadidoVisual] Llamada para técnico ${idTecnico}`, 'color: purple; font-weight: bold;');
+
+    // Rastrea la pila de llamadas para saber quién la invocó
+    console.trace("Pila de llamadas para marcarTecnicoComoAñadidoVisual");
+
+    if (!contenedorAcciones) {
+        console.warn(`No se encontró contenedor de acciones para técnico ${idTecnico}`);
+        console.groupEnd(); // Cierra el grupo si hay error
+        return;
+    }
+
+    if (!contenedorAcciones) {
+        console.warn(`No se encontró contenedor de acciones para técnico ${idTecnico}`);
+        return;
+    }
+
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+    const miembroDelEquipo = equipo.find(item => item.id == idTecnico);
+
+    // *** CAMBIO CRÍTICO AQUÍ: Aplicar .trim() al ID de localStorage ***
+    // Aseguramos que sea string y luego le quitamos espacios/caracteres invisibles
+    const categoriaId = miembroDelEquipo ? String(miembroDelEquipo.categoria).trim() : '';
+
+    console.log(`%c[DEBUG marcarTecnico] Para técnico ${idTecnico}:`, 'color: #007bff; font-weight: bold;');
+    console.log(`%c  - ID de categoría de localStorage (categoriaId) (¡TRIMEADO!): '${categoriaId}' (Tipo: ${typeof categoriaId})`, 'color: #007bff;');
+
+    console.log("%c  - Contenido completo de listaCategorias (global) JUSTO ANTES DE FIND:", 'color: #28a745; font-weight: bold;', JSON.parse(JSON.stringify(listaCategorias || [])));
+
+    const categoriaInfo = listaCategorias.find(c => {
+        // *** CAMBIO CRÍTICO AQUÍ: Aplicar .trim() al ID de la categoría de listaCategorias ***
+        const trimmed_c_id = String(c.id).trim(); // Aseguramos que sea string y luego le quitamos espacios/caracteres invisibles
+
+        console.log(`%c    > Comparando elemento TRIMEADO '${trimmed_c_id}' (Tipo: ${typeof trimmed_c_id}) con ID buscado TRIMEADO '${categoriaId}' (Tipo: ${typeof categoriaId})`, 'color: #ffc107;');
+        const comparisonResult = (trimmed_c_id == categoriaId); // La comparación ahora debería funcionar
+        const strictComparisonResult = (trimmed_c_id === categoriaId);
+        console.log(`%c      Resultado (==): ${comparisonResult}, Resultado (===): ${strictComparisonResult}`, 'color: #ffc107;');
+        return comparisonResult;
+    });
+
+    console.log(`%c[DEBUG marcarTecnico] Resultado FINAL de la búsqueda en listaCategorias para ID '${categoriaId}':`, 'color: #dc3545; font-weight: bold;', categoriaInfo);
+
+    const nombreCategoria = categoriaInfo
+        ? `(${categoriaInfo.nombreDepartamento || categoriaInfo.nombre || 'Categoría no definida'})`
+        : '';
+    console.log(`%c[DEBUG marcarTecnico] Nombre final de categoría a mostrar: '${nombreCategoria}'`, 'color: #6f42c1; font-weight: bold;');
 
     contenedorAcciones.innerHTML = `
-        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idContacto}">
+        <div class="text-success fw-semibold d-flex align-items-center justify-content-end es-equipo" data-id="${idTecnico}" data-categoria="${categoriaId}" data-username="${username}">
             <i class="bi bi-check-circle-fill me-2"></i>
-            Parte de tu equipo
+            Parte de tu equipo ${nombreCategoria}
             <button class="btn text-danger btn-remover" title="Eliminar del equipo" style="border: none; background: none; font-size: 2.4rem; line-height: 1; padding: 0 0.5rem; font-weight: bold;">&times;</button>
         </div>
     `;
 
-    // Reconfigurar eventos para los botones de editar y eliminar
+    // *** NUEVO LOG AQUÍ ***
+    console.log(`%c[DEBUG marcarTecnico] HTML FINAL insertado para técnico ${idTecnico}:`, 'color: #008000; font-weight: bold;', contenedorAcciones.innerHTML);
+
+    // Asignar eventos a los botones
     const editarBtn = contenedorAcciones.querySelector(".editar");
     const eliminarBtn = contenedorAcciones.querySelector(".eliminar");
     const removerBtn = contenedorAcciones.querySelector(".btn-remover");
 
     if (editarBtn) {
         editarBtn.addEventListener("click", () => {
-            const contacto = listaContactos.find(c => c.id == idContacto);
-            if (contacto) {
+            const tecnico = listaTecnicos.find(t => t.id == idTecnico);
+            if (tecnico) {
                 AbrirModalEditar(
-                    contacto.id,
-                    contacto.Nombre,
-                    contacto["Correo Electrónico"] || contacto["Correo Elect."],
-                    contacto["Número de tel."],
-                    contacto.Foto
+                    tecnico.id,
+                    tecnico.Nombre,
+                    tecnico["Correo Electrónico"] || tecnico["Correo Elect."],
+                    tecnico["Número de tel."],
+                    tecnico.Foto
                 );
             }
         });
@@ -1817,10 +2028,10 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
 
     if (eliminarBtn) {
         eliminarBtn.addEventListener("click", () => {
-            const contacto = listaContactos.find(c => c.id == idContacto);
-            if (contacto) {
+            const tecnico = listaTecnicos.find(t => t.id == idTecnico);
+            if (tecnico) {
                 Swal.fire({
-                    title: `¿Eliminar a ${contacto.Nombre}?`,
+                    title: `¿Eliminar a ${tecnico.Nombre}?`,
                     text: "Esta acción no se puede deshacer.",
                     icon: "warning",
                     showCancelButton: true,
@@ -1830,7 +2041,7 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
                     cancelButtonText: "Cancelar"
                 }).then(result => {
                     if (result.isConfirmed) {
-                        eliminarContacto(idContacto);
+                        eliminarTecnico(idTecnico);
                     }
                 });
             }
@@ -1839,13 +2050,56 @@ function marcarContactoComoAñadidoVisual(idContacto, contenedorAcciones) {
 
     if (removerBtn) {
         removerBtn.addEventListener("click", () => {
-            removerDelEquipo(idContacto);
+            removerDelEquipo(idTecnico);
         });
     }
 }
 
-// CORRECCIÓN 7: Función para remover del equipo
-function removerDelEquipo(idContacto) {
+// CORRECCIÓN: Función obtenerTecnicos simplificada
+async function obtenerTecnicos() {
+    const contenedor = document.getElementById("lista-tecnicos");
+    if (!contenedor) return;
+
+    // Mostrar indicador de carga
+    contenedor.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando técnicos...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando técnicos...</p>
+        </div>
+    `;
+
+    try {
+        const res = await fetch(API_URL);
+
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+
+        const data = await res.json();
+        listaTecnicos = data; // Actualizar la lista global
+        console.log("Técnicos cargados:", listaTecnicos);
+
+        // Mostrar datos Y restaurar estado automáticamente
+        mostrarDatos(data);
+
+        return data;
+    } catch (error) {
+        console.error("Error al obtener técnicos:", error);
+        contenedor.innerHTML = `
+            <div class="alert alert-danger">
+                Error al cargar los técnicos. Por favor, intenta nuevamente.
+                <button class="btn btn-sm btn-outline-danger ms-2" onclick="obtenerTecnicos()">
+                    Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+// CORRECCIÓN: Función para remover técnico del equipo
+function removerDelEquipo(idTecnico) {
     Swal.fire({
         title: '¿Remover del equipo?',
         text: 'Esta persona ya no formará parte de tu equipo de trabajo.',
@@ -1858,10 +2112,10 @@ function removerDelEquipo(idContacto) {
     }).then((result) => {
         if (result.isConfirmed) {
             // Actualizar storage
-            actualizarEquipoEnStorage(idContacto, "eliminar");
+            actualizarEquipoEnStorage(idTecnico, "eliminar");
 
             // Refrescar la vista
-            obtenerContactos();
+            obtenerTecnicos();
 
             Swal.fire({
                 icon: 'success',
@@ -1874,37 +2128,51 @@ function removerDelEquipo(idContacto) {
     });
 }
 
-function guardarDatosPaso2() {
-    // Obtener todos los contactos que están marcados como parte del equipo
+function guardarDatosPaso3() {
+    // Obtener todos los técnicos que están marcados como parte del equipo
     const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
-    const ids = Array.from(equipoActual).map(el => el.dataset.id);
 
-    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+    // Mapear los elementos para crear un array de objetos con id y categoría
+    const miEquipoCompleto = Array.from(equipoActual).map(el => ({
+        id: el.dataset.id,
+        categoria: el.dataset.categoria,
+        username: el.dataset.username
+    }));
+
+    // ¡Cambio clave aquí! Guardar el array de objetos en localStorage
+    localStorage.setItem("miEquipo", JSON.stringify(miEquipoCompleto));
+
+    console.log("Datos del equipo guardados en localStorage:", miEquipoCompleto);
 }
 
-// Departamentos
-function restaurarDatosPaso2() {
-    obtenerCategorias()
+function restaurarDatosPaso3() {
+    const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+    equipo.forEach(({ id }) => {
+        const cont = document.getElementById(`acciones-${id}`);
+        if (cont) {
+            marcarTecnicoComoAñadidoVisual(id, cont, true);
+        }
+    });
 }
 
 // Función mejorada para el buscador
-function inicializarBuscadorDeContactos() {
-    const inputBusqueda = document.getElementById("busquedaContacto");
+function inicializarBuscadorDeTecnicos() {
+    const inputBusqueda = document.getElementById("busquedaTecnico");
     const botonBuscar = document.getElementById("btnBuscar");
 
     if (!inputBusqueda || !botonBuscar) return;
 
     // Función de filtrado mejorada
-    const filtrarContactos = () => {
+    const filtrarTecnicos = () => {
         const query = inputBusqueda.value.trim().toLowerCase();
-        const filas = document.querySelectorAll(".contacto-fila");
+        const filas = document.querySelectorAll(".tecnico-fila");
 
-        let contactosVisibles = 0;
+        let tecnicosVisibles = 0;
 
         filas.forEach(fila => {
-            const nombre = fila.querySelector(".nombre-contacto")?.textContent.toLowerCase() || "";
-            const correo = fila.querySelector(".correo-contacto")?.textContent.toLowerCase() || "";
-            const telefono = fila.querySelector(".telefono-contacto")?.textContent.toLowerCase() || "";
+            const nombre = fila.querySelector(".nombre-tecnico")?.textContent.toLowerCase() || "";
+            const correo = fila.querySelector(".correo-tecnico")?.textContent.toLowerCase() || "";
+            const telefono = fila.querySelector(".telefono-tecnico")?.textContent.toLowerCase() || "";
 
             // Buscar en todos los campos
             const coincide = query === "" ||
@@ -1914,22 +2182,21 @@ function inicializarBuscadorDeContactos() {
 
             if (coincide) {
                 fila.style.display = "flex";
-                contactosVisibles++;
+                tecnicosVisibles++;
             } else {
                 fila.style.display = "none";
             }
         });
 
         // Mostrar mensaje si no hay resultados
-        mostrarMensajeResultados(contactosVisibles, query);
+        mostrarMensajeResultados(tecnicosVisibles, query);
     };
 
     // Asignar nuevos eventos
-    botonBuscar.addEventListener("click", filtrarContactos);
-    inputBusqueda.addEventListener("keyup", filtrarContactos);
+    botonBuscar.addEventListener("click", filtrarTecnicos);
+    inputBusqueda.addEventListener("keyup", filtrarTecnicos);
 }
 
-// CORRECCIÓN 1: Función para limpiar caracteres especiales en nombres
 function limpiarTexto(texto) {
     if (!texto) return "";
 
@@ -1944,58 +2211,219 @@ function accionSiguientePaso() {
     siguientePaso();
 }
 
-//---------------------------------- PASO 3 ----------------------------------
+//---------------------------------- PASO 4 ----------------------------------
 
-function guardarDatosPaso3() {
-    // Obtener todos los contactos que están marcados como parte del equipo
-    const equipoActual = document.querySelectorAll('.es-equipo[data-id]');
-    const ids = Array.from(equipoActual).map(el => el.dataset.id);
+function restaurarDatosPaso4() {
+    console.log("[restaurarDatosPaso4] Iniciando restauración de datos del Paso 4.");
 
-    sessionStorage.setItem("miEquipo", JSON.stringify(ids));
+    // 1. Recuperar datos de localStorage
+    const datosPaso1 = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
+    const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+    const contenedor = document.getElementById("lista-integrantes-paso4");
+    if (!contenedor) {
+        console.error("[restaurarDatosPaso4] 'lista-integrantes-paso4' no encontrado.");
+        return;
+    }
+
+    // 2. Mostrar datos de empresa (con valor por defecto)
+    const defaultEmpresa = "H2C - Help To Comply";
+    const nombreEmpresa = datosPaso1.empresaNombre?.trim() || defaultEmpresa;
+    document.getElementById("displayNombreEmpresa").textContent = nombreEmpresa;
+
+    document.getElementById("displayCorreoEmpresa").textContent =
+        datosPaso1.correoEmpresa?.trim() || "N/A";
+
+    const telEmpRaw = datosPaso1.telefonoEmpresa?.trim() || "";
+    document.getElementById("displayTelefonoEmpresa").textContent =
+        telEmpRaw ? formatoLegibleTelefono(telEmpRaw) : "N/A";
+
+    const sitio = datosPaso1.sitioWeb?.trim();
+    const dispWeb = document.getElementById("displaySitioWebEmpresa");
+    if (dispWeb) {
+        if (sitio) {
+            const href = sitio.match(/^https?:\/\//) ? sitio : `https://${sitio}`;
+            dispWeb.innerHTML = `<a href="${href}" target="_blank" rel="noopener">${sitio}</a>`;
+        } else {
+            dispWeb.textContent = "N/A";
+        }
+    }
+
+    // 3. Mostrar datos del administrador
+    document.getElementById("displayNombreAdmin").textContent =
+        datosPaso1.adminNombre?.trim() || "N/A";
+    document.getElementById("displayCorreoAdmin").textContent =
+        datosPaso1.adminCorreo?.trim() || "N/A";
+
+    const telAdminRaw = datosPaso1.telefonoAdmin?.trim() || "";
+    document.getElementById("displayTelefonoAdmin").textContent =
+        telAdminRaw ? formatoLegibleTelefono(telAdminRaw) : "N/A";
+
+    // 4. Agrupar técnicos por categoría
+    const grupos = {};
+    equipoGuardado.forEach(({ id, categoria }) => {
+        const t = listaTecnicos.find(x => x.id == id);
+        if (!t) return;
+        const catObj = listaCategorias.find(c => c.id == categoria);
+        const catNombre = catObj?.nombreDepartamento || catObj?.nombre || "Sin categoría";
+        if (!grupos[catNombre]) grupos[catNombre] = [];
+        grupos[catNombre].push(t);
+    });
+
+    // 5. Colores fijos (hex) según tu paleta
+    const catColors = {
+        "Redes": "#0D122B",
+        "Gestión de Usuarios": "#6a040f",
+        "Incidentes críticos": "#dc2f02",
+        "Gestión de Usuarios": "#f48c06",
+        "Soporte Técnico": "#ffba08"
+    };
+    const defaultColor = "#ffba08";
+
+    // 6. Construir el HTML
+    let html = "";
+
+    if (Object.keys(grupos).length === 0) {
+        html = `
+      <div class="alert alert-info text-center">
+        No hay integrantes agregados al equipo.
+      </div>
+    `;
+    } else {
+        Object.keys(grupos).sort().forEach(catNombre => {
+            const color = catColors[catNombre] || defaultColor;
+
+            // Título de sección con color
+            html += `
+        <div class="mb-4">
+          <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
+            ${catNombre}
+          </h5>
+      `;
+
+            grupos[catNombre].forEach(tecnico => {
+                const foto = tecnico.Foto?.trim()
+                    ? tecnico.Foto
+                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                const correo = tecnico["Correo Electrónico"] || tecnico.Correo || "N/A";
+                const telefono = tecnico["Número de tel."] || tecnico.Telefono || "";
+
+                html += `
+          <div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
+            <div class="row g-0 align-items-center">
+
+              <div class="col-auto p-3">
+                <img 
+                  src="${foto}" 
+                  alt="Foto de ${tecnico.Nombre}" 
+                  class="rounded-circle"
+                  width="56" height="56"
+                >
+              </div>
+
+              <div class="col px-3">
+                <h6 class="mb-1">${tecnico.Nombre}</h6>
+                <p class="mb-1 text-muted small">
+                  <i class="bi bi-envelope-at" style="color: #dc2f02;"></i>  ${correo}
+                </p>
+                <p class="mb-0 text-muted small">
+                  <i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
+                </p>
+              </div>
+
+              <div class="col-auto pe-3">
+                <i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
+              </div>
+
+            </div>
+          </div>
+        `;
+            });
+
+            html += `</div>`;
+        });
+    }
+
+    // 7. Inyectar en el DOM
+    contenedor.innerHTML = html;
+    console.log("[restaurarDatosPaso4] Renderizado completado.");
 }
 
-function restaurarDatosPaso3() {
-    const equipo = JSON.parse(sessionStorage.getItem("miEquipo") || "[]");
 
-    if (equipo.length === 0) return;
+/**
+ * Formatea un número de teléfono pegado en bloques legibles
+ * según el prefijo de país más común en tu app.
+ * +503 → +503 XXXX-XXXX
+ * +1   → +1 (AAA) BBB-CCCC
+ * +52  → +52 AA BBBB BBBB
+ * +57  → +57 AAA BBB CCCC
+ * Otros → agrupa de 3 en 3
+ */
+function formatoLegibleTelefono(telefono) {
+    if (!telefono) return "N/A";
 
-    // Función para verificar y restaurar con reintentos
-    const verificarYRestaurar = (intentos = 0) => {
-        const contenedor = document.getElementById("lista-contactos");
+    // 1. Limpiar todo menos dígitos y '+'
+    let t = telefono.replace(/[^\d+]/g, "");
 
-        if (!contenedor) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
+    // 2. Asegurarnos de que empiece por '+'
+    if (!t.startsWith("+")) {
+        // Si viene con código 503 al inicio, lo convertimos
+        if (t.startsWith("503")) {
+            t = "+" + t;
         }
-
-        // Verificar que los contactos estén renderizados
-        const contactosRenderizados = contenedor.querySelectorAll('.contacto-fila');
-
-        if (contactosRenderizados.length === 0) {
-            if (intentos < 30) {
-                setTimeout(() => verificarYRestaurar(intentos + 1), 100);
-            }
-            return;
+        // Si son 8 dígitos puros, asumimos +503
+        else if (/^\d{8}$/.test(t)) {
+            t = "+503" + t;
         }
+        // Si no, ante la duda, anteponemos '+'
+        else {
+            t = "+" + t;
+        }
+    }
 
-        // Restaurar estado del equipo
-        setTimeout(() => {
-            restaurarEstadoEquipo();
-        }, 200);
-    };
+    // 3. Separar prefijo + resto
+    const partes = t.match(/^(\+\d{1,3})(\d+)$/);
+    if (!partes) return telefono;
+    const [, prefijo, resto] = partes;
 
-    verificarYRestaurar();
+    // 4. Dar formato según prefijo
+    switch (prefijo) {
+        case "+503": // El Salvador
+            if (resto.length === 8) {
+                return `${prefijo} ${resto.substr(0, 4)}-${resto.substr(4)}`;
+            }
+            break;
+
+        case "+1": // USA/Canadá
+            if (resto.length === 10) {
+                return `${prefijo} (${resto.substr(0, 3)}) ${resto.substr(3, 3)}-${resto.substr(6)}`;
+            }
+            break;
+
+        case "+52": // México
+            if (resto.length === 10) {
+                return `${prefijo} ${resto.substr(0, 2)} ${resto.substr(2, 4)} ${resto.substr(6)}`;
+            }
+            break;
+
+        case "+57": // Colombia
+            if (resto.length === 10) {
+                return `${prefijo} ${resto.substr(0, 3)} ${resto.substr(3, 3)} ${resto.substr(6)}`;
+            }
+            break;
+    }
+
+    // 5. Fallback genérico: agrupar de 3 en 3
+    const grupos = resto.match(/.{1,3}/g) || [resto];
+    return `${prefijo} ${grupos.join(" ")}`;
 }
 
 // Función para inicializar componentes específicos de cada paso
-function inicializarComponentesPaso(paso) {
-    fetch(`pasosPrimerUso/paso${paso}.html`)
+function inicializarComponentesPaso(pasoActualGlobal) {
+    fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`)
         .then(res => res.text())
         .then(html => {
             document.getElementById("contenido-dinamico").innerHTML = html;
-            document.getElementById("paso-actual").textContent = paso;
+            document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPaso();
 
             setTimeout(() => {
@@ -2003,10 +2431,10 @@ function inicializarComponentesPaso(paso) {
 
                 requestAnimationFrame(() => {
                     // Ejecutar funciones específicas según el paso
-                    if (paso === 1) {
+                    if (pasoActualGlobal === 1) {
                         restaurarDatosPaso1();
                     }
-                    if (paso === 2) {
+                    if (pasoActualGlobal === 2) {
                         // IMPORTANTE: Ejecutar initPaso2() antes de restaurar datos
                         initPaso2();
                         // Restaurar datos después de que se hayan cargado las categorías
@@ -2015,15 +2443,11 @@ function inicializarComponentesPaso(paso) {
                         }, 500); // Dar tiempo para que se carguen las categorías
 
                     }
-                    if (paso === 3) {
+                    if (pasoActualGlobal === 3) {
                         // IMPORTANTE: Ejecutar initPaso3() antes de restaurar datos
                         initPaso3();
-                        // Restaurar datos después de que se hayan cargado los contactos
-                        setTimeout(() => {
-                            restaurarDatosPaso3();
-                        }, 500); // Dar tiempo para que se carguen los contactos
                     }
-                    if (paso === 4) {
+                    if (pasoActualGlobal === 4) {
                         restaurarDatosPaso4();
                     }
                 });
@@ -2033,46 +2457,51 @@ function inicializarComponentesPaso(paso) {
     // Mostrar/ocultar botón atrás
     const btnAtras = document.getElementById("btn-atras");
     if (btnAtras) {
-        btnAtras.style.display = paso === 1 ? "none" : "inline-flex";
+        btnAtras.style.display = pasoActualGlobal === 1 ? "none" : "inline-flex";
     }
 }
 
-// NUEVA - Función principal unificada para navegar entre pasos
-function navegarAPaso(numeroPaso) {
-    const paso = parseInt(numeroPaso);
+// Función principal unificada para navegar entre pasos (usada por botones "Modificar", "Añadir Miembro", etc.)
+function navegarAPaso(numeroPasoDestino) {
+    const pasoInt = parseInt(numeroPasoDestino);
 
-    if (paso < 1 || paso > 3) {
-        console.error('Número de paso inválido:', paso);
+    // Valida el rango de pasos. Asegúrate de que el Paso 4 esté incluido.
+    if (pasoInt < 1 || pasoInt > 4) { // Si tienes 4 pasos, el máximo es 4
+        console.error('Número de paso inválido:', pasoInt);
         return;
     }
 
-    fetch(`pasosPrimerUso/paso${paso}.html`)
+    // *** ¡FUNDAMENTAL! Actualizar la variable global con el paso de destino ***
+    pasoActualGlobal = pasoInt;
+
+    fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`) // Usa la variable global actualizada
         .then(res => {
             if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
+                throw new Error(`HTTP error! status: ${res.status} `);
             }
             return res.text();
         })
         .then(html => {
-            document.getElementById("main").innerHTML = html;
+            // *** ¡IMPORTANTE! Usar el mismo contenedor que cargarPaso() ***
+            document.getElementById("contenido-dinamico").innerHTML = html; // Antes era "main"
 
-            // Actualizar paso actual si existe la variable
-            if (typeof pasoActual !== 'undefined') {
-                pasoActual = paso;
-            }
+            // Actualizar el texto del número de paso
+            document.getElementById("paso-actual").textContent = pasoActualGlobal;
 
-            // Usar las funciones existentes
-            actualizarIndicadorPaso(paso);
-            inicializarComponentesPaso(paso);
+            // Llama a la función unificada para actualizar el indicador visual
+            actualizarIndicadorPasoVisual();
+
+            // Asegúrate de que 'inicializarComponentesPaso' maneje la lógica de cada paso
+            inicializarComponentesPaso(pasoActualGlobal); // Pasa el paso actual
 
             window.scrollTo({ top: 0, behavior: "smooth" });
-            console.log(`Navegado al paso ${paso} exitosamente`);
+            console.log(`Navegado al paso ${pasoActualGlobal} exitosamente`);
         })
         .catch(err => {
             console.error("Error al cargar paso:", err);
             Swal.fire({
                 title: "Error",
-                text: `No se pudo cargar el paso ${paso}. Verifica que el archivo existe.`,
+                text: `No se pudo cargar el paso ${pasoActualGlobal}. Verifica que el archivo existe.`,
                 icon: "error",
                 confirmButtonText: "Entendido"
             });
@@ -2080,7 +2509,6 @@ function navegarAPaso(numeroPaso) {
 }
 
 document.addEventListener("click", function (e) {
-    // Detectar navegación específica (para botones del paso 3)
     const botonNavegar = e.target.closest("[data-navegar-paso]");
     if (botonNavegar) {
         const pasoDestino = botonNavegar.dataset.navegarPaso;
@@ -2088,19 +2516,9 @@ document.addEventListener("click", function (e) {
         return;
     }
 
-    // Detectar navegación general (botones "Modificar", etc.)
     const boton = e.target.closest("[data-paso]");
     if (boton) {
-        const paso = boton.dataset.paso;
-        navegarAPaso(paso);
+        const pasoDestino = boton.dataset.paso;
+        navegarAPaso(pasoDestino);
     }
 });
-
-// OPCIONAL - Funciones específicas para mayor claridad
-function regresarAPaso1() {
-    navegarAPaso(1);
-}
-
-function regresarAPaso2() {
-    navegarAPaso(2);
-}

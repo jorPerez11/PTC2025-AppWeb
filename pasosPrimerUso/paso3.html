@@ -137,7 +137,7 @@
         <!-- Sección de búsqueda -->
         <div id="barraBusquedaSticky">
             <div class="input-group">
-                <input type="text" id="busquedaContacto" class="form-control"
+                <input type="text" id="busquedaTecnico" class="form-control"
                     placeholder="Nombre / Correo / Número de teléfono" />
                 <button class="btn" id="btnBuscar" type="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -151,7 +151,7 @@
 
 
         <!-- Lista de Técnicos -->
-        <div id="lista-contactos" class="d-flex flex-column gap-3">
+        <div id="lista-tecnicos" class="d-flex flex-column gap-3">
             <!-- Las cards se cargarán aquí desde la API -->
             <div class="d-flex justify-content-center spinner-wrapper">
                 <div class="spinner-border text-primary" role="status">
@@ -242,6 +242,11 @@
                     <input type="text" id="correoEquipo" class="form-control mb-2" disabled>
                     <input type="text" id="telefonoEquipo" class="form-control mb-2" disabled>
 
+                    <div class="mb-3">
+                        <label for="usernameEquipo" class="form-label">Nombre de Usuario</label>
+                        <input type="text" id="usernameEquipo" class="form-control" readonly style="cursor: not-allowed;">
+                    </div>
+
                     <label for="categoriaEquipo" class="form-label mt-2">Categoría asignada</label>
                     <select id="categoriaDropdown" class="form-select" required>
                         <option value="">Selecciona una categoría</option>
@@ -256,7 +261,6 @@
             </div>
         </form>
     </dialog>
-
 
     <!-- JS -->
     <!-- intl-tel-input scripts -->

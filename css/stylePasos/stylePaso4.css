@@ -120,10 +120,178 @@ body {
     width: calc(100% - 30px);
 }
 
-.btn-Modificar{
+.btn-Modificar {
     font-weight: 500;
 }
 
-.btn-add{
+.btn-add {
     font-weight: 500;
 }
+
+/* ===== Responsive ===== */
+/* Móvil pequeño: apila vertical */
+@media (max-width: 575.98px) {
+    #lista-integrantes-paso4 .card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+
+    #lista-integrantes-paso4 .card img {
+        margin-bottom: .75rem;
+    }
+
+    #lista-integrantes-paso4 .card .d-flex.flex-column#acciones-\\d+ {
+        width: 100%;
+        flex-direction: row !important;
+        justify-content: flex-end;
+        margin-top: .75rem;
+    }
+
+    #lista-integrantes-paso4 .card .bi-check-circle-fill {
+        top: .5rem;
+        right: .5rem;
+    }
+}
+
+/* Tablet: filas comprimidas */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    #lista-integrantes-paso4 .card {
+        padding: .75rem 1rem;
+        gap: .75rem;
+    }
+
+    #lista-integrantes-paso4 .card img {
+        width: 56px;
+        height: 56px;
+    }
+
+    #lista-integrantes-paso4 .card .card-body h6 {
+        font-size: 1rem;
+    }
+
+    #lista-integrantes-paso4 .card .bi-check-circle-fill {
+        font-size: 1.4rem;
+    }
+}
+
+/* Escritorio pequeño: aprovecha más ancho */
+@media (min-width: 768px) {
+    #lista-integrantes-paso4 .card {
+        max-width: none;
+        width: 100%;
+        padding: 1rem 1.5rem;
+    }
+}
+
+/* ===== Media queries para dispositivos móviles ===== */
+@media (max-width: 576px) {
+
+    /* 1. Apilar etiqueta + valor en Paso 4 (empresa y admin) */
+    #paso4-datos-empresa .d-flex.mb-2,
+    #paso4-datos-admin .d-flex.mb-2 {
+        flex-direction: column !important;
+        align-items: flex-start;
+    }
+
+    /* 2. Hacer que la etiqueta ocupe 100%, sin min-width */
+    #paso4-datos-empresa .d-flex.mb-2>.fw-semibold,
+    #paso4-datos-admin .d-flex.mb-2>.fw-semibold {
+        min-width: auto !important;
+        width: 100%;
+        margin-bottom: .25rem;
+    }
+
+    /* 3. Hacer que el valor ocupe 100% y permita quiebre de línea */
+    #paso4-datos-empresa .d-flex.mb-2>div:not(.fw-semibold),
+    #paso4-datos-admin .d-flex.mb-2>div:not(.fw-semibold) {
+        width: 100%;
+        word-break: break-word;
+    }
+
+    /* 4. Botón “Modificar” en full width y con margen superior */
+    #paso4-datos-empresa .btn-Modificar,
+    #paso4-datos-admin .btn-Modificar {
+        width: 100%;
+        margin-top: .5rem;
+        text-align: center;
+    }
+}
+
+/* 1) Cada grupo (.mb-4) se convierte en un grid */
+/*    El H5 ocupa toda la fila, luego vienen las cards */
+#lista-integrantes-paso4 .mb-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: start;
+}
+
+/* El título de categoría (#h5) siempre en la primera fila completa */
+#lista-integrantes-paso4 .mb-4>h5 {
+    grid-column: 1 / -1;
+    font-size: 1.25rem;
+    margin-bottom: .75rem;
+    font-weight: 600;
+}
+
+/* 2) Cards estilo “bloque” */
+#lista-integrantes-paso4 .mb-4 .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: .75rem 1rem;
+    border: 1px solid #e2e6ea;
+    border-top: 4px solid var(--cat-color, #6c757d);
+    border-radius: .5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    background: #fff;
+    height: 100%;
+}
+
+/* 3) Avatar más chico */
+#lista-integrantes-paso4 .mb-4 .card img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: .5rem;
+}
+
+/* 4) Nombre, correo y teléfono compactos */
+#lista-integrantes-paso4 .mb-4 .card h6 {
+    margin: .25rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#lista-integrantes-paso4 .mb-4 .card p {
+    margin: 0;
+    font-size: .85rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+#lista-integrantes-paso4 .mb-4 .card p .bi {
+    margin-right: .4rem;
+    font-size: 1rem;
+}
+
+/* 5) Icono check en la esquina */
+#lista-integrantes-paso4 .mb-4 .card .bi-check-circle-fill {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+    font-size: 1.3rem;
+    color: var(--cat-color, #6c757d);
+}
+
+/* 6) Variables de color por categoría */
+/* Aplica esto inline cuando generes cada grupo desde JS:
+   <div class="mb-4" style="--cat-color: #dc2f02"> ... </div>
+*/

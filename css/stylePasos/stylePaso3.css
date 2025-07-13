@@ -138,7 +138,7 @@ label {
     font-weight: 500;
 }
 
-.card.contacto img {
+.card.tecnico img {
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -166,7 +166,7 @@ label {
 }
 
 /* ¡Compactá las cards como antes! */
-#lista-contactos {
+#lista-tecnicos {
     margin-top: 0;
 }
 
@@ -178,7 +178,7 @@ label {
     padding: 1rem 1rem 0.75rem;
 }
 
-#busquedaContacto {
+#busquedaTecnico {
     font-size: 1rem;
     padding: 0.6rem 1rem;
     border-radius: 0.375rem 0 0 0.375rem;
@@ -221,17 +221,17 @@ label {
     padding: 1rem;
 }
 
-.headers-contacto {
+.headers-tecnico {
     font-size: 0.875rem;
     border-bottom: 1px solid #e3e3e3;
 }
 
-#lista-contactos .row {
+#lista-tecnicos .row {
     margin-left: 0;
     margin-right: 0;
 }
 
-#lista-contactos .col {
+#lista-tecnicos .col {
     overflow: hidden;
 }
 
@@ -305,7 +305,7 @@ label {
     border-color: #0A369D;
 }
 
-#lista-contactos .row>.col {
+#lista-tecnicos .row>.col {
     display: flex;
     align-items: center;
     padding-top: 0.1rem;
@@ -319,7 +319,7 @@ label {
     text-overflow: ellipsis;
 }
 
-#lista-contactos .row {
+#lista-tecnicos .row {
     min-height: 64px;
     /* opcional si querés igualdad visual */
 }
@@ -328,22 +328,22 @@ label {
     gap: 0.5rem;
 }
 
-#lista-contactos .btn-accion.añadir {
+#lista-tecnicos .btn-accion.añadir {
     font-size: clamp(0.75rem, 0.9rem + 0.3vw, 1rem);
     padding: clamp(0.4rem, 0.5rem + 0.25vw, 0.75rem) clamp(0.75rem, 0.8rem + 0.5vw, 1.25rem);
 }
 
 
-.foto-contacto {
+.foto-tecnico {
     width: clamp(52px, 6vw, 68px);
     height: clamp(52px, 6vw, 68px);
     object-fit: cover;
     background-color: #f3f3f3;
 }
 
-.nombre-contacto,
-.correo-contacto,
-.telefono-contacto {
+.nombre-tecnico,
+.correo-tecnico,
+.telefono-tecnico {
     padding: 0;
     margin: 0;
     line-height: 1.4;
@@ -351,7 +351,7 @@ label {
     word-break: break-word;
 }
 
-.headers-contacto {
+.headers-tecnico {
     font-size: 0.875rem;
     font-weight: 600;
     color: #2D2D2D;
@@ -362,8 +362,8 @@ label {
 }
 
 /* Alinear vertical y replicar estructura */
-.headers-contacto .col,
-.headers-contacto .col-auto {
+.headers-tecnico .col,
+.headers-tecnico .col-auto {
     display: flex;
     align-items: center;
     padding-left: 0.5rem;
@@ -372,15 +372,15 @@ label {
 }
 
 /* Forzar alineación derecha en Acciones */
-.headers-contacto .text-end {
+.headers-tecnico .text-end {
     justify-content: center;
 }
 
-.headers-contacto {
+.headers-tecnico {
     font-size: large;
 }
 
-#lista-contactos .col {
+#lista-tecnicos .col {
     display: flex;
     align-items: center;
 }
@@ -575,40 +575,40 @@ dialog:not([open]) {
 }
 
 @media (max-width: 576px) {
-    .contacto-fila {
+    .tecnico-fila-fila {
         flex-direction: column !important;
         align-items: stretch !important;
         text-align: left;
     }
 
-    .contacto-fila>.col,
-    .contacto-fila>.col-auto {
+    .tecnico-fila>.col,
+    .tecnico-fila>.col-auto {
         width: 100% !important;
         flex: 0 0 auto;
         margin-bottom: 0.5rem;
     }
 
-    .contacto-fila .nombre-contacto,
-    .contacto-fila .correo-contacto,
-    .contacto-fila .telefono-contacto {
+    .tecnico-fila .nombre-tecnico,
+    .tecnico-fila .correo-tecnico,
+    .tecnico-fila .telefono-tecnico {
         font-size: 0.95rem;
         word-wrap: break-word;
     }
 
-    .contacto-fila .d-flex.justify-content-end {
+    .tecnico-fila .d-flex.justify-content-end {
         justify-content: flex-start !important;
     }
 
-    .contacto-fila .d-flex.align-items-end {
+    .tecnico-fila .d-flex.align-items-end {
         align-items: flex-start !important;
     }
 
-    .contacto-fila .acciones {
+    .tecnico-fila .acciones {
         width: 100%;
         text-align: right;
     }
 
-    .headers-contacto {
+    .headers-tecnico {
         display: flex !important;
         justify-content: center !important;
         align-items: center;
@@ -616,11 +616,11 @@ dialog:not([open]) {
         padding: 0.25rem 1rem;
     }
 
-    .headers-contacto>div {
+    .headers-tecnico>div {
         display: none !important;
     }
 
-    .headers-contacto>div:first-child {
+    .headers-tecnico>div:first-child {
         display: block !important;
         flex: 0 0 100%;
         text-align: center !important;

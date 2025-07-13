@@ -138,6 +138,11 @@ label {
     font-weight: 500;
 }
 
+.card .card-title {
+  text-decoration: none;
+  border-bottom: none;
+}
+
 .card.contacto img {
     width: 48px;
     height: 48px;
