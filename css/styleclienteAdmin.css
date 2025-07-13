@@ -9,7 +9,12 @@ body {
     height: 100%;
 }
 
-header{
+h4 {
+    background-color: #03071E;
+    color: white;
+}
+
+.header {
     background-color: #03071E;
     color: white;
 }
