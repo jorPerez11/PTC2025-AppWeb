@@ -1,0 +1,44 @@
+# Archivos del sistema operativo
+.DS_Store          # Ignora archivos de macOS
+Thumbs.db          # Ignora archivos de miniaturas de Windows
+
+# Archivos de IDEs/Editores comunes
+.idea/             # Ignora el directorio de configuración de IntelliJ IDEA
+.vscode/           # Ignora el directorio de configuración de VS Code
+*.iml              # Ignora archivos de módulo de IntelliJ
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de logs
+*.log
+npm-debug.log* # Ignora logs de npm
+yarn-debug.log* # Ignora logs de yarn
+yarn-error.log*
+
+# Directorios de dependencias o compilación (si usas frameworks de frontend como React, Angular, Vue, etc.)
+/node_modules/     # Ignora las dependencias de Node.js
+/dist/             # Ignora el directorio de salida de builds (ej. para sitios estáticos o SPAs)
+/build/            # Ignora otro directorio de salida de builds
+/out/              # Ignora otro directorio de salida
+
+# Archivos grandes o binarios que NO deben subirse a Git
+# Esto incluye los ejecutables que te dieron problemas:
+img/Postman-win64-Setup.exe # Ignora este archivo específico en la carpeta img/
+img/ideaIU-2025.1.3.exe     # Ignora este otro archivo específico en la carpeta img/
+*.exe                      # Ignora todos los archivos .exe en cualquier parte del repositorio
+*.msi                      # Ignora todos los instaladores MSI
+*.dmg                      # Ignora todas las imágenes de disco de macOS
+*.iso                      # Ignora todas las imágenes ISO
+*.zip                      # Ignora todos los archivos ZIP
+*.rar                      # Ignora todos los archivos RAR
+*.tar                      # Ignora todos los archivos TAR (comprimidos)
+*.gz                       # Ignora todos los archivos GZ (comprimidos)
+*.mp4                      # Ignora archivos de video MP4
+*.mov                      # Ignora archivos de video MOV
+*.avi                      # Ignora archivos de video AVI
+*.mp3                      # Ignora archivos de audio MP3
+*.wav                      # Ignora archivos de audio WAV
+*.psd                      # Ignora archivos de Photoshop
+*.ai                       # Ignora archivos de Illustrator
+*.db                       # Ignora archivos de base de datos local (ej. SQLite)
+*.sqlite

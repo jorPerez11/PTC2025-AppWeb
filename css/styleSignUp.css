@@ -1,0 +1,275 @@
+body{
+    font-family: "Montserrat", sans-serif;
+    padding-top: 5.5rem;
+    background-color: #000417;
+    background-image: url(../img/signUpImg/signUpBackground.png);
+    background-repeat: no-repeat;
+    background-size: 120rem;
+}
+
+.navbar{
+    background-color: #03071E;
+    transition: background-color 0.4s, box-shadow 0.4s;
+}
+
+.nav-separator{
+    border: 0;
+    height: 1px; 
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+.botonInicioSesion,
+.botonRegistro,
+.botonComenzar {
+  white-space: nowrap;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.botonComenzar{
+    color: white;
+    background-color: #DC2F02;
+}
+
+.botonComenzar:hover{
+    background-color: #FF3500;
+    color: white;
+}
+
+.botonComenzar:focus{
+    background-color: #CE2B00;
+    color: white;
+}
+
+.navbar-nav{
+    padding-right: 30px;
+}
+
+.nav-item{
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.navbar-toggler{
+   border: none;
+}
+.navbar-toggler:focus{
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus{
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro{
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover{
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus{
+   background-color: #a45d00;
+    color: white;
+}
+
+.botonInicioSesion{
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus{
+    box-shadow: none;
+}
+
+
+.navbar-brand{
+    size: 100px;
+}
+
+.nav-link{
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover{
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before{
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before{
+    width: 100%;
+}
+
+.contSign{
+    color: white;
+    background: linear-gradient(to bottom, #03071e8a, #00000084);
+    max-width: 60rem;
+    border-radius: 25px;
+    border-color: #FFFFFF;
+}
+
+.contSignText h1 {
+  font-size: 72px;
+  background: -webkit-linear-gradient(#727272, #FFFFFF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.contSignText{
+    color: white;
+}
+
+.botonRegistroV2{
+    width: auto;
+    height: auto;
+    color: white;
+    font-weight: 400;
+    background-color: #202020;
+    border-color: white;
+    border-radius: 10px;
+}
+
+.botonRegistroV2 img{
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.botonRegistroV2:hover{
+    color: white;
+    background-color: #171717;
+    border-color: white;
+}
+
+.botonRegistroV3 {
+    width: auto;
+    height: auto;
+    color: white;
+    font-weight: 400;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    background: linear-gradient(to left, #F48C06, #DC2F02);
+    transition: color 0.3s ease-in-out;
+}
+
+.botonRegistroV3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to left, #e08105, #ba2601);
+    z-index: -1;
+    opacity: 0;
+    border-radius: inherit;
+
+    transition: opacity 0.3s ease-in-out; 
+}
+
+.botonRegistroV3:hover::before {
+    opacity: 1;
+}
+
+.botonRegistroV3:hover{
+    color: white;
+    background: linear-gradient(to left, #e08105, #ba2601);
+}
+
+.hr-text{
+    line-height: 1em;
+    position: relative;
+    outline: 0;
+    border: 0;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    height: 1.5em;
+    opacity: 0.5;
+    font-size: 18px;
+}
+
+.hr-text:before{
+    content: "";
+    background: linear-gradient(to right, transparent, #ffffff, transparent);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    color: #FFFFFF;
+}
+
+.hr-text::after{
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: rgb(255, 255, 255);
+    padding: 0 0 0.5em;
+    line-height: 1.5em;
+    color: #FFFFFF;
+    background-color: #03071E;
+}
+
+.form-control{
+    font-size: 20px;
+    font-weight: 300;
+    background-color: #111111;
+    color: white;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.form-control:focus{
+    font-weight: 300;
+    background-color: #111111;
+    color: white;
+}
+
+.form-control::placeholder{
+    color: rgba(252, 252, 252, 0.276);
+}
+.footer{
+    background-color: #03071E;
+    color: white;
+}
+
+.footer a{
+    text-decoration: none;
+    color: white;
+}
+
+.footer a:hover{
+    color: rgb(205, 205, 205);
+}
+
+.footerInfo h5, p {
+    overflow-wrap: break-word; /* Versión más moderna de word-wrap */
+}
