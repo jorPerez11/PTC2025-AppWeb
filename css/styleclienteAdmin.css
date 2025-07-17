@@ -1,5 +1,9 @@
 body {
     background-color: #0D122B;
+    background-image: url(../img/clientesAdminImg/ctbackground.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     font-family: "Montserrat", sans-serif;
     margin: 0;
     padding: 0;
@@ -14,9 +18,41 @@ h4 {
     color: white;
 }
 
-.header {
+.header-container {
     background-color: #03071E;
-    color: white;
+    color: #fff;
+    padding: 0;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 93px;
+    margin-top: 85px;
+}
+
+.header {
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.header-icon {
+    padding-right: 15px;
+}
+
+.header-title {
+    flex-grow: 1;
+}
+
+.header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .navbar {
@@ -132,7 +168,7 @@ h4 {
     width: calc(100% - 30px);
 }
 
-.main-container{
+.main-container {
     padding: 20px;
     margin-top: 80px;
 }
@@ -140,4 +176,204 @@ h4 {
 .header-section {
     background-color: #03071E;
     color: white;
+}
+
+.profile-img-sm {
+    width: 40px;
+    /* Tamaño de la imagen de perfil en la tabla */
+    height: 40px;
+    object-fit: cover;
+    /* Asegura que la imagen se ajuste bien */
+    border-radius: 50%;
+    margin-right: 10px;
+    /* Espacio entre la imagen y el nombre */
+}
+
+/* Encabezados */
+.headers-usuario {
+    padding: .5rem 1rem;
+    color: white;
+}
+
+/* Alinear filas con headers */
+.usuario-card .row {
+    min-height: 64px;
+}
+
+/* Efecto hover ligero */
+.usuario-card {
+    transition: transform .1s;
+}
+
+.usuario-card:hover {
+    transform: translateY(-2px);
+}
+
+.ver-actividad {
+    color: #fff;
+}
+
+#lista-usuarios .row {
+    min-height: 64px;
+}
+
+#filter-bar-container .btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+#userCount,
+#filterCount {
+    color: #fff;
+}
+
+.filtros {
+    color: #fff;
+}
+
+/* Contenedor principal de la barra */
+.filter-bar-custom {
+    background-color: #161A34;
+    /* Un tono ligeramente diferente al fondo */
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para el conteo de usuarios */
+.user-counts {
+    color: white;
+}
+
+.user-counts div {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.user-counts small {
+    color: #a0a0a0;
+    font-weight: 300;
+}
+
+/* Contenedor y estilos del input de búsqueda */
+.search-container .form-control.search-input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding-left: 0.5rem;
+    height: 44px;
+    font-size: 1rem;
+}
+
+.search-container .form-control.search-input:focus {
+    background-color: transparent;
+    box-shadow: none;
+    color: white;
+}
+
+.search-container .form-control.search-input::placeholder {
+    color: #8c8c8c;
+}
+
+.search-container .search-icon-span {
+    background-color: transparent;
+    border: none;
+    color: #8c8c8c;
+    font-size: 1.2rem;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    color: #a0a0a0;
+}
+
+/* Línea divisora */
+.filter-divider {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Contenedor de los selectores para alinear ícono y texto */
+.filter-select-wrapper {
+    position: relative;
+    color: white;
+}
+
+.filter-select-wrapper .filter-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    /* El ícono no interfiere con el click */
+    z-index: 3;
+}
+
+/* Estilos para los selectores (dropdowns) */
+.styled-select {
+    background-color: #0D122B;
+    color: white;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    padding: 0.5rem 2.5rem 0.5rem 2.25rem;
+    /* Padding: top/bottom, right, left */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    min-width: 180px;
+    /* Ancho mínimo para que no se vean muy pequeños */
+}
+
+.styled-select:focus {
+    background-color: #0D122B;
+    color: white;
+    border-color: #F48C06;
+    /* Color de acento al hacer foco */
+    box-shadow: none;
+}
+
+.btnact {
+    padding-right: 50px;
+}
+
+@media (max-width: 576px) {
+    .header {
+        flex-wrap: wrap;
+    }
+
+    .header-title {
+        width: 100%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .header-icon {
+        width: 100%;
+        text-align: center;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Fuerza que mis col-md-X ocupen 100% */
+    .col-md-1,
+    .col-md-2,
+    .col-md-3 {
+        flex: 1 0 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Oculta headers igual que en móvil */
+    .headers-usuario {
+        display: none !important;
+    }
+
+    .btnact {
+        padding-left: 50px;
+    }
 }
