@@ -1,8 +1,13 @@
 body {
-    background-color: #0D122B;
-    background-image: url(../img/clientesAdminImg/ctbackground.png);
+    /* color al final será la capa de “respaldo” */
+    background:
+        url('../img/clientesAdminImg/ctbackground.png') no-repeat center/cover,
+        #0D122B;
+    margin: 0;
+    min-height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     background-position: center;
     font-family: "Montserrat", sans-serif;
     margin: 0;
@@ -375,5 +380,24 @@ h4 {
 
     .btnact {
         padding-left: 50px;
+    }
+}
+
+/* Para pantallas de escritorio pequeñas */
+@media (max-width: 1200px) {
+    body {
+        /* Ajusta el ancho al 100% y deja que la altura escale */
+        background-size: 100% auto;
+        /* Centra horizontalmente, pero sube un poco el foco */
+        background-position: top center;
+    }
+}
+
+/*(tablets/desktops estrechos) */
+@media (max-width: 992px) {
+    body {
+        /* Que ocupe todo el contenedor sin recortar*/
+        background-size: contain;
+        background-position: center top;
     }
 }
