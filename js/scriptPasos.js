@@ -146,6 +146,43 @@ function siguientePaso() {
         guardarDatosPaso1();
     }
 
+    if (pasoActualGlobal === 4) {
+        Swal.fire({
+            title: '¿Confirmar finalización?',
+            text: 'Casi listo… ¿Deseas confirmar los datos para finalizar la creación?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            confirmButtonColor: '#28a745',
+            cancelButtonText: 'Revisar',
+            cancelButtonColor: '#dc3545'
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            // 2.1 Guardar datos finales
+            if (typeof guardarDatosPaso4 === 'function') {
+            }
+
+            // 2.3 Mostrar mensaje de éxito final
+            Swal.fire({
+                icon: 'success',
+                title: '¡Enhorabuena!',
+                html: `
+          <p>Haz creado tu propio equipo.</p>
+          <p>puedes dirigirte al panel principal para gestionarlo</p>
+        `,
+                confirmButtonText: 'Ir al Inicio',
+                confirmButtonColor: '#28a745'
+            }).then(() => {
+                // Redirige al dashboard o página principal
+                window.location.href = './PlataformaWebInicio/PW_Inicio.html';
+            });
+        });
+
+        // Cancelamos el flujo normal para no avanzar pasos
+        return;
+    }
+
     if (pasoActualGlobal === 2) guardarDatosPaso2();
     if (pasoActualGlobal === 3) guardarDatosPaso3();
     if (pasoActualGlobal === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();

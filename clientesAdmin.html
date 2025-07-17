@@ -4,18 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/styleclienteAdmin.css">
-    <title>Clientes - Administracións</title>
+    <title>Clientes - Administración</title>
 </head>
 
 <body>
     <div class="container">
-        <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
+        <nav class="navbar fixed-top navbar-expand-xl navbar-dark navbar-expand-lg" id="navbar">
             <div class="container-fluid justify-content-between">
                 <a href="primerUso.html" class="navbar-brand mb-0 h1 mx-auto">
                     <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
@@ -124,76 +125,86 @@
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
 
-    <div class="container main-container">
-
-        <!-- Encabezado + Icono -->
-        <div class="row align-items-center mb-4 header">
-            <div class="col-auto">
-                <!-- SVG de ejemplo -->
+    <div class="container-fluid p-0 header-container">
+        <div class="row align-items-center m-0 header">
+            <div class="col-auto header-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="51" height="35" viewBox="0 0 51 35" fill="none">
                     <path
                         d="M35.2656 16.9999C39.2882 16.9999 42.7489 13.408 42.7489 8.73062C42.7489 4.10965 39.27 0.686279 35.2656 0.686279C31.2621 0.686279 27.7822 4.18433 27.7822 8.76796C27.7822 13.408 31.243 16.9999 35.2656 16.9999ZM13.7317 17.4307C17.2116 17.4307 20.2434 14.2869 20.2434 10.2269C20.2434 6.20521 17.1925 3.2299 13.7317 3.2299C10.2528 3.2299 7.18371 6.27989 7.20284 10.2652C7.20284 14.2869 10.2337 17.4307 13.7327 17.4307M3.29314 34.3244H17.5112C15.5659 31.4994 17.942 25.812 21.9646 22.7064C19.8882 21.3222 17.2116 20.293 13.7135 20.293C5.27577 20.2921 0 26.5214 0 31.7043C0 33.3891 0.935304 34.3244 3.29314 34.3244ZM23.4982 34.3244H47.0147C49.9518 34.3244 51 33.482 51 31.8354C51 27.0087 44.9565 20.3486 35.2474 20.3486C25.5565 20.3486 19.513 27.0087 19.513 31.8363C19.513 33.482 20.5603 34.3244 23.4982 34.3244Z"
                         fill="white" />
                 </svg>
             </div>
-            <div class="col">
-                <h4 class="mb-0">Todos los Clientes</h4>
+            <div class="col header-title">
+                <h4 class="mb-0">Todos los Usuarios</h4>
             </div>
         </div>
-
-        <!-- Filtro y conteo -->
-        <div class="row mb-3">
-            <div class="col-sm-6 mb-2 mb-sm-0">
-                <div class="input-group">
-                    <label class="input-group-text" for="filtroEstado">Filtrar por</label>
-                    <select class="form-select" id="filtroEstado">
-                        <option selected>Todos</option>
-                        <option value="espera">En Espera</option>
-                        <option value="proceso">En Proceso</option>
-                        <option value="cerrado">Cerrado</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-sm-6 text-sm-end">
-                <small class="text-muted">Mostrando <strong>32</strong> clientes</small>
-            </div>
-        </div>
-
-        <!-- Tabla responsive de clientes -->
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Fecha de Registro</th>
-                        <th scope="col">Solicitud</th>
-                        <th scope="col" class="text-center">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Ejemplo de fila -->
-                    <tr>
-                        <td>Juan Pérez</td>
-                        <td>juan.perez@mail.com</td>
-                        <td>01/05/2025</td>
-                        <td>
-                            <span class="badge bg-warning text-dark">En Espera</span>
-                        </td>
-                        <td class="text-center">
-                            <a href="#" class="link-primary">Ver Actividad</a>
-                        </td>
-                    </tr>
-                    <!-- Repite <tr>…</tr> para cada cliente -->
-                </tbody>
-            </table>
-        </div>
-
     </div>
 
+    <div class="container my-4">
+        <!-- A: Aquí irá la barra de filtros -->
+        <div id="filter-bar-container" class="mb-4"></div>
+
+        <!-- B: Aquí muestras las cards-->
+        <div id="lista-usuarios"></div>
+    </div>
+
+
+    <!-- Modal Ver Actividad -->
+    <div class="modal fade" id="modalVerActividad" tabindex="-1" aria-labelledby="modalVerActividadLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Ticket #<span id="lblTicketId">—</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <div class="modal-body">
+                    <dl class="row g-2">
+                        <dt class="col-sm-4">Solicitante:</dt>
+                        <dd class="col-sm-8" id="lblSolicitante">—</dd>
+
+                        <dt class="col-sm-4">Rol:</dt>
+                        <dd class="col-sm-8 d-flex align-items-center">
+                            <span id="lblRol">—</span>
+                            <button class="btn btn-link btn-sm ms-2">Cambiar rol</button>
+                        </dd>
+
+                        <dt class="col-sm-4">Asunto:</dt>
+                        <dd class="col-sm-8" id="lblAsunto">—</dd>
+
+                        <dt class="col-sm-4">Creación:</dt>
+                        <dd class="col-sm-8" id="lblCreacion">—</dd>
+
+                        <dt class="col-sm-4">Técnico encargado:</dt>
+                        <dd class="col-sm-8 d-flex align-items-center">
+                            <span id="lblTecnico">—</span>
+                            <button class="btn btn-link btn-sm ms-2">Cambiar usuario</button>
+                        </dd>
+
+                        <dt class="col-sm-4">Estado de Ticket:</dt>
+                        <dd class="col-sm-8 d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                            <span id="lblEstado">—</span>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-…"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
+    <script src="js/scriptAdmin.js"></script>
 </body>
 
 </html>
