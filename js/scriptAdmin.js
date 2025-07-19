@@ -36,7 +36,7 @@ function renderFilterBar() {
                 <i class="bi bi-search"></i>
             </span>
             <input type="text" id="busquedaUsuario" class="form-control search-input" placeholder="Buscar Usuario / Email / ID">
-            <button class="btn btn-outline-secondary d-none" id="btnBuscar"></button>
+            <button class="btn btn-outline-danger d-none" id="btnBuscar"></button>
           </div>
         </div>
 
@@ -257,19 +257,64 @@ async function abrirModalVerActividad(userId) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Status ${res.status}`);
     const u = await res.json();
-    document.getElementById('lblTicketId').textContent = u.id;
+    document.getElementById('lblTicketId').innerHTML = `<strong>${u.id}</strong>`;
     document.getElementById('lblSolicitante').textContent = u.nombre || '—';
-    document.getElementById('lblAsunto').textContent = u.solicitud || '—';
     const fecha = new Date(u.registroDate);
-    document.getElementById('lblCreacion').textContent = isNaN(fecha) ? '—' : fecha.toLocaleDateString('es-ES');
+    document.getElementById('lblCreacion').textContent = isNaN(fecha)
+      ? '—'
+      : fecha.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
     document.getElementById('lblRol').textContent = 'Cliente';
     document.getElementById('lblTecnico').textContent = 'Fernando Velásquez';
-    document.getElementById('lblEstado').textContent = u.solicitud || 'En Espera';
+    document.getElementById('lblSolicitante').classList.add('fw-semibold');
+    document.getElementById('lblRol').classList.add('fw-semibold');
+    mostrarCreacion(u.registroDate, u.solicitud);
+    // Estado de ticket con icono y color
+    mostrarEstado(u.solicitud);
     new bootstrap.Modal(document.getElementById('modalVerActividad')).show();
   } catch (err) {
     console.error('Error cargando usuario:', err);
     alert('No se pudo cargar la actividad. Intenta de nuevo.');
   }
+}
+
+// Mapa de estado → [claseIcono, claseColor]
+const statusIconMap = {
+  'Abierto': ['bi-exclamation-circle', 'text-danger'],       // ❗ rojo
+  'En Proceso': ['bi-grid', 'text-warning'],                 // 🔲 naranja
+  'Cerrado': ['bi-check-circle', 'text-success'],            // ✅ verde
+  'En Espera': ['bi-clock', 'text-warning']                  // ⏰ naranja
+};
+
+// Inyecta el icono de creación + fecha
+function mostrarCreacion(fechaStr, estado) {
+  const [_, color] = statusIconMap[estado] || ['bi-question-circle', 'text-muted'];
+  const fechaFormateada = fechaStr
+    ? new Date(fechaStr).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+    : '—';
+
+  const el = document.getElementById('lblCreacion');
+  el.innerHTML = `
+    <span class="">${fechaFormateada}</span>
+    <i class="bi bi-calendar2-week ${color} ms-2"></i>
+  `;
+}
+
+// Inyecta el icono de estado + texto con color
+function mostrarEstado(estado) {
+  const [icono, color] = statusIconMap[estado] || ['bi-question-circle', 'text-muted'];
+  const el = document.getElementById('lblEstadoTicket');
+  el.innerHTML = `
+    <span class="${color}">${estado || '—'}</span>
+    <i class="bi ${icono} ${color} ms-2"></i>
+  `;
 }
 
 document.addEventListener('DOMContentLoaded', initUsuarios);
