@@ -1,8 +1,7 @@
 body {
-    /* color al final será la capa de “respaldo” */
     background:
-        url('../img/clientesAdminImg/ctbackground.png') no-repeat center/cover,
-        #0D122B;
+        url('../img/clientesAdminImg/Tcbackground.png') no-repeat center/cover,
+        #fff;
     margin: 0;
     min-height: 100vh;
     background-size: cover;
@@ -197,7 +196,7 @@ h4 {
 /* Encabezados */
 .headers-usuario {
     padding: .5rem 1rem;
-    color: white;
+    color: black;
 }
 
 /* Alinear filas con headers */
@@ -214,7 +213,7 @@ h4 {
     transform: translateY(-2px);
 }
 
-.ver-actividad {
+.ver-mas {
     color: #fff;
 }
 
@@ -228,25 +227,27 @@ h4 {
 
 #userCount,
 #filterCount {
-    color: #fff;
+    color: black;
 }
 
 .filtros {
     color: #fff;
 }
 
-/* Contenedor principal de la barra */
 .filter-bar-custom {
-    background-color: #161A34;
-    /* Un tono ligeramente diferente al fondo */
+    background-color: #ffffff;
+    /* Fondo blanco */
     padding: 1rem 1.5rem;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e0e0e0;
+    /* Borde gris muy claro */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* Sombra sutil */
 }
 
 /* Estilos para el conteo de usuarios */
 .user-counts {
-    color: white;
+    color: black;
 }
 
 .user-counts div {
@@ -304,14 +305,13 @@ dd {
 
 /* Encabezado personalizado */
 .modal-header-custom {
+    position: relative;
+    /* Requerido para posicionar el botón 'X' */
     display: flex;
     justify-content: center;
-    /* Centra el título */
     align-items: center;
-    padding: 1.5rem 1.5rem 1rem 1.5rem;
-    position: relative;
-    border-bottom: none;
-    /* Sin línea en el encabezado */
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
 }
 
 /* Título del modal */
@@ -323,19 +323,19 @@ dd {
 }
 
 /* Botón de cerrar (X) en la esquina */
-#modalVerActividad .btn-close {
+#modalVermas .btn-close {
     position: absolute;
     top: 1.5rem;
     right: 1.5rem;
 }
 
 /* Cuerpo del modal */
-#modalVerActividad .modal-body {
+#modalVermas .modal-body {
     padding: 0.5rem 1.5rem 2rem 1.5rem;
 }
 
 /* Estilo para los títulos de cada campo (ej: "Solicitante:") */
-#modalVerActividad dt {
+#modalVermas dt {
     font-weight: 600;
     /* Peso de fuente medio */
     color: #000000;
@@ -344,7 +344,7 @@ dd {
 }
 
 /* Estilo para los valores de cada campo*/
-#modalVerActividad dd {
+#modalVermas dd {
     font-weight: 500;
     color: #000000;
     /* Negro suave */
@@ -359,7 +359,7 @@ dd {
 }
 
 /* Estilo para los enlaces "Cambiar rol" */
-#modalVerActividad .btn-link {
+#modalVermas .btn-link {
     font-size: 0.8rem;
     font-weight: 600;
     padding: 0 0 0 0.5rem;
@@ -368,15 +368,22 @@ dd {
 }
 
 .user-counts small {
-    color: #a0a0a0;
-    font-weight: 300;
+    color: black;
+    font-weight: 500;
+}
+
+/* Contenedor del input de búsqueda */
+.search-container {
+    border-bottom: 1px solid #ced4da;
+    /* Línea inferior para el campo de búsqueda */
 }
 
 /* Contenedor y estilos del input de búsqueda */
 .search-container .form-control.search-input {
     background-color: transparent;
     border: none;
-    color: white;
+    color: #212529;
+    /* Color de texto oscuro */
     padding-left: 0.5rem;
     height: 44px;
     font-size: 1rem;
@@ -385,7 +392,8 @@ dd {
 .search-container .form-control.search-input:focus {
     background-color: transparent;
     box-shadow: none;
-    color: white;
+    color: #212529;
+    /* Color de texto oscuro */
 }
 
 .search-container .form-control.search-input::placeholder {
@@ -406,7 +414,8 @@ dd {
 
 /* Línea divisora */
 .filter-divider {
-    border-color: rgba(255, 255, 255, 0.15);
+    border-color: #8c8c8c;
+    /* Color más claro para la división */
     margin-top: 1rem;
     margin-bottom: 1.25rem;
 }
@@ -414,48 +423,61 @@ dd {
 /* Contenedor de los selectores para alinear ícono y texto */
 .filter-select-wrapper {
     position: relative;
-    color: white;
+    color: #333;
+    /* Color de texto oscuro para los íconos */
 }
 
-.filter-select-wrapper .filter-icon {
+.filter-select-wrapper .filter-icon-1,
+.filter-select-wrapper .filter-icon-2 {
     position: absolute;
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    /* El ícono no interfiere con el click */
     z-index: 3;
+}
+
+.filter-icon-1 {
+    color: #DC2F02;
+}
+
+.filter-icon-2 {
+    color: #F48C06;
 }
 
 /* Estilos para los selectores (dropdowns) */
 .styled-select {
-    background-color: #0D122B;
-    color: white;
-    border: 1px solid #4a4a4a;
+    background-color: white;
+    /* Fondo blanco */
+    color: black;
+    border: 1px solid #ced4da;
+    /* Borde gris estándar */
     border-radius: 6px;
-    padding: 0.5rem 2.5rem 0.5rem 2.25rem;
-    /* Padding: top/bottom, right, left */
+    padding: 0.5rem 2.5rem 0.5rem 2.5rem;
+    /* Ajuste de padding para el ícono */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    /* Ícono de flecha hacia abajo en color negro */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 16px 12px;
     min-width: 180px;
-    /* Ancho mínimo para que no se vean muy pequeños */
 }
 
 .styled-select:focus {
-    background-color: #0D122B;
-    color: white;
+    background-color: white;
+    /* Mantenemos fondo blanco en foco */
+    color: black;
     border-color: #F48C06;
     /* Color de acento al hacer foco */
-    box-shadow: none;
+    box-shadow: 0 0 0 0.25rem rgba(244, 140, 6, 0.25);
+    /* Sombra de foco a juego */
 }
 
 .btnact {
-    padding-right: 50px;
+    padding-right: 10px;
 }
 
 @media (max-width: 576px) {
@@ -475,15 +497,55 @@ dd {
         padding-right: 0;
     }
 
-    #modalVerActividad .modal-body .ticket-separator dt {
+    /* 1) Convierto la tarjeta en columna para móvil */
+    .usuario-card {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: .75rem 1rem;
+    }
+
+    /* 2) Cada celda ocupa 100% de ancho */
+    .usuario-card>div {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding: .25rem 0 !important;
+    }
+
+    /* 3) La imagen: centrada y algo de margen */
+    .usuario-card img {
+        margin: 0 auto .5rem;
+    }
+
+    /* 4) El asunto: permito que rompa línea */
+    .usuario-card .px-2 {
+        white-space: normal !important;
+        word-break: break-word !important;
+    }
+
+    /* 5) El botón “Ver más” a todo ancho */
+    .usuario-card .btnact {
+        margin-top: .5rem;
+        width: 100%;
+    }
+
+    .usuario-card .btnact .ver-mas {
+        width: 100%;
+    }
+
+    #modalVermas dt,
+    #modalVermas dd {
+        font-size: 0.9rem;
+    }
+
+    #modalVermas .modal-body dt {
         margin-bottom: 0.5rem;
     }
 
-    #modalVerActividad .modal-body .ticket-separator dd {
+    #modalVermas .modal-body dd {
         margin-left: 1rem;
         margin-bottom: 1rem;
     }
-
 }
 
 @media (max-width: 768px) {
@@ -502,7 +564,7 @@ dd {
     }
 
     .btnact {
-        padding-left: 50px;
+        padding-left: 10px;
     }
 }
 
