@@ -1068,3 +1068,19 @@ html {
     }
 
 }
+
+@media (max-width: 576px) {
+  .main-title,
+  .main-phrase {
+    font-size: 1.4rem;                  /* aprox. 22px */
+    margin: 0 1rem;                     /* margen relativo y equilibrado */
+    max-width: calc(100% - 2rem);       /* nunca más ancho que el viewport */
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  .main-title {
+    display: block;
+  }
+}
