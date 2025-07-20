@@ -1,0 +1,529 @@
+body {
+    /* color al final será la capa de “respaldo” */
+    background:
+        url('../img/clientesAdminImg/ctbackground.png') no-repeat center/cover,
+        #0D122B;
+    margin: 0;
+    min-height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    height: 100%;
+}
+
+h4 {
+    background-color: #03071E;
+    color: white;
+}
+
+.header-container {
+    background-color: #03071E;
+    color: #fff;
+    padding: 0;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 93px;
+    margin-top: 85px;
+}
+
+.header {
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.header-icon {
+    padding-right: 15px;
+}
+
+.header-title {
+    flex-grow: 1;
+}
+
+.header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar {
+    background-color: #03071E;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.separator {
+    width: 3.5px;
+    /* Ancho del "palito" */
+    height: 34px;
+    /* Altura del "palito" (aprox. la altura de los iconos) */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Color blanco semi-transparente */
+    margin: 0 10px;
+}
+
+.botonInicioSesion,
+.botonRegistro {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-nav {
+    padding-right: 30px;
+}
+
+.nav-item {
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro {
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonInicioSesion {
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus {
+    box-shadow: none;
+}
+
+.navbar-brand {
+    size: 100px;
+}
+
+.nav-link {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 100%;
+}
+
+.nav-separator {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+.main-container {
+    padding: 20px;
+    margin-top: 80px;
+}
+
+.header-section {
+    background-color: #03071E;
+    color: white;
+}
+
+.profile-img-sm {
+    width: 40px;
+    /* Tamaño de la imagen de perfil en la tabla */
+    height: 40px;
+    object-fit: cover;
+    /* Asegura que la imagen se ajuste bien */
+    border-radius: 50%;
+    margin-right: 10px;
+    /* Espacio entre la imagen y el nombre */
+}
+
+/* Encabezados */
+/* Se renombra headers-usuario a headers-tecnico para mayor claridad */
+.headers-tecnico {
+    padding: .5rem 1rem;
+    color: white;
+}
+
+/* Alinear filas con headers */
+.usuario-card .row {
+    min-height: 64px;
+}
+
+/* Efecto hover ligero */
+.usuario-card {
+    transition: transform .1s;
+}
+
+.usuario-card:hover {
+    transform: translateY(-2px);
+}
+
+.ver-actividad {
+    color: #fff;
+}
+
+/* Cambiado de #lista-usuarios a #lista-tecnico */
+#lista-tecnico .row {
+    min-height: 64px;
+}
+
+#filter-bar-container .btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+#userCount,
+#filterCount {
+    color: #fff;
+}
+
+.filtros {
+    color: #fff;
+}
+
+/* Contenedor principal de la barra */
+.filter-bar-custom {
+    background-color: #161A34;
+    /* Un tono ligeramente diferente al fondo */
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos para el conteo de usuarios */
+.user-counts {
+    color: white;
+}
+
+.user-counts div {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.modal-content {
+    font-family: "Montserrat", sans-serif;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    /* negrita sólida */
+}
+
+.ticket-separator {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    /* línea suave entre grupos */
+    padding: 1rem 0;
+    margin: 0;
+}
+
+dt {
+    font-weight: 600;
+    /* títulos seminegrita */
+    font-size: 1rem;
+    color: #333;
+    /* tono oscuro para contraste */
+}
+
+dd {
+    font-size: 1rem;
+    color: #222;
+    margin: 0;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+.btn-link {
+    font-size: 0.875rem;
+    padding: 0;
+}
+
+/* Contenedor principal del modal */
+#modalVermas .modal-content {
+    border-radius: 12px;
+    /* Bordes más redondeados */
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Encabezado personalizado */
+.modal-header-custom {
+    display: flex;
+    justify-content: center;
+    /* Centra el título */
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    position: relative;
+    border-bottom: none;
+    /* Sin línea en el encabezado */
+}
+
+/* Título del modal */
+.modal-title-custom {
+    font-size: 1.25rem;
+    font-weight: 600;
+    /* Semibold */
+    color: #333;
+}
+
+/* Botón de cerrar (X) en la esquina */
+#modalVermas .btn-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+}
+
+/* Cuerpo del modal */
+#modalVermas .modal-body {
+    padding: 0.5rem 1.5rem 2rem 1.5rem;
+}
+
+/* Estilo para los títulos de cada campo (ej: "Solicitante:") */
+#modalVermas dt {
+    font-weight: 600;
+    /* Peso de fuente medio */
+    color: #000000;
+    /* Gris sutil */
+    font-size: 1.0rem;
+}
+
+/* Estilo para los valores de cada campo*/
+#modalVermas dd {
+    font-weight: 500;
+    color: #000000;
+    /* Negro suave */
+    font-size: 1.0rem;
+    margin: 0;
+    /* Reseteo de margen */
+}
+
+.ticket-separator:last-child {
+    border-bottom: none;
+    /* No mostrar línea en el último elemento */
+}
+
+/* Estilo para los enlaces "Cambiar rol" */
+#modalVermas .btn-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0 0 0 0.5rem;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+.user-counts small {
+    color: #a0a0a0;
+    font-weight: 300;
+}
+
+/* Contenedor y estilos del input de búsqueda */
+.search-container .form-control.search-input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    padding-left: 0.5rem;
+    height: 44px;
+    font-size: 1rem;
+}
+
+.search-container .form-control.search-input:focus {
+    background-color: transparent;
+    box-shadow: none;
+    color: white;
+}
+
+.search-container .form-control.search-input::placeholder {
+    color: #8c8c8c;
+}
+
+.search-container .search-icon-span {
+    background-color: transparent;
+    border: none;
+    color: #8c8c8c;
+    font-size: 1.2rem;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    color: #a0a0a0;
+}
+
+/* Línea divisora */
+.filter-divider {
+    border-color: rgba(255, 255, 255, 0.15);
+    margin-top: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Contenedor de los selectores para alinear ícono y texto */
+.filter-select-wrapper {
+    position: relative;
+    color: white;
+}
+
+.filter-select-wrapper .filter-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    /* El ícono no interfiere con el click */
+    z-index: 3;
+}
+
+/* Estilos para los selectores (dropdowns) */
+.styled-select {
+    background-color: #0D122B;
+    color: white;
+    border: 1px solid #4a4a4a;
+    border-radius: 6px;
+    padding: 0.5rem 2.5rem 0.5rem 2.25rem;
+    /* Padding: top/bottom, right, left */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    min-width: 180px;
+    /* Ancho mínimo para que no se vean muy pequeños */
+}
+
+.styled-select:focus {
+    background-color: #0D122B;
+    color: white;
+    border-color: #F48C06;
+    /* Color de acento al hacer foco */
+    box-shadow: none;
+}
+
+.btnact {
+    padding-right: 10px;
+}
+
+@media (max-width: 576px) {
+    .header {
+        flex-wrap: wrap;
+    }
+
+    .header-title {
+        width: 100%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .header-icon {
+        width: 100%;
+        text-align: center;
+        padding-right: 0;
+    }
+
+    #modalVerActividad .modal-body .ticket-separator dt {
+        margin-bottom: 0.5rem;
+    }
+
+    #modalVerActividad .modal-body .ticket-separator dd {
+        margin-left: 1rem;
+        margin-bottom: 1rem;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    /* Fuerza que mis col-md-X ocupen 100% */
+    .col-md-1,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4 {
+        flex: 1 0 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    .headers-tecnico {
+        display: none !important;
+    }
+
+    .btnact {
+        padding-left: 10px;
+    }
+}
+
+/* Para pantallas de escritorio pequeñas */
+@media (max-width: 1200px) {
+    body {
+        /* Ajusta el ancho al 100% y deja que la altura escale */
+        background-size: 100% auto;
+        /* Centra horizontalmente, pero sube un poco el foco */
+        background-position: top center;
+    }
+}
+
+/*(tablets/desktops estrechos) */
+@media (max-width: 992px) {
+    body {
+        /* Que ocupe todo el contenedor sin recortar*/
+        background-size: contain;
+        background-position: center top;
+    }
+}
