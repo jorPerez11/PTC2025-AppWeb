@@ -76,7 +76,6 @@ function renderFilterBar() {
 function initFilterEvents() {
   document.getElementById('periodFilter').addEventListener('change', filtrarUsuarios);
   document.getElementById('statusFilter').addEventListener('change', filtrarUsuarios);
-  // El evento 'input' es mejor para búsquedas en tiempo real
   document.getElementById('busquedaUsuario').addEventListener('input', filtrarUsuarios);
 }
 
@@ -169,11 +168,6 @@ function formatearFecha(fechaStr) {
   });
 }
 
-/**
- * [NUEVA FUNCIÓN] Convierte una fecha en formato "dd de mes de yyyy" a un objeto Date.
- * @param {string} dateString - La fecha en formato español.
- * @returns {Date} El objeto de fecha.
- */
 function parseSpanishDate(dateString) {
   const meses = {
     'enero': 0, 'febrero': 1, 'marzo': 2, 'abril': 3, 'mayo': 4, 'junio': 5,
@@ -188,7 +182,7 @@ function parseSpanishDate(dateString) {
 
 
 /**
- * [FUNCIÓN ACTUALIZADA] Filtra la lista de usuarios basándose en todos los criterios.
+ * Filtra la lista de usuarios basándose en todos los criterios.
  */
 function filtrarUsuarios() {
   const term = document.getElementById('busquedaUsuario').value.toLowerCase().trim();
@@ -196,17 +190,17 @@ function filtrarUsuarios() {
   const periodFilter = document.getElementById('periodFilter').value;
 
   const usuariosFiltrados = window.todosLosUsuarios.filter(user => {
-    // 1. Coincidencia con el término de búsqueda
+    // Coincidencia con el término de búsqueda
     const matchTerm = (
       user.nombre.toLowerCase().includes(term) ||
       user.email.toLowerCase().includes(term) ||
       user.id.toString().includes(term)
     );
 
-    // 2. Coincidencia con el estado de la solicitud
+    // Coincidencia con el estado de la solicitud
     const matchStatus = (statusFilter === 'all' || user.solicitud === statusFilter);
 
-    // 3. Coincidencia con el período de tiempo
+    // Coincidencia con el período de tiempo
     let matchPeriod = false;
     if (periodFilter === 'all') {
       matchPeriod = true;
@@ -284,7 +278,7 @@ async function abrirModalVerActividad(userId) {
 // Mapa de estado → [claseIcono, claseColor]
 const statusIconMap = {
   'Abierto': ['bi-exclamation-circle', 'text-danger'],       // ❗ rojo
-  'En Proceso': ['bi-grid', 'text-warning'],                 // 🔲 naranja
+  'En Proceso': ['bi-grid', 'text-warning'],                 // 🎫 naranja
   'Cerrado': ['bi-check-circle', 'text-success'],            // ✅ verde
   'En Espera': ['bi-clock', 'text-warning']                  // ⏰ naranja
 };

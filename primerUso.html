@@ -43,7 +43,7 @@
                                 </a>
                             </li>
                             <li class="nav-item active me-3">
-                                <a href="#" class="nav-link">
+                                <a href="clientesAdmin.html" class="nav-link">
                                     Clientes
                                 </a>
                             </li>
@@ -133,138 +133,142 @@
                 <!-- Columna de tarjetas -->
                 <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 col-xxl-6 order-xl-1 order-2">
                     <div class=" cards-section position-relative">
-                    <!-- todo el contenido de tarjetas aquí -->
-                    <!-- Encabezado de columnas -->
-                    <div class="header-row">
-                        <span>Solicitante</span>
-                        <span>Asunto</span>
-                        <span class="tec">Técnico</span>
-                    </div>
+                        <!-- todo el contenido de tarjetas aquí -->
+                        <!-- Encabezado de columnas -->
+                        <div class="header-row">
+                            <span>Solicitante</span>
+                            <span>Asunto</span>
+                            <span class="tec">Técnico</span>
+                        </div>
 
-                    <!-- Tarjeta con datos reales -->
-                    <div class="ticket-card">
-                        <div class="ticket-content">
-                            <div class="ticket-info">
-                                <div class="ticket-field horizontal">
-                                    <div class="field-icon" style="border: #000;"><img src="img/primerUsoimg/icon.png" alt="">
+                        <!-- Tarjeta con datos reales -->
+                        <div class="ticket-card">
+                            <div class="ticket-content">
+                                <div class="ticket-info">
+                                    <div class="ticket-field horizontal">
+                                        <div class="field-icon" style="border: #000;"><img
+                                                src="img/primerUsoimg/icon.png" alt="">
+                                        </div>
+                                        <div class="field-value">Cliente</div>
                                     </div>
-                                    <div class="field-value">Cliente</div>
+                                    <div class="ticket-field">
+                                        <div class="status-badge">Conexión a red</div>
+                                    </div>
+                                    <div class="ticket-field">
+                                        <div class="field-icon" style="background: #ffa500; color: white;"><svg
+                                                xmlns="http://www.w3.org/2000/svg" width="42" height="42"
+                                                viewBox="0 0 50 50" fill="none">
+                                                <path
+                                                    d="M7 38.5C7 34.787 8.475 31.226 11.1005 28.6005C13.726 25.975 17.287 24.5 21 24.5C24.713 24.5 28.274 25.975 30.8995 28.6005C33.525 31.226 35 34.787 35 38.5H31.5C31.5 35.7152 30.3938 33.0445 28.4246 31.0754C26.4555 29.1062 23.7848 28 21 28C18.2152 28 15.5445 29.1062 13.5754 31.0754C11.6062 33.0445 10.5 35.7152 10.5 38.5H7ZM21 22.75C15.1987 22.75 10.5 18.0513 10.5 12.25C10.5 6.44875 15.1987 1.75 21 1.75C26.8013 1.75 31.5 6.44875 31.5 12.25C31.5 18.0513 26.8013 22.75 21 22.75ZM21 19.25C24.8675 19.25 28 16.1175 28 12.25C28 8.3825 24.8675 5.25 21 5.25C17.1325 5.25 14 8.3825 14 12.25C14 16.1175 17.1325 19.25 21 19.25Z"
+                                                    fill="black" />
+                                            </svg></div>
+                                    </div>
                                 </div>
-                                <div class="ticket-field">
-                                    <div class="status-badge">Conexión a red</div>
+                                <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
+                                        viewBox="0 0 44 44" fill="none">
+                                        <path
+                                            d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
+                                            fill="black" />
+                                    </svg></div>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de carga (skeleton) -->
+                        <div class="ticket-card pattern">
+                            <div class="skeleton-content">
+                                <div class="field-icon" style="border: #000;"><img src="img/primerUsoimg/icon.png"
+                                        alt="">
                                 </div>
-                                <div class="ticket-field">
-                                    <div class="field-icon" style="background: #ffa500; color: white;"><svg
-                                            xmlns="http://www.w3.org/2000/svg" width="42" height="42"
-                                            viewBox="0 0 50 50" fill="none">
-                                            <path
-                                                d="M7 38.5C7 34.787 8.475 31.226 11.1005 28.6005C13.726 25.975 17.287 24.5 21 24.5C24.713 24.5 28.274 25.975 30.8995 28.6005C33.525 31.226 35 34.787 35 38.5H31.5C31.5 35.7152 30.3938 33.0445 28.4246 31.0754C26.4555 29.1062 23.7848 28 21 28C18.2152 28 15.5445 29.1062 13.5754 31.0754C11.6062 33.0445 10.5 35.7152 10.5 38.5H7ZM21 22.75C15.1987 22.75 10.5 18.0513 10.5 12.25C10.5 6.44875 15.1987 1.75 21 1.75C26.8013 1.75 31.5 6.44875 31.5 12.25C31.5 18.0513 26.8013 22.75 21 22.75ZM21 19.25C24.8675 19.25 28 16.1175 28 12.25C28 8.3825 24.8675 5.25 21 5.25C17.1325 5.25 14 8.3825 14 12.25C14 16.1175 17.1325 19.25 21 19.25Z"
-                                                fill="black" />
-                                        </svg></div>
+                                <div class="skeleton-text">
+                                    <div class="skeleton-line short"></div>
+                                    <div class="skeleton-line medium"></div>
                                 </div>
+                                <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
+                                        viewBox="0 0 44 44" fill="none">
+                                        <path
+                                            d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
+                                            fill="#868686" />
+                                    </svg></div>
                             </div>
-                            <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
-                                    viewBox="0 0 44 44" fill="none">
-                                    <path
-                                        d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
-                                        fill="black" />
-                                </svg></div>
                         </div>
-                    </div>
 
-                    <!-- Tarjeta de carga (skeleton) -->
-                    <div class="ticket-card pattern">
-                        <div class="skeleton-content">
-                            <div class="field-icon" style="border: #000;"><img src="img/primerUsoimg/icon.png" alt="">
+                        <!-- Otra tarjeta con patrón -->
+                        <div class="ticket-card pattern">
+                            <div class="skeleton-content">
+                                <div class="field-icon" style="border: #000;"><img src="img/primerUsoimg/icon.png"
+                                        alt="">
+                                </div>
+                                <div class="skeleton-text">
+                                    <div class="skeleton-line short"></div>
+                                    <div class="skeleton-line medium"></div>
+                                </div>
+                                <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
+                                        viewBox="0 0 44 44" fill="none">
+                                        <path
+                                            d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
+                                            fill="#868686" />
+                                    </svg></div>
                             </div>
-                            <div class="skeleton-text">
-                                <div class="skeleton-line short"></div>
-                                <div class="skeleton-line medium"></div>
-                            </div>
-                            <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
-                                    viewBox="0 0 44 44" fill="none">
-                                    <path
-                                        d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
-                                        fill="#868686" />
-                                </svg></div>
                         </div>
-                    </div>
 
-                    <!-- Otra tarjeta con patrón -->
-                    <div class="ticket-card pattern">
-                        <div class="skeleton-content">
-                            <div class="field-icon" style="border: #000;"><img src="img/primerUsoimg/icon.png" alt="">
-                            </div>
-                            <div class="skeleton-text">
-                                <div class="skeleton-line short"></div>
-                                <div class="skeleton-line medium"></div>
-                            </div>
-                            <div class="ticket-menu"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44"
-                                    viewBox="0 0 44 44" fill="none">
-                                    <path
-                                        d="M9.16667 18.3333C7.15 18.3333 5.5 19.9833 5.5 21.9999C5.5 24.0166 7.15 25.6666 9.16667 25.6666C11.1833 25.6666 12.8333 24.0166 12.8333 21.9999C12.8333 19.9833 11.1833 18.3333 9.16667 18.3333ZM34.8333 18.3333C32.8167 18.3333 31.1667 19.9833 31.1667 21.9999C31.1667 24.0166 32.8167 25.6666 34.8333 25.6666C36.85 25.6666 38.5 24.0166 38.5 21.9999C38.5 19.9833 36.85 18.3333 34.8333 18.3333ZM22 18.3333C19.9833 18.3333 18.3333 19.9833 18.3333 21.9999C18.3333 24.0166 19.9833 25.6666 22 25.6666C24.0167 25.6666 25.6667 24.0166 25.6667 21.9999C25.6667 19.9833 24.0167 18.3333 22 18.3333Z"
-                                        fill="#868686" />
-                                </svg></div>
-                        </div>
+                        <img src="img/primerUsoimg/58 1.png" class="bg-deco deco-top-left" alt="">
+                        <img src="img/primerUsoimg/60 1.png" class="bg-deco deco-bottom-left" alt="">
+                        <img src="img/primerUsoimg/59 1.png" class="bg-deco deco-middle-right" alt="">
                     </div>
-
-                    <img src="img/primerUsoimg/58 1.png" class="bg-deco deco-top-left" alt="">
-                    <img src="img/primerUsoimg/60 1.png" class="bg-deco deco-bottom-left" alt="">
-                    <img src="img/primerUsoimg/59 1.png" class="bg-deco deco-middle-right" alt="">
                 </div>
-            </div>
 
-            <!-- Columna de texto -->
-            <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 col-xxl-6 order-xl-2 order-1">
-                <div class="text-section">
-                    <!-- todo tu contenido de texto aquí -->
-                    <h1 class="main-title">
-                        Pon las solicitudes en las
-                        <span class="main-phrase">
-                            <span class="highlight">
-                                manos adecuadas
-                                <span class="redline">
-                                    <img src="img/primerUsoimg/Linearoja.png" alt="Red Line">
+                <!-- Columna de texto -->
+                <div class="col-12 col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 col-xxl-6 order-xl-2 order-1">
+                    <div class="text-section">
+                        <div class="title-wrapper">
+                            <h1 class="main-title">
+                                Pon las solicitudes en las
+                                <span class="main-phrase">
+                                    <span class="highlight">
+                                        manos adecuadas
+                                        <span class="redline">
+                                            <img src="img/primerUsoimg/Linearoja.png" alt="Red Line">
+                                        </span>
+                                    </span>
+                                    <span class="word-with-icon">
+                                        en segundos
+                                        <span class="decorative-lines">
+                                            <img src="img/primerUsoimg/gotitas.png" alt="Red marks">
+                                        </span>
+                                    </span>
                                 </span>
-                            </span>
-                            <span class="word-with-icon">
-                                en segundos
-                                <span class="decorative-lines">
-                                    <img src="img/primerUsoimg/gotitas.png" alt="Red marks">
-                                </span>
-                            </span>
-                        </span>
-                    </h1>
-                    <br>
-                    <br>
-                    <p class="description">
-                        Asigna tickets de forma inteligente a los agentes según sus habilidades, departamento o área
-                        de
-                        interés.
-                        Reduce significativamente los tiempos de espera de los clientes para recibir asistencia de
-                        agentes
-                        cualificados.
-                    </p>
-                    <a href="primerUsoPasos.html" class="cta-link">
-                        Crear equipo y asignar agentes <span class="arrow"><svg xmlns="http://www.w3.org/2000/svg"
-                                width="68" height="68" viewBox="0 0 68 68" fill="none">
-                                <g clip-path="url(#clip0_315_267)">
-                                    <path
-                                        d="M57.575 43.9723L66.3545 35.0277C66.6455 34.7312 66.8069 34.3312 66.803 33.9157C66.7991 33.5002 66.6304 33.1033 66.3338 32.8122L57.3892 24.0328C57.1682 23.815 56.8875 23.6679 56.5827 23.6098C56.2779 23.5518 55.9628 23.5856 55.6772 23.707C55.3916 23.8283 55.1485 24.0317 54.9787 24.2913C54.8089 24.551 54.7199 24.8552 54.7232 25.1655L54.7934 32.4611L3.18764 32.9397L3.21687 36.0768L54.8226 35.5938L54.8884 42.8895C54.8909 43.1998 54.9854 43.5023 55.1601 43.7587C55.3347 44.0152 55.5816 44.214 55.8693 44.33C56.1571 44.446 56.4728 44.4739 56.7765 44.4102C57.0802 44.3465 57.3581 44.1941 57.575 43.9723Z"
-                                        fill="#0066FF" />
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_315_267">
-                                        <rect width="47" height="47" fill="white"
-                                            transform="translate(67.4519 33.9097) rotate(134.466)" />
-                                    </clipPath>
-                                </defs>
-                            </svg></span>
-                    </a>
+                            </h1>
+                        </div>
+                        <br>
+                        <br>
+                        <p class="description">
+                            Asigna tickets de forma inteligente a los agentes según sus habilidades, departamento o área
+                            de
+                            interés.
+                            Reduce significativamente los tiempos de espera de los clientes para recibir asistencia de
+                            agentes
+                            cualificados.
+                        </p>
+                        <a href="primerUsoPasos.html" class="cta-link">
+                            Crear equipo y asignar agentes <span class="arrow"><svg xmlns="http://www.w3.org/2000/svg"
+                                    width="68" height="68" viewBox="0 0 68 68" fill="none">
+                                    <g clip-path="url(#clip0_315_267)">
+                                        <path
+                                            d="M57.575 43.9723L66.3545 35.0277C66.6455 34.7312 66.8069 34.3312 66.803 33.9157C66.7991 33.5002 66.6304 33.1033 66.3338 32.8122L57.3892 24.0328C57.1682 23.815 56.8875 23.6679 56.5827 23.6098C56.2779 23.5518 55.9628 23.5856 55.6772 23.707C55.3916 23.8283 55.1485 24.0317 54.9787 24.2913C54.8089 24.551 54.7199 24.8552 54.7232 25.1655L54.7934 32.4611L3.18764 32.9397L3.21687 36.0768L54.8226 35.5938L54.8884 42.8895C54.8909 43.1998 54.9854 43.5023 55.1601 43.7587C55.3347 44.0152 55.5816 44.214 55.8693 44.33C56.1571 44.446 56.4728 44.4739 56.7765 44.4102C57.0802 44.3465 57.3581 44.1941 57.575 43.9723Z"
+                                            fill="#0066FF" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_315_267">
+                                            <rect width="47" height="47" fill="white"
+                                                transform="translate(67.4519 33.9097) rotate(134.466)" />
+                                        </clipPath>
+                                    </defs>
+                                </svg></span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
     <!-- JS -->
