@@ -8,9 +8,9 @@ body {
 }
 
 .separator {
-    width: 2px; /* Ancho del "palito" */
-    height: 25px; /* Altura del "palito" (aprox. la altura de los iconos) */
-    background-color: rgba(255, 255, 255, 0.5); /* Color blanco semi-transparente */
+    width: 2px;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
     margin: 0 10px;
 }
 
@@ -170,49 +170,45 @@ body {
     border-radius: 8px;
 }
 
-/* Contenedor principal del input de mensaje y botones */
 .input-message-container {
     border-top: 1px solid #ddd;
     padding-top: 10px;
-    display: flex; /* Habilita Flexbox */
-    align-items: flex-end; /* Alinea los ítems al final (abajo) */
-    gap: 10px; /* Espacio entre el textarea y los botones */
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
 }
 
-/* Estilos para el textarea */
 .message-textarea {
     width: 100%;
     resize: none;
     border-radius: 10px;
-    padding: 10px 15px; /* Ajusta el padding para que se vea mejor */
-    border: 1px solid #ccc; /* Borde suave */
-    flex-grow: 1; /* Permite que el textarea ocupe el espacio disponible */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    flex-grow: 1;
 }
 
-/* Contenedor de los botones de acción (adjuntar, enviar) */
 .message-actions {
     display: flex;
-    flex-direction: column; /* Apila los botones verticalmente */
-    gap: 5px; /* Espacio entre los botones */
-    flex-shrink: 0; /* Evita que este contenedor se encoja */
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
 }
 
-/* Estilos para los botones de icono */
 .btn-icon {
-    width: 40px; /* Tamaño fijo para los botones */
-    height: 40px; /* Tamaño fijo para los botones */
-    padding: 0; /* Elimina el padding predeterminado de Bootstrap */
+    width: 40px;
+    height: 40px;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%; /* Botones circulares */
-    border: none; /* Sin borde */
+    border-radius: 50%;
+    border: none;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .attach-button {
-    background-color: #f0f0f0; /* Fondo claro para el botón de adjuntar */
+    background-color: #f0f0f0;
 }
 
 .attach-button:hover {
@@ -220,15 +216,12 @@ body {
 }
 
 .attach-button svg {
-    width: 24px; /* Tamaño del SVG dentro del botón */
+    width: 24px;
     height: 24px;
-    /* Ajusta el color del stroke del SVG de adjuntar */
-    /* El SVG que proporcionaste tiene stroke="black", si quieres cambiarlo a gris: */
-    /* stroke: #666; */
 }
 
 .send-button {
-    background-color: #0066FF; /* Fondo azul para el botón de enviar */
+    background-color: #0066FF;
 }
 
 .send-button:hover {
@@ -236,14 +229,12 @@ body {
 }
 
 .send-button svg {
-    width: 24px; /* Tamaño del SVG dentro del botón */
+    width: 24px;
     height: 24px;
-    /* El SVG de enviar ya tiene fill="white" */
 }
 
-/* Ajustes para el SVG del usuario en el details-box si es necesario */
 .details-box svg {
-    width: 50px; /* Ajusta el tamaño del SVG del usuario */
+    width: 50px;
     height: 50px;
 }
 

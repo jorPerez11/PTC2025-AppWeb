@@ -42,7 +42,7 @@ function mostrarDatos(ticketsData) {
     }
 
     ticketsData.forEach(ticket => {
-        const estadoActual = ticket.status; // Usamos 'status' directamente del JSON
+        const estadoActual = ticket.status;
 
         let ticketNumber = '';
       if (ticket.ticketId < 10) {
@@ -65,8 +65,6 @@ function mostrarDatos(ticketsData) {
             card.className = 'ticket-card mb-3';
 
             card.addEventListener('click', () => {
-                // Puedes pasar el ID del ticket o cualquier otra información si la necesitas en chat.html
-                // Por ahora, simplemente redirigimos a chat.html
                 window.location.href = 'chat.html';
             });
 
