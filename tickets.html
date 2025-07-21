@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styleTickets.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar fixed-top navbar-expand-xl navbar-dark navbar-expand-lg" id="navbar">
+            <div class="container-fluid justify-content-between">
+                <a href="primerUso.html" class="navbar-brand mb-0 h1 mx-auto">
+                    <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
+                    H2C
+                </a>
+                <!--Botón hamburguesa para pantallas sm y md-->
+                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación"
+                    id="botonHamburguesa">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContenido">
+                    <div class="navbar-content ms-4">
+                        <ul class="navbar-nav me-auto ms-2 ">
+                            <li class="nav-item active mb-1 me-3 ">
+                                <a href="primerUso.html" class="nav-link">
+                                    Inicio
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Analítica
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Base de conocimientos
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Actividades
+                                </a>
+                            </li>
+                            </li>
+                            <div class="d-sm-block d-xl-none">
+                                <hr class="nav-separator mt-2 mb-2">
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">Notificaciones</a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        Configuración
+                                    </a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        Mi Perfil
+                                    </a>
+                                </li>
+                            </div>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-none align-items-center gap-2 d-none d-xl-flex">
+                    <button type="button" class="btn botonNotificaciones mx-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
+                            <path
+                                d="M17.5 2.91675C14.7926 2.91675 12.1961 3.99227 10.2816 5.9067C8.36721 7.82113 7.2917 10.4177 7.2917 13.1251V18.2701C7.29191 18.4963 7.23948 18.7195 7.13857 18.922L4.63461 23.9284C4.5123 24.173 4.45454 24.4448 4.46683 24.718C4.47912 24.9912 4.56104 25.2567 4.70483 25.4893C4.84861 25.722 5.04947 25.914 5.28834 26.0471C5.5272 26.1803 5.79614 26.2501 6.06961 26.2501H28.9304C29.2039 26.2501 29.4729 26.1803 29.7117 26.0471C29.9506 25.914 30.1515 25.722 30.2952 25.4893C30.439 25.2567 30.5209 24.9912 30.5332 24.718C30.5455 24.4448 30.4878 24.173 30.3654 23.9284L27.8629 18.922C27.7615 18.7196 27.7086 18.4964 27.7084 18.2701V13.1251C27.7084 10.4177 26.6328 7.82113 24.7184 5.9067C22.804 3.99227 20.2074 2.91675 17.5 2.91675ZM17.5 30.6251C16.5949 30.6256 15.7119 30.3453 14.9728 29.8229C14.2336 29.3005 13.6747 28.5618 13.3729 27.7084H21.6271C21.3254 28.5618 20.7665 29.3005 20.0273 29.8229C19.2881 30.3453 18.4051 30.6256 17.5 30.6251Z"
+                                fill="white" />
+                        </svg>
+                    </button>
+                    <button type="button" class="btn botonConfig me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                            <path
+                                d="M18 23.25C16.6076 23.25 15.2723 22.6969 14.2877 21.7123C13.3031 20.7277 12.75 19.3924 12.75 18C12.75 16.6076 13.3031 15.2723 14.2877 14.2877C15.2723 13.3031 16.6076 12.75 18 12.75C19.3924 12.75 20.7277 13.3031 21.7123 14.2877C22.6969 15.2723 23.25 16.6076 23.25 18C23.25 19.3924 22.6969 20.7277 21.7123 21.7123C20.7277 22.6969 19.3924 23.25 18 23.25ZM29.145 19.455C29.205 18.975 29.25 18.495 29.25 18C29.25 17.505 29.205 17.01 29.145 16.5L32.31 14.055C32.595 13.83 32.67 13.425 32.49 13.095L29.49 7.905C29.31 7.575 28.905 7.44 28.575 7.575L24.84 9.075C24.06 8.49 23.25 7.98 22.305 7.605L21.75 3.63C21.7195 3.45333 21.6275 3.29314 21.4902 3.17783C21.3529 3.06252 21.1793 2.99952 21 3H15C14.625 3 14.31 3.27 14.25 3.63L13.695 7.605C12.75 7.98 11.94 8.49 11.16 9.075L7.425 7.575C7.095 7.44 6.69 7.575 6.51 7.905L3.51 13.095C3.315 13.425 3.405 13.83 3.69 14.055L6.855 16.5C6.795 17.01 6.75 17.505 6.75 18C6.75 18.495 6.795 18.975 6.855 19.455L3.69 21.945C3.405 22.17 3.315 22.575 3.51 22.905L6.51 28.095C6.69 28.425 7.095 28.545 7.425 28.425L11.16 26.91C11.94 27.51 12.75 28.02 13.695 28.395L14.25 32.37C14.31 32.73 14.625 33 15 33H21C21.375 33 21.69 32.73 21.75 32.37L22.305 28.395C23.25 28.005 24.06 27.51 24.84 26.91L28.575 28.425C28.905 28.545 29.31 28.425 29.49 28.095L32.49 22.905C32.67 22.575 32.595 22.17 32.31 21.945L29.145 19.455Z"
+                                fill="white" />
+                        </svg>
+                    </button>
+                    <div class="separator"></div>
+                    <button type="button" class="btn botonUser me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                            <g clip-path="url(#clip0_315_64)">
+                                <path
+                                    d="M28.875 18.375C28.875 22.7325 25.3575 26.25 21 26.25C16.6425 26.25 13.125 22.7325 13.125 18.375C13.125 14.0175 16.6425 10.5 21 10.5C25.3575 10.5 28.875 14.0175 28.875 18.375Z"
+                                    fill="white" />
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M42 21C42 32.6025 32.6025 42 21 42C9.3975 42 0 32.6025 0 21C0 9.3975 9.3975 0 21 0C32.6025 0 42 9.3975 42 21ZM10.5 36.0938C10.92 35.3955 14.9887 28.875 20.9737 28.875C26.9325 28.875 31.0275 35.4113 31.4475 36.0938C33.8884 34.4058 35.8828 32.1503 37.2591 29.5211C38.6355 26.8919 39.3526 23.9677 39.3488 21C39.3488 10.8413 31.1325 2.625 20.9737 2.625C10.815 2.625 2.59875 10.8413 2.59875 21C2.59875 27.2475 5.7225 32.7863 10.5 36.0938Z"
+                                    fill="white" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_315_64">
+                                    <rect width="42" height="42" fill="white" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="container-fluid p-0 header-container">
+        <div class="row align-items-center m-0 header">
+            <div class="col-auto header-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.16"
+                        d="M38 10H20V38H38C39.0609 38 40.0783 37.5786 40.8284 36.8284C41.5786 36.0783 42 35.0609 42 34V28C40.9391 28 39.9217 27.5786 39.1716 26.8284C38.4214 26.0783 38 25.0609 38 24C38 22.9391 38.4214 21.9217 39.1716 21.1716C39.9217 20.4214 40.9391 20 42 20V14C42 12.9391 41.5786 11.9217 40.8284 11.1716C40.0783 10.4214 39.0609 10 38 10Z"
+                        fill="black" />
+                    <path
+                        d="M6 20H4C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22V20ZM6 28V26C5.46957 26 4.96086 26.2107 4.58579 26.5858C4.21071 26.9609 4 27.4696 4 28H6ZM42 20V22C42.5304 22 43.0391 21.7893 43.4142 21.4142C43.7893 21.0391 44 20.5304 44 20H42ZM42 28H44C44 27.4696 43.7893 26.9609 43.4142 26.5858C43.0391 26.2107 42.5304 26 42 26V28ZM10 12H20V8H10V12ZM20 12H38V8H20V12ZM38 36H20V40H38V36ZM20 36H10V40H20V36ZM18 10V38H22V10H18ZM7.414 22.586C7.78894 22.9611 7.99957 23.4697 7.99957 24C7.99957 24.5303 7.78894 25.0389 7.414 25.414L10.242 28.242C11.3668 27.1168 11.9987 25.591 11.9987 24C11.9987 22.409 11.3668 20.8832 10.242 19.758L7.414 22.586ZM40.586 25.414C40.2111 25.0389 40.0004 24.5303 40.0004 24C40.0004 23.4697 40.2111 22.9611 40.586 22.586L37.758 19.758C36.6332 20.8832 36.0013 22.409 36.0013 24C36.0013 25.591 36.6332 27.1168 37.758 28.242L40.586 25.414ZM6 22C6.514 22 7.024 22.194 7.414 22.586L10.242 19.758C9.11704 18.6327 7.59117 18.0003 6 18V22ZM8 20V14H4V20H8ZM8 34V28H4V34H8ZM7.414 25.414C7.03901 25.7891 6.53039 25.9999 6 26V30C7.532 30 9.072 29.414 10.242 28.242L7.414 25.414ZM40.586 22.586C40.961 22.2109 41.4696 22.0001 42 22V18C40.468 18 38.928 18.586 37.758 19.758L40.586 22.586ZM40 14V20H44V14H40ZM40 28V34H44V28H40ZM42 26C41.4696 25.9999 40.961 25.7891 40.586 25.414L37.758 28.242C38.883 29.3673 40.4088 29.9997 42 30V26ZM10 36C9.46957 36 8.96086 35.7893 8.58579 35.4142C8.21071 35.0391 8 34.5304 8 34H4C4 35.5913 4.63214 37.1174 5.75736 38.2426C6.88258 39.3679 8.4087 40 10 40V36ZM38 40C39.5913 40 41.1174 39.3679 42.2426 38.2426C43.3679 37.1174 44 35.5913 44 34H40C40 34.5304 39.7893 35.0391 39.4142 35.4142C39.0391 35.7893 38.5304 36 38 36V40ZM38 12C38.5304 12 39.0391 12.2107 39.4142 12.5858C39.7893 12.9609 40 13.4696 40 14H44C44 12.4087 43.3679 10.8826 42.2426 9.75736C41.1174 8.63214 39.5913 8 38 8V12ZM10 8C8.4087 8 6.88258 8.63214 5.75736 9.75736C4.63214 10.8826 4 12.4087 4 14H8C8 13.4696 8.21071 12.9609 8.58579 12.5858C8.96086 12.2107 9.46957 12 10 12V8Z"
+                        fill="black" />
+                </svg>
+
+            </div>
+            <div class="col header-title">
+                <h4 class="mb-0">Mis Clientes</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="container ticket-container">
+        <h4><strong>Todos los Tickets</strong></h4>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="status-header d-flex flex-row align-items-center mb-3" id="estado-en-espera">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z"
+                            stroke="#DC2F02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M12 7V12L15 15" stroke="#DC2F02" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <p class="mb-0 ms-1">En espera <span id="en-espera-header-count"></span></p>
+                </div>
+                <div id="en-espera-list"></div>
+            </div>
+            <div class="col-md-4">
+                <div class="status-header d-flex flex-row align-items-center mb-3" id="estado-en-progreso">
+                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M5.625 3.375C5.02826 3.375 4.45597 3.61205 4.03401 4.03401C3.61205 4.45597 3.375 5.02826 3.375 5.625V21.375C3.375 21.9717 3.61205 22.544 4.03401 22.966C14.3879 22.544 14.625 21.9717 14.625 21.375V14.625H21.375C21.9717 14.625 22.544 14.3879 22.966 13.966C23.3879 13.544 23.625 12.9717 23.625 12.375V5.625C23.625 5.02826 23.3879 4.45597 22.966 4.03401C22.544 3.61205 21.9717 3.375 21.375 3.375H5.625ZM14.625 12.375H21.375V5.625H14.625V12.375ZM5.625 14.625V21.375H12.375V14.625H5.625ZM5.625 12.375H12.375V5.625H5.625V12.375Z"
+                            fill="#F48C06" />
+                    </svg>
+                    <p class="mb-0 ms-1">En progreso <span id="en-progreso-header-count"></span></p>
+                </div>
+                <div id="en-progreso-list"></div>
+            </div>
+            <div class="col-md-4">
+                <div class="status-header d-flex flex-row align-items-center mb-3" id="estado-completado">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M10.243 16.3139L6 12.0699L7.414 10.6559L10.243 13.4839L15.899 7.8269L17.314 9.2419L10.243 16.3139Z"
+                            fill="#32C91E" />
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M1 12C1 5.925 5.925 1 12 1C18.075 1 23 5.925 23 12C23 18.075 18.075 23 12 23C5.925 23 1 18.075 1 12ZM12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 10.8181 3.23279 9.64778 3.68508 8.55585C4.13738 7.46392 4.80031 6.47177 5.63604 5.63604C6.47177 4.80031 7.46392 4.13738 8.55585 3.68508C9.64778 3.23279 10.8181 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21Z"
+                            fill="#32C91E" />
+                    </svg>
+                    <p class="mb-0 ms-1">Completado <span id="completado-header-count"></span></p>
+                </div>
+                <div id="completado-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.js"></script>
+    <script src="js/scriptTickets.js"></script>
+</body>
+
+</html>
