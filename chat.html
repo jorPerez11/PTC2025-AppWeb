@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/styleChat.css" />
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar fixed-top navbar-expand-xl navbar-dark navbar-expand-lg" id="navbar">
+            <div class="container-fluid justify-content-between">
+                <a href="primerUso.html" class="navbar-brand mb-0 h1 mx-auto">
+                    <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
+                    H2C
+                </a>
+                <!--Botón hamburguesa para pantallas sm y md-->
+                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación"
+                    id="botonHamburguesa">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContenido">
+                    <div class="navbar-content ms-4">
+                        <ul class="navbar-nav me-auto ms-2 ">
+                            <li class="nav-item active mb-1 me-3 ">
+                                <a href="primerUso.html" class="nav-link">
+                                    Inicio
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Analítica
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Base de conocimientos
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Actividades
+                                </a>
+                            </li>
+                            </li>
+                            <div class="d-sm-block d-xl-none">
+                                <hr class="nav-separator mt-2 mb-2">
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">Notificaciones</a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        Configuración
+                                    </a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        Mi Perfil
+                                    </a>
+                                </li>
+                            </div>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-none align-items-center gap-2 d-none d-xl-flex">
+                    <button type="button" class="btn botonNotificaciones mx-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
+                            <path
+                                d="M17.5 2.91675C14.7926 2.91675 12.1961 3.99227 10.2816 5.9067C8.36721 7.82113 7.2917 10.4177 7.2917 13.1251V18.2701C7.29191 18.4963 7.23948 18.7195 7.13857 18.922L4.63461 23.9284C4.5123 24.173 4.45454 24.4448 4.46683 24.718C4.47912 24.9912 4.56104 25.2567 4.70483 25.4893C4.84861 25.722 5.04947 25.914 5.28834 26.0471C5.5272 26.1803 5.79614 26.2501 6.06961 26.2501H28.9304C29.2039 26.2501 29.4729 26.1803 29.7117 26.0471C29.9506 25.914 30.1515 25.722 30.2952 25.4893C30.439 25.2567 30.5209 24.9912 30.5332 24.718C30.5455 24.4448 30.4878 24.173 30.3654 23.9284L27.8629 18.922C27.7615 18.7196 27.7086 18.4964 27.7084 18.2701V13.1251C27.7084 10.4177 26.6328 7.82113 24.7184 5.9067C22.804 3.99227 20.2074 2.91675 17.5 2.91675ZM17.5 30.6251C16.5949 30.6256 15.7119 30.3453 14.9728 29.8229C14.2336 29.3005 13.6747 28.5618 13.3729 27.7084H21.6271C21.3254 28.5618 20.7665 29.3005 20.0273 29.8229C19.2881 30.3453 18.4051 30.6256 17.5 30.6251Z"
+                                fill="white" />
+                        </svg>
+                    </button>
+                    <button type="button" class="btn botonConfig me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+                            <path
+                                d="M18 23.25C16.6076 23.25 15.2723 22.6969 14.2877 21.7123C13.3031 20.7277 12.75 19.3924 12.75 18C12.75 16.6076 13.3031 15.2723 14.2877 14.2877C15.2723 13.3031 16.6076 12.75 18 12.75C19.3924 12.75 20.7277 13.3031 21.7123 14.2877C22.6969 15.2723 23.25 16.6076 23.25 18C23.25 19.3924 22.6969 20.7277 21.7123 21.7123C20.7277 22.6969 19.3924 23.25 18 23.25ZM29.145 19.455C29.205 18.975 29.25 18.495 29.25 18C29.25 17.505 29.205 17.01 29.145 16.5L32.31 14.055C32.595 13.83 32.67 13.425 32.49 13.095L29.49 7.905C29.31 7.575 28.905 7.44 28.575 7.575L24.84 9.075C24.06 8.49 23.25 7.98 22.305 7.605L21.75 3.63C21.7195 3.45333 21.6275 3.29314 21.4902 3.17783C21.3529 3.06252 21.1793 2.99952 21 3H15C14.625 3 14.31 3.27 14.25 3.63L13.695 7.605C12.75 7.98 11.94 8.49 11.16 9.075L7.425 7.575C7.095 7.44 6.69 7.575 6.51 7.905L3.51 13.095C3.315 13.425 3.405 13.83 3.69 14.055L6.855 16.5C6.795 17.01 6.75 17.505 6.75 18C6.75 18.495 6.795 18.975 6.855 19.455L3.69 21.945C3.405 22.17 3.315 22.575 3.51 22.905L6.51 28.095C6.69 28.425 7.095 28.545 7.425 28.425L11.16 26.91C11.94 27.51 12.75 28.02 13.695 28.395L14.25 32.37C14.31 32.73 14.625 33 15 33H21C21.375 33 21.69 32.73 21.75 32.37L22.305 28.395C23.25 28.005 24.06 27.51 24.84 26.91L28.575 28.425C28.905 28.545 29.31 28.425 29.49 28.095L32.49 22.905C32.67 22.575 32.595 22.17 32.31 21.945L29.145 19.455Z"
+                                fill="white" />
+                        </svg>
+                    </button>
+                    <div class="separator"></div>
+                    <button type="button" class="btn botonUser me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                            <g clip-path="url(#clip0_315_64)">
+                                <path
+                                    d="M28.875 18.375C28.875 22.7325 25.3575 26.25 21 26.25C16.6425 26.25 13.125 22.7325 13.125 18.375C13.125 14.0175 16.6425 10.5 21 10.5C25.3575 10.5 28.875 14.0175 28.875 18.375Z"
+                                    fill="white" />
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M42 21C42 32.6025 32.6025 42 21 42C9.3975 42 0 32.6025 0 21C0 9.3975 9.3975 0 21 0C32.6025 0 42 9.3975 42 21ZM10.5 36.0938C10.92 35.3955 14.9887 28.875 20.9737 28.875C26.9325 28.875 31.0275 35.4113 31.4475 36.0938C33.8884 34.4058 35.8828 32.1503 37.2591 29.5211C38.6355 26.8919 39.3526 23.9677 39.3488 21C39.3488 10.8413 31.1325 2.625 20.9737 2.625C10.815 2.625 2.59875 10.8413 2.59875 21C2.59875 27.2475 5.7225 32.7863 10.5 36.0938Z"
+                                    fill="white" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_315_64">
+                                    <rect width="42" height="42" fill="white" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container ticket-container">
+        <a href="#" class="mb-3 d-inline-block" style="text-decoration: none; color: #0066FF;"><svg
+                xmlns="http://www.w3.org/2000/svg" height="20" width="17.5"
+                viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                <path fill="#0066ff"
+                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+            </svg> Regresar</a>
+        <h4 class="mb-4">Javier Mendoza</h4>
+        <div class="chat-box">
+            <!-- Conversación -->
+            <div class="messages">
+                <div class="message message-left">Buenas tardes. Todavía no tengo respuesta sobre mi ticket.</div>
+                <div class="message message-left">¿Tienen alguna idea de cuánto tiempo más podría tardar?</div>
+                <div class="message message-right">Hola, buenas tardes. Gracias por escribirnos. Ya estamos trabajando
+                    en ello y esperamos darte una solución lo antes posible.</div>
+                <div class="message message-right">Entendemos tu preocupación. En este momento, el área encargada está
+                    revisando los detalles. Estimamos que podríamos tener una actualización en el transcurso del día.
+                </div>
+                <div class="message message-right">Te notificaremos en cuanto tengamos novedades.</div>
+                <div class="message message-left">Perfecto, muchas gracias. Quedo pendiente.</div>
+
+                <!-- MODIFICACIÓN AQUÍ: Contenedor para el textarea y los botones -->
+                <div class="input-message-container mt-3">
+                    <textarea class="form-control message-textarea" rows="3" placeholder="Mensaje"></textarea>
+                    <input type="file" id="file-input" style="display: none;" />
+                    <div class="message-actions">
+                        <label for="file-input" class="btn btn-icon attach-button">
+                            <!-- SVG para Adjuntar -->
+                            <svg width="49" height="49" viewBox="0 0 49 49" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24.5" cy="24.5" r="24" stroke="#A4A4A4" />
+                                <path
+                                    d="M30.6359 16.0428L19.0609 27.7829C18.7252 28.1118 18.4574 28.5052 18.2732 28.9402C18.0889 29.3751 17.992 29.843 17.9879 30.3164C17.9839 30.7897 18.0728 31.2592 18.2495 31.6974C18.4263 32.1355 18.6873 32.5336 19.0173 32.8683C19.3474 33.203 19.7398 33.4678 20.1718 33.647C20.6038 33.8263 21.0666 33.9165 21.5334 33.9124C22.0001 33.9083 22.4613 33.8099 22.8902 33.6231C23.3190 33.4362 23.7069 33.1646 24.0312 32.8241L35.3039 21.0839C36.5845 19.7391 37.2931 17.9380 37.2771 16.0684C37.2611 14.1989 36.5217 12.4105 35.2183 11.0884C33.9148 9.76641 32.1516 9.01652 30.3083 9.00027C28.4651 8.98402 26.6893 9.70273 25.3634 11.0016L14.0889 22.7400C12.1111 24.7460 11.0000 27.4666 11.0000 30.3035C11.0000 33.1404 12.1111 35.8611 14.0889 37.8671C16.0666 39.8731 18.7490 41.0000 21.5460 41.0000C24.3430 41.0000 27.0254 39.8731 29.0032 37.8671L40.0000 26.7383"
+                                    stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </label>
+                        <button class="btn btn-icon send-button">
+                            <!-- SVG para Enviar -->
+                            <svg width="49" height="49" viewBox="0 0 49 49" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24.5" cy="24.5" r="24.5" fill="#0066FF" />
+                                <path
+                                    d="M37.6160 21.8454L25.0641 9L12.5122 21.8454C12.3641 21.9615 12.2419 22.1088 12.1540 22.2776C12.0661 22.4464 12.0145 22.6327 12.0026 22.8238C11.9908 23.0149 12.0190 23.2064 12.0853 23.3853C12.1517 23.5642 12.2546 23.7264 12.3872 23.8608C12.5197 23.9952 12.6788 24.0988 12.8537 24.1645C13.0285 24.2301 13.2150 24.2564 13.4006 24.2415C13.5862 24.2266 13.7665 24.1708 13.9293 24.0780C14.0921 23.9851 14.2336 23.8574 14.3443 23.7034L23.7647 14.0927V39.6633C23.7647 40.0178 23.9016 40.3578 24.1453 40.6085C24.3889 40.8592 24.7194 41.0000 25.0641 41.0000C25.4087 41.0000 25.7392 40.8592 25.9828 40.6085C26.2265 40.3578 26.3634 40.0178 26.3634 39.6633V14.0927L35.7838 23.7034C36.0285 23.9534 36.3597 24.0931 36.7045 24.0918C37.0493 24.0906 37.3795 23.9484 37.6225 23.6967C37.8654 23.4450 38.0012 23.1044 38.0000 22.7497C37.9988 22.3950 37.8606 22.0553 37.6160 21.8053V21.8454Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalles -->
+            <div class="details-box">
+                <div class="detalles">
+                    <h6>Ticket</h6>
+                    <p><strong>ID:</strong> #1859</p>
+                    <p><strong>Creado:</strong> 25 Jun 2025</p>
+                    <p><strong>Último mensaje:</strong> 25 Jun 2025</p>
+                    <p><strong>Estado:</strong> Abierto</p>
+                    <p><strong>Fuente:</strong> Email</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="ticket-tag">Urgente</span>
+                        <a href="#" style="color: #0066FF; text-decoration: none; min-width: 8rem;"
+                            class="d-flex align-items-center ms-4">+ Crear artículo</a>
+                    </div>
+                </div>
+                <hr />
+                <div class="usuario">
+                    <h6>Solicitante</h6>
+                    <div class="d-flex align-items-center">
+                        <svg width="82" height="82" viewBox="0 0 82 82" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="me-3">
+                            <path
+                                d="M40.5 15C43.7489 15 46.8647 16.2906 49.1621 18.5879C51.4594 20.8853 52.75 24.0011 52.75 27.25C52.75 30.4989 51.4594 33.6147 49.1621 35.9121C46.8647 38.2094 43.7489 39.5 40.5 39.5C37.2511 39.5 34.1353 38.2094 31.8379 35.9121C29.5406 33.6147 28.25 30.4989 28.25 27.25C28.25 24.0011 29.5406 20.8853 31.8379 18.5879C34.1353 16.2906 37.2511 15 40.5 15ZM40.5 45.625C54.0363 45.625 65 51.1069 65 57.875V64H16V57.875C16 51.1069 26.9637 45.625 40.5 45.625Z"
+                                fill="black" />
+                            <circle cx="41" cy="41" r="39" stroke="black" stroke-width="4" />
+                        </svg>
+
+                        <div>
+                            <strong>Javier Mendoza</strong><br />
+                            <small>javiermendoza@gmail.com</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/scriptChat.js"></script>
+</body>
+
+</html>
