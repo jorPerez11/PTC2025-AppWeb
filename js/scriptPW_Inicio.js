@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
 $(document).ready(function () {
     // Inicialización del daterangepicker
     $('input[name="dates"]').daterangepicker({
-
-
         locale: {
             format: 'MM/DD/YYYY', // Formato visible en el input del picker
             separator: ' - ',
