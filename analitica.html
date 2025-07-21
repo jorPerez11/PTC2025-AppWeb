@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analítica</title>
+    <!--Enlace a tipografía externa-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <!--Enlaces a CSS y Framework Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="/css/styleAnalitica.css">
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
+            <div class="container-fluid justify-content-between">
+                <a href="#" class="navbar-brand mb-0 h1 mx-auto">
+                    <img src="../img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
+                    H2C
+                </a>
+                <!--Botón hamburguesa para pantallas sm y md-->
+                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
+                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarContenido">
+                    <div class="navbar-content ms-4">
+                        <ul class="navbar-nav me-auto ms-2 ">
+                            <li class="nav-item active mb-1 me-3 ">
+                                <a href="/primerUso.html" class="nav-link">
+                                    Inicio
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Clientes
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="analitica.html" class="nav-link">
+                                    Analítica
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="#" class="nav-link">
+                                    Base de conocimientos
+                                </a>
+                            </li>
+                            <li class="nav-item active me-3">
+                                <a href="activities.html" class="nav-link">
+                                    Actividades
+                                </a>
+                            </li>
+                            <div class="d-sm-block d-xl-none">
+                                <hr class="nav-separator mt-2 mb-2">
+                                <li class="nav-item active me-3">
+                                    <img src="../img/notificationIcon.png" alt="">
+                                    <a href="#" class="nav-link">
+                                        Notificaciones
+                                    </a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        <img src="../img/configIcon.png" alt="">
+                                        Configuración
+                                    </a>
+                                </li>
+                                <li class="nav-item active me-3">
+                                    <a href="#" class="nav-link">
+                                        <img src="../img/userIcon.png" style="width: 2rem; margin-right: 4px;" alt="">
+                                        Mi Perfil
+                                    </a>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="d-none align-items-center gap-2 d-none d-xl-flex">
+                    <button type="button" class="btn botonNotificaciones mx-2">
+                        <img src="../img/notificationIcon.png" alt="">
+                    </button>
+                    <button type="button" class="btn botonConfig me-2">
+                        <img src="../img/configIcon.png" alt="">
+                    </button>
+                    <div class="separator"></div>
+                    <button type="button" class="btn botonUser me-2">
+                        <img src="../img/userIcon.png" alt="">
+                    </button>
+
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <section class="hero-section position-relative">
+        <section class="analytics-banner text-white py-5">
+            <div class="container py-5 flex-column justify-content-center">
+                <h1 class="display-4 mb-3 h1banner">Analítica</h1>
+                <p class="lead pbanner">Explora métricas clave del desempeño operativo</p>
+            </div>
+        </section>
+    </section>
+
+    <main>
+        <div class="container text-center mb-5">
+            <div class="section-divider">
+                <hr class="line-left">
+                <h2 class="section-title">Resumen General</h2>
+                <hr class="line-right">
+            </div>
+        </div>
+
+        <div class="container cards-container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-6 col-lg-3 mb-4">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="39" viewBox="0 0 36 39"
+                                    fill="none" class="mb-3 card-icon">
+                                    <path
+                                        d="M16.2 25.35H19.8V29.25H16.2V25.35ZM16.2 9.75H19.8V21.45H16.2V9.75ZM18 0C8.046 0 0 8.775 0 19.5C0 24.6717 1.89642 29.6316 5.27208 33.2886C6.94353 35.0993 8.92784 36.5357 11.1117 37.5157C13.2956 38.4956 15.6362 39 18 39C22.7739 39 27.3523 36.9455 30.7279 33.2886C34.1036 29.6316 36 24.6717 36 19.5C36 16.9392 35.5344 14.4035 34.6298 12.0377C33.7252 9.67182 32.3994 7.52216 30.7279 5.71142C29.0565 3.90068 27.0722 2.46432 24.8883 1.48435C22.7044 0.504382 20.3638 0 18 0ZM18 35.1C14.1809 35.1 10.5182 33.4564 7.81766 30.5309C5.11714 27.6053 3.6 23.6374 3.6 19.5C3.6 15.3626 5.11714 11.3947 7.81766 8.46913C10.5182 5.54357 14.1809 3.9 18 3.9C21.8191 3.9 25.4818 5.54357 28.1823 8.46913C30.8829 11.3947 32.4 15.3626 32.4 19.5C32.4 23.6374 30.8829 27.6053 28.1823 30.5309C25.4818 33.4564 21.8191 35.1 18 35.1Z"
+                                        fill="#DC2F02" />
+                                </svg>
+                                <img src="img/analiticaImg/ArrowIcon.png" style="object-fit: contain;"
+                                    alt="Ir a Detalles" class="card-row">
+                            </div>
+                            <div class="centro">
+                                <h5 class="card-title-lg" id="ticketsAbiertosTitle"></h5>
+                                <p class="card-number" id="ticketsAbiertosNumber"></p>
+                                <p class="card-description" id="ticketsAbiertosDescription"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mb-4">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46"
+                                    fill="none" class="mb-3 card-icon">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M9.58333 5.75C8.56667 5.75 7.59165 6.15387 6.87276 6.87276C6.15387 7.59165 5.75 8.56667 5.75 9.58333V36.4167C5.75 37.4333 6.15387 38.4084 6.87276 39.1272C7.59165 39.8461 8.56667 40.25 9.58333 40.25H21.0833C22.1 40.25 23.075 39.8461 23.7939 39.1272C24.5128 38.4084 24.9167 37.4333 24.9167 36.4167V24.9167H36.4167C37.4333 24.9167 38.4084 24.5128 39.1272 23.7939C39.8461 23.075 40.25 22.1 40.25 21.0833V9.58333C40.25 8.56667 39.8461 7.59165 39.1272 6.87276C38.4084 6.15387 37.4333 5.75 36.4167 5.75H9.58333ZM24.9167 21.0833H36.4167V9.58333H24.9167V21.0833ZM9.58333 24.9167V36.4167H21.0833V24.9167H9.58333ZM9.58333 21.0833H21.0833V9.58333H9.58333V21.0833Z"
+                                        fill="#F48C06" />
+                                </svg>
+                                <img src="img/analiticaImg/ArrowIcon.png" style="object-fit: contain;"
+                                    alt="Ir a Detalles" class="card-row">
+                            </div>
+                            <div class="centro">
+                                <h5 class="card-title-lg" id="ticketsEnProcesoTitle"></h5>
+                                <p class="card-number" id="ticketsEnProcesoNumber"></p>
+                                <p class="card-description" id="ticketsEnProcesoDescription"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mb-4">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43 43"
+                                    fill="none" class="mb-3 card-icon">
+                                    <path
+                                        d="M18.352 29.2293L10.75 21.6255L13.2834 19.0921L18.352 24.1589L28.4857 14.0234L31.0209 16.5586L18.352 29.2293Z"
+                                        fill="#32C91E" />
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M1.79199 21.5001C1.79199 10.6157 10.6159 1.79175 21.5003 1.79175C32.3847 1.79175 41.2087 10.6157 41.2087 21.5001C41.2087 32.3845 32.3847 41.2084 21.5003 41.2084C10.6159 41.2084 1.79199 32.3845 1.79199 21.5001ZM21.5003 37.6251C19.3828 37.6251 17.2859 37.208 15.3296 36.3976C13.3732 35.5873 11.5956 34.3995 10.0982 32.9022C8.60088 31.4048 7.41312 29.6272 6.60277 27.6708C5.79241 25.7145 5.37532 23.6176 5.37532 21.5001C5.37532 19.3825 5.79241 17.2857 6.60277 15.3293C7.41312 13.3729 8.60088 11.5953 10.0982 10.098C11.5956 8.60064 13.3732 7.41288 15.3296 6.60252C17.2859 5.79217 19.3828 5.37508 21.5003 5.37508C25.7769 5.37508 29.8784 7.07396 32.9024 10.098C35.9264 13.122 37.6253 17.2235 37.6253 21.5001C37.6253 25.7767 35.9264 29.8782 32.9024 32.9022C29.8784 35.9262 25.7769 37.6251 21.5003 37.6251Z"
+                                        fill="#32C91E" />
+                                </svg>
+                                <img src="img/analiticaImg/ArrowIcon.png" style="object-fit: contain;"
+                                    alt="Ir a Detalles" class="card-row">
+                            </div>
+                            <div class="centro">
+                                <h5 class="card-title-lg" id="ticketsCerradosTitle"></h5>
+                                <p class="card-number" id="ticketsCerradosNumber"></p>
+                                <p class="card-description" id="ticketsCerradosDescription"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mb-4">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                    fill="none" class="mb-3 card-icon">
+                                    <path
+                                        d="M27.68 23.1624L23.8337 20.9422V12.8334C23.8337 12.3472 23.6405 11.8809 23.2967 11.5371C22.9529 11.1932 22.4866 11.0001 22.0003 11.0001C21.5141 11.0001 21.0478 11.1932 20.704 11.5371C20.3602 11.8809 20.167 12.3472 20.167 12.8334V22.0001C20.167 22.3219 20.2517 22.638 20.4126 22.9167C20.5735 23.1954 20.805 23.4268 21.0837 23.5877L25.8467 26.3377C26.0552 26.46 26.286 26.5398 26.5255 26.5726C26.7651 26.6053 27.0087 26.5904 27.2425 26.5286C27.4762 26.4668 27.6954 26.3594 27.8875 26.2125C28.0796 26.0656 28.2407 25.8822 28.3616 25.6728C28.4825 25.4635 28.5607 25.2322 28.5919 24.9925C28.6231 24.7527 28.6065 24.5091 28.5431 24.2758C28.4798 24.0425 28.3709 23.824 28.2228 23.6329C28.0747 23.4418 27.8902 23.2819 27.68 23.1624ZM22.0003 3.66675C18.3743 3.66675 14.8298 4.74198 11.8149 6.75647C8.79998 8.77096 6.45015 11.6342 5.06254 14.9842C3.67494 18.3342 3.31187 22.0204 4.01927 25.5767C4.72667 29.1331 6.47275 32.3997 9.03671 34.9637C11.6007 37.5277 14.8674 39.2738 18.4237 39.9811C21.98 40.6885 25.6662 40.3255 29.0162 38.9379C32.3662 37.5503 35.2294 35.2004 37.2439 32.1855C39.2584 29.1706 40.3337 25.6261 40.3337 22.0001C40.3288 17.1393 38.3957 12.4789 34.9586 9.04182C31.5215 5.6047 26.8611 3.6716 22.0003 3.66675ZM22.0003 36.6667C19.0995 36.6667 16.2639 35.8066 13.852 34.195C11.44 32.5834 9.56019 30.2928 8.4501 27.6128C7.34002 24.9328 7.04957 21.9838 7.61548 19.1388C8.1814 16.2937 9.57826 13.6804 11.6294 11.6292C13.6806 9.57801 16.294 8.18115 19.139 7.61523C21.9841 7.04931 24.933 7.33976 27.613 8.44985C30.293 9.55993 32.5836 11.4398 34.1952 13.8517C35.8068 16.2636 36.667 19.0993 36.667 22.0001C36.6621 25.8884 35.1154 29.6161 32.3659 32.3656C29.6164 35.1151 25.8887 36.6619 22.0003 36.6667Z"
+                                        fill="#FF7D0B" />
+                                </svg>
+                                <img src="img/analiticaImg/ArrowIcon.png" style="object-fit: contain;"
+                                    alt="Ir a Detalles" class="card-row">
+                            </div>
+                            <div class="centro">
+                                <h5 class="card-title-lg" id="ticketsEnEsperaTitle"></h5>
+                                <p class="card-number" id="ticketsEnEsperaNumber"></p>
+                                <p class="card-description" id="ticketsEnEsperaDescription"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row g-4 align-items-stretch">
+                        <div class="col-12 col-md-6 col-lg-3 mb-4 order-1 order-md-1 order-lg-1">
+                            <div class="card shadow-lg h-100">
+                                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                    <h5 class="card-title-custom mb-4">Rendimiento</h5>
+                                    <div class="gauge-container mb-3">
+                                        <div class="gauge-bg"></div>
+                                        <div class="gauge-cover"></div>
+                                        <div id="gaugeNeedle" class="gauge-needle"></div>
+                                    </div>
+                                    <div class="rendimiento-stars mb-1" id="rendimientoStars"></div>
+                                    <p class="rendimiento-text">Bueno</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-12 col-lg-6 mb-4 order-2 order-md-3 order-lg-2">
+                            <div class="card shadow-lg h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title-custom mb-0">Nuevos Usuarios</h5>
+
+                                    <!-- Dropdown Bootstrap -->
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light border dropdown-toggle" type="button"
+                                            id="dropdownNewUsers" data-bs-toggle="dropdown" aria-expanded="false">
+                                            6 Meses
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownNewUsers">
+                                            <li><a class="dropdown-item" href="#">1 Mes</a></li>
+                                            <li><a class="dropdown-item" href="#">3 Meses</a></li>
+                                            <li><a class="dropdown-item" href="#">6 Meses</a></li>
+                                            <li><a class="dropdown-item" href="#">12 Meses</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <!-- Gráfico ocupa todo el espacio restante -->
+                                <div id="barChartApex" class="flex-fill" style="min-height:180px;"></div>
+
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-4 order-3 order-md-2 order-lg-3">
+                            <div class="card shadow-lg h-100">
+                                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                    <h5 class="card-title-custom mb-4">Progreso</h5>
+                                    <div class="donut-chart-container" data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Representa en porcentajes el progreso del año.">
+                                        <svg class="donut-svg" width="170" height="170" viewBox="0 0 42 42">
+                                            <circle class="donut-track" cx="21" cy="21" r="15.9" stroke-width="4">
+                                            </circle>
+                                            <circle id="donutFill" class="donut-fill" cx="21" cy="21" r="15.9"
+                                                stroke-width="4"></circle>
+                                        </svg>
+                                        <div class="donut-text">
+                                            <div class="total-label fw-semibold">Total</div>
+                                            <div class="percentage-label" id="donutPercentage">0%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container text-center mt-5 mb-5">
+                <div class="section-divider">
+                    <hr class="line-left">
+                    <h2 class="section-title">Alertas y Objetivos</h2>
+                    <hr class="line-right">
+                </div>
+            </div>
+
+            <div class="container mb-5">
+                <div class="card shadow-lg">
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover alerts-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Métrica</th>
+                                    <th scope="col">Objetivo (SLA)</th>
+                                    <th scope="col">Actual</th>
+                                    <th scope="col">Cumplimiento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tiempo de primera respuesta</td>
+                                    <td>≤ 1h</td>
+                                    <td>45 min</td>
+                                    <td><span class="status-indicator completed"></span> Cumplido</td>
+                                </tr>
+                                <tr>
+                                    <td>Tiempo de resolución</td>
+                                    <td>≤ 24h</td>
+                                    <td>28 h</td>
+                                    <td><span class="status-indicator not-completed"></span> No cumplido</td>
+                                </tr>
+                                <tr>
+                                    <td>Tickets resueltos al día</td>
+                                    <td>≥ 50</td>
+                                    <td>60</td>
+                                    <td><span class="status-indicator completed"></span> Cumplido</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <!-- Mi JS-->
+    <script src="js/scriptAnalitica.js"></script>
+</body>
+
+</html>
