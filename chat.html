@@ -19,7 +19,6 @@
                     <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
                     H2C
                 </a>
-                <!--Botón hamburguesa para pantallas sm y md-->
                 <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
                     aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación"
                     id="botonHamburguesa">
@@ -122,14 +121,12 @@
     <div class="container ticket-container">
         <a href="tickets.html" class="mb-3 d-inline-block" style="text-decoration: none; color: #0066FF;"><svg
                 xmlns="http://www.w3.org/2000/svg" height="20" width="17.5"
-                viewBox="0 0 448 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                <path fill="#0066ff"
+                viewBox="0 0 448 512"><path fill="#0066ff"
                     d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
             </svg> Regresar</a>
         <h4 class="mb-4">Javier Mendoza</h4>
-        <div class="chat-box">
-            <!-- Conversación -->
-            <div class="messages">
+        <div class="row chat-box">
+            <div class="messages col-12 col-lg-8">
                 <div class="message message-left">Buenas tardes. Todavía no tengo respuesta sobre mi ticket.</div>
                 <div class="message message-left">¿Tienen alguna idea de cuánto tiempo más podría tardar?</div>
                 <div class="message message-right">Hola, buenas tardes. Gracias por escribirnos. Ya estamos trabajando
@@ -145,7 +142,6 @@
                     <input type="file" id="file-input" style="display: none;" />
                     <div class="message-actions">
                         <label for="file-input" class="btn btn-icon attach-button">
-                            <!-- SVG para Adjuntar -->
                             <svg width="49" height="49" viewBox="0 0 49 49" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="24.5" cy="24.5" r="24" stroke="#A4A4A4" />
@@ -155,7 +151,6 @@
                             </svg>
                         </label>
                         <button class="btn btn-icon send-button">
-                            <!-- SVG para Enviar -->
                             <svg width="49" height="49" viewBox="0 0 49 49" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="24.5" cy="24.5" r="24.5" fill="#0066FF" />
@@ -168,8 +163,7 @@
                 </div>
             </div>
 
-            <!-- Detalles -->
-            <div class="details-box">
+            <div class="details-box col-12 col-lg-4">
                 <div class="detalles">
                     <h6>Ticket</h6>
                     <p><strong>ID:</strong> #1859</p>
