@@ -1,50 +1,54 @@
-body{
+body {
     font-family: "Montserrat", sans-serif;
 }
 
-.navbar{
+.navbar {
     background-color: #03071E;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .separator {
-    width: 2px; /* Ancho del "palito" */
-    height: 25px; /* Altura del "palito" (aprox. la altura de los iconos) */
-    background-color: rgba(255, 255, 255, 0.5); /* Color blanco semi-transparente */
+    width: 2px;
+    /* Ancho del "palito" */
+    height: 25px;
+    /* Altura del "palito" (aprox. la altura de los iconos) */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Color blanco semi-transparente */
     margin: 0 10px;
 }
 
 .botonInicioSesion,
-.botonRegistro{
+.botonRegistro {
     white-space: nowrap;
     padding-left: 1rem;
     padding-right: 1rem;
 }
 
-.navbar-nav{
+.navbar-nav {
     padding-right: 30px;
 }
 
-.nav-item{
+.nav-item {
     font-size: 18px;
     font-weight: 300;
     white-space: nowrap;
 }
 
-.navbar-toggler{
-   border: none;
+.navbar-toggler {
+    border: none;
 }
-.navbar-toggler:focus{
+
+.navbar-toggler:focus {
     box-shadow: none;
 }
 
-.navbar-toggler-icon:focus{
+.navbar-toggler-icon:focus {
     outline: none;
     border: none;
     box-shadow: none;
 }
 
-.botonRegistro{
+.botonRegistro {
     background-color: #F48C06;
     color: white;
     width: auto;
@@ -52,43 +56,43 @@ body{
     font-size: 18px;
 }
 
-.botonRegistro:hover{
+.botonRegistro:hover {
     background-color: #a45d00;
     color: white;
 }
 
-.botonRegistro:focus{
-   background-color: #a45d00;
+.botonRegistro:focus {
+    background-color: #a45d00;
     color: white;
 }
 
-.botonInicioSesion{
+.botonInicioSesion {
     width: auto;
     height: auto;
     font-size: 18px;
 }
 
-.botonInicioSesion:focus{
+.botonInicioSesion:focus {
     box-shadow: none;
 }
 
-.navbar-brand{
+.navbar-brand {
     size: 100px;
 }
 
-.nav-link{
+.nav-link {
     color: white;
     display: inline-block;
     text-decoration: none;
     position: relative;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     color: #F48C06;
     position: relative;
 }
 
-.nav-link::before{
+.nav-link::before {
     content: '';
     position: absolute;
     bottom: 5px;
@@ -99,13 +103,13 @@ body{
     transition: width 0.3s ease;
 }
 
-.nav-link:hover::before{
+.nav-link:hover::before {
     width: 100%;
 }
 
-.nav-separator{
+.nav-separator {
     border: 0;
-    height: 1px; 
+    height: 1px;
     background-color: white;
     width: 25%;
     width: calc(100% - 30px);
@@ -117,12 +121,12 @@ body{
     background-position: left;
     background-repeat: no-repeat;
     background-size: contain;
-    padding-top: 80px; 
-    padding-bottom: 10rem; 
-    
+    padding-top: 80px;
+    padding-bottom: 10rem;
+
 }
 
-.input-group{
+.input-group {
     border-radius: 15px;
     overflow: hidden;
 }
@@ -130,39 +134,128 @@ body{
 /* Contenedor de las tarjetas que superpondrán el banner */
 .cards-container {
     /* **SOLUCIÓN CLAVE DE POSICIONAMIENTO** */
-    position: absolute; /* Posicionamiento absoluto respecto a .hero-section */
-    bottom: -600px; /* Ajusta esto para mover el contenedor hacia arriba/abajo */
-    left: 50%; /* Centrar horizontalmente */
-    transform: translateX(-50%); /* Centrar con precisión */
-    width: 90%; /* Ancho del contenedor de tarjetas */
-    max-width: 1600px; /* Limita el ancho máximo para pantallas grandes */
-    z-index: 10; /* Asegura que esté por encima de otros elementos */
+    position: absolute;
+    /* Posicionamiento absoluto respecto a .hero-section */
+    bottom: -600px;
+    /* Ajusta esto para mover el contenedor hacia arriba/abajo */
+    left: 50%;
+    /* Centrar horizontalmente */
+    transform: translateX(-50%);
+    /* Centrar con precisión */
+    width: 90%;
+    /* Ancho del contenedor de tarjetas */
+    max-width: 1600px;
+    /* Limita el ancho máximo para pantallas grandes */
+    z-index: 10;
+    /* Asegura que esté por encima de otros elementos */
 }
 
-.charts{
-    width: 35rem;
+/* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    width: 180px;
+    height: 90px;
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    border-radius: 90px 90px 0 0;
+}
+
+.gauge-cover {
+    width: 140px;
+    height: 70px;
+    background: #fff;
+    border-radius: 70px 70px 0 0;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.gauge-needle {
+    position: absolute;
+    bottom: -15px;
+    left: calc(50% - 4px);
+    width: 8px;
+    height: 80px;
+    background: #7b001c;
+    transform-origin: 50% 100%;
+    transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    clip-path: polygon(50% 0%,
+            /* punta exacta en el centro arriba */
+            100% 15%,
+            /* ancho máximo tras la punta */
+            100% 100%,
+            /* base inferior derecha */
+            0% 100%,
+            /* base inferior izquierda */
+            0% 15%
+            /* ancho máximo tras la punta */
+        );
+}
+
+.rendimiento-stars {
+    color: #ffc107;
+    font-size: 1.5rem;
+}
+
+.rendimiento-text {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Estilos base para el contenedor de los gráficos */
+.charts {
+    width: 100%;
+    /* Ocupa todo el ancho disponible */
+    height: auto;
+    /* Permite que la altura se ajuste dinámicamente según el contenido, pero min-height lo limita */
+    min-height: 250px;
+    /* Valor base. Se ajustará con media queries. */
+    display: flex;
+    /* Para centrar el contenido de ApexCharts */
+    flex-direction: column;
+    /* Asegura que los ítems dentro se apilen verticalmente si es necesario */
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    /* Centrar el contenedor del gráfico */
+    padding-bottom: 0;
+    /* Eliminar cualquier padding inferior que pueda generar espacio extra */
+    padding-top: 15px;
+    /* Un poco de espacio arriba para el título de la tarjeta */
 }
 
 .daterangepicker td.active {
-    background-color: #1345d1; /* Color de fondo del morado principal para fechas activas */
+    background-color: #1345d1;
+    /* Color de fondo del morado principal para fechas activas */
 }
 
-.daterangepicker td.end-date{
-    background-color: #1345d1; /* Color de fondo del morado principal para fechas activas */
+.daterangepicker td.end-date {
+    background-color: #1345d1;
+    /* Color de fondo del morado principal para fechas activas */
 
 }
 
 .daterangepicker td.in-range {
-    background-color: #69d2fc25; /* Fondo para el rango seleccionado */
+    background-color: #69d2fc25;
+    /* Fondo para el rango seleccionado */
 }
 
 
 /* Estilos para las tarjetas de Bootstrap */
 .card {
-    border-radius: 20px; /* Bordes redondeados */
-    border: none; /* Elimina el borde por defecto de Bootstrap */
-    background-color: #ffffff; /* Fondo blanco */
-    color: #333; /* Color del texto dentro de la tarjeta */
+    border-radius: 20px;
+    /* Bordes redondeados */
+    border: none;
+    /* Elimina el borde por defecto de Bootstrap */
+    background-color: #ffffff;
+    /* Fondo blanco */
+    color: #333;
+    /* Color del texto dentro de la tarjeta */
 }
 
 .card .card-body {
@@ -182,38 +275,39 @@ body{
 .card .card-text {
     font-weight: 600;
     font-size: 3rem;
-    color: #333; /* Color para el número, puedes cambiarlo */
+    color: #333;
+    /* Color para el número, puedes cambiarlo */
 }
 
-.btn p{
+.btn p {
     color: #434343;
 }
 
 /* Botones Ver Mas*/
 
-.botonVerMasR{
+.botonVerMasR {
     background-color: rgba(220, 47, 2, 0.25);
 }
 
-.botonVerMasR:hover{
+.botonVerMasR:hover {
     background-color: rgb(220, 46, 2);
     color: white;
 }
 
-.botonVerMasN{
+.botonVerMasN {
     background-color: rgba(244, 140, 6, 0.25);
 }
 
-.botonVerMasN:hover{
+.botonVerMasN:hover {
     background-color: rgb(244, 141, 6);
     color: white;
 }
 
-.botonVerMasV{
+.botonVerMasV {
     background-color: rgba(50, 201, 30, 0.25);
 }
 
-.botonVerMasV:hover{
+.botonVerMasV:hover {
     background-color: rgb(50, 201, 30);
     color: white;
 }
@@ -227,20 +321,77 @@ body{
     text-decoration: underline;
 }
 
-/* Media Queries para ajustar el diseño en pantallas pequeñas si es necesario */
-@media (max-width: 767.98px) { /* Para pantallas más pequeñas que 'md' */
+/* Media Queries para ajustar el diseño en pantallas pequeñas */
+@media (max-width: 767.98px) {
+
     .hero-section {
-        padding-bottom: 200px; /* Aumenta el padding para que las tarjetas apiladas no se desborden */
+        padding-bottom: 2rem;
+        /* Suficiente espacio para el flujo natural */
     }
+
     .cards-container {
-        position: relative; /* Puedes cambiar a relativo si prefieres que fluya normalmente en móviles */
+        position: relative;
+        /* Cambiado a relativo para que fluya con el documento */
         bottom: auto;
         left: auto;
         transform: none;
-        width: 100%; /* Ocupa todo el ancho disponible */
-        padding: 0 15px; /* Pequeño padding para los bordes */
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    .charts {
+        min-height: 280px;
+        /* Una altura mínima un poco mayor para móviles */
+        margin-bottom: 1rem;
+        /* Espacio entre gráficos */
     }
 }
 
+/* Media Queries para ajustar el diseño en pantallas pequeñas */
+/* Móviles: 0px a 767.98px */
+@media (max-width: 767.98px) {
+    .charts {
+        min-height: 260px;
+        margin-bottom: 1rem;
+        /* Espacio entre gráficos cuando se apilan */
+        padding-top: 10px;
+    }
+}
 
+/* Media Queries para ajustar el diseño en pantallas pequeñas */
+@media (max-width: 991.98px) {
+    .hero-section {
+        padding-top: 100px;
+        padding-bottom: 30px;
+        min-height: auto;
+    }
 
+    .hero-section .row > * {
+        margin-top: 0;
+        padding-right: calc(var(--bs-gutter-x) * .5);
+        padding-left: calc(var(--bs-gutter-x) * .5);
+    }
+
+    .cards-container {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        padding: 0 15px; /* Mantenemos el padding horizontal */
+    }
+
+    .charts {
+        min-height: 260px; /* Ajuste para móviles, si se ve cortado, puedes bajarlo más */
+        margin-bottom: 1rem; /* Espacio entre gráficos cuando se apilan */
+        padding-top: 10px;
+    }
+}
+
+/* Desktop: 992px y más */
+@media (min-width: 992px) {
+    .charts {
+        min-height: 380px;
+        padding-top: 20px;
+    }
+}
