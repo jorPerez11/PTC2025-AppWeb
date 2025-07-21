@@ -64,6 +64,12 @@ function mostrarDatos(ticketsData) {
             const card = document.createElement('div');
             card.className = 'ticket-card mb-3';
 
+            card.addEventListener('click', () => {
+                // Puedes pasar el ID del ticket o cualquier otra información si la necesitas en chat.html
+                // Por ahora, simplemente redirigimos a chat.html
+                window.location.href = 'chat.html';
+            });
+
             // Formatear la fecha para mostrar solo la parte de la fecha (YYYY-MM-DD)
             const creationDate = ticket.creationDate ? new Date(ticket.creationDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A';
 
