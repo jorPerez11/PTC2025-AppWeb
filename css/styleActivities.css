@@ -1,0 +1,411 @@
+body {
+    background: #fff;
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Montserrat", sans-serif;
+    padding: 0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Estilos base para las imágenes de esquina */
+.imgFondo1,
+.imgFondo2 {
+    position: absolute;
+    top: 0;
+    width: 25vw;
+    height: 25vw;
+    background-image: url('../img/activitiesImg/imgBackground.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+/* Imagen de la esquina superior izquierda */
+.imgFondo1 {
+    left: -5vw;
+    background-position: top left;
+}
+
+/* Imagen de la esquina superior derecha (espejo de la izquierda) */
+.imgFondo2 {
+    right: -5vw;
+    background-position: top right;
+    transform: scaleX(-1);
+}
+
+/* --- Estilos para el contenido de Actividades --- */
+
+.activities-content {
+    padding-top: 100px;
+    padding-bottom: 40px;
+}
+
+.activities-title {
+    color: #DC2F02;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.activities-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.search-bar .form-control {
+    border-color: #ced4da;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.search-bar .search-button {
+    background-color: transparent;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 0.5rem 0.5rem 0;
+    color: #495057;
+    padding: 0.75rem 1rem;
+}
+
+.search-bar .search-button:hover {
+    background-color: #e9ecef;
+}
+
+.create-note-button {
+    background-color: #F48C06;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.create-note-button:hover {
+    background-color: #e07b00;
+    color: white;
+}
+
+.create-note-button i {
+    margin-right: 0.5rem;
+}
+
+/* Estilos de las tarjetas */
+.activities-cards-container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.activity-card {
+    background-color: transparent; /* El fondo general de la tarjeta es transparente o el del body */
+    border: 1px solid #e0e0e0; /* Un borde sutil para definir la tarjeta */
+    border-radius: 1rem; /* Bordes más redondeados */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra pronunciada para toda la tarjeta */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden; /* Importante para que los bordes redondeados se vean bien con los fondos internos */
+}
+
+.activity-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.activity-card-header {
+    background-color: #03071E; /* Fondo negro para el encabezado de la tarjeta */
+    padding: 1rem 1.25rem; /* Padding para el encabezado */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Separador sutil con el cuerpo */
+    /* Aquí usamos solo 'card-title' para que el h5 interno tome los estilos */
+}
+
+.activity-card-title {
+    color: white; /* El título dentro del header es blanco */
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0; /* Elimina el margen inferior por defecto del h5 en este contexto */
+}
+
+.activity-card-body {
+    background-color: white; /* Fondo blanco para el cuerpo de la tarjeta */
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    color: black; /* Color de texto predeterminado para el cuerpo (naranja) */
+}
+
+.activity-card-text {
+    color: black; /* Texto de la descripción de la tarjeta es naranja */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.activity-card .form-check {
+    margin-bottom: 0.5rem;
+}
+
+.activity-card .form-check-label {
+    font-size: 0.9rem;
+    color: black; /* Labels de checkbox también naranja */
+}
+
+.edit-activity-button {
+    background-color: #DC2F02;
+    color: white;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-activity-button:hover {
+    background-color: #e07b00;
+    transform: scale(1.05);
+    color: white;
+}
+
+.edit-activity-button i {
+    font-size: 1.1rem;
+}
+
+
+/* --- Estilos existentes (mantener) --- */
+
+h4 {
+    background-color: #03071E;
+    color: white;
+}
+
+.header-container {
+    background-color: #03071E;
+    color: #fff;
+    padding: 0;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    height: 93px;
+    margin-top: 85px;
+}
+
+.header {
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.header-icon {
+    padding-right: 15px;
+}
+
+.header-title {
+    flex-grow: 1;
+}
+
+.header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar {
+    background-color: #03071E;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.separator {
+    width: 3.5px;
+    height: 34px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: 0 10px;
+}
+
+.botonInicioSesion,
+.botonRegistro {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-nav {
+    padding-right: 30px;
+}
+
+.nav-item {
+    font-size: 18px;
+    font-weight: 300;
+    white-space: nowrap;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+.navbar-toggler-icon:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.botonRegistro {
+    background-color: #F48C06;
+    color: white;
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonRegistro:hover {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonRegistro:focus {
+    background-color: #a45d00;
+    color: white;
+}
+
+.botonInicioSesion {
+    width: auto;
+    height: auto;
+    font-size: 18px;
+}
+
+.botonInicioSesion:focus {
+    box-shadow: none;
+}
+
+.navbar-brand {
+    size: 100px;
+}
+
+.nav-link {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 100%;
+}
+
+.nav-separator {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
+}
+
+.main-container {
+    padding: 20px;
+    margin-top: 80px;
+}
+
+.header-section {
+    background-color: #03071E;
+    color: white;
+}
+
+.profile-img-sm {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Encabezados */
+.headers-usuario {
+    padding: .5rem 1rem;
+    color: black;
+}
+
+/* Alinear filas con headers */
+.usuario-card .row {
+    min-height: 64px;
+}
+
+/* Efecto hover ligero */
+.usuario-card {
+    transition: transform .1s;
+}
+
+.usuario-card:hover {
+    transform: translateY(-2px);
+}
+
+.ver-mas {
+    color: #fff;
+}
+
+#lista-usuarios .row {
+    min-height: 64px;
+}
+
+#filter-bar-container .btn-outline-secondary {
+    border-color: #ced4da;
+}
+
+#userCount,
+#filterCount {
+    color: black;
+}
+
+.filtros {
+    color: #fff;
+}
+
+.filter-bar-custom {
+    background-color: #ffffff;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.create-note-link{
+color: #0066FF;
+font-size: 1.2rem;
+text-decoration: none;
+}
