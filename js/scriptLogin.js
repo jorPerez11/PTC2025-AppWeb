@@ -9,7 +9,7 @@ const contrasena = document.getElementById("inputPassword");
 form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (correo.value === USUARIO_CORRECTO && contrasena.value === CONTRASENA_CORRECTA) {
-        window.location.href = "PlataformaWebInicio/PW_Inicio.html";
+        window.location.href = "primerUsoPasos.html";
     } else {
         alert("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
     }
