@@ -17,110 +17,96 @@
     <div class="imgFondo1"></div>
     <div class="imgFondo2"></div>
 
-    <div class="container-fluid">
-        <nav class="navbar fixed-top navbar-expand-xl navbar-dark navbar-expand-lg" id="navbar">
-            <div class="container-fluid justify-content-between">
-                <a href="/PlataformaWebInicio/PW_Inicio.html" class="navbar-brand mb-0 h1 mx-auto">
-                    <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
-                    H2C
-                </a>
-                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
-                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación"
-                    id="botonHamburguesa">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarContenido">
-                    <div class="navbar-content ms-4">
-                        <ul class="navbar-nav me-auto ms-2 ">
-                            <li class="nav-item active mb-1 me-3 ">
-                                <a href="PlataformaWebInicio/PW_Inicio.html" class="nav-link">
-                                    Inicio
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="tickets.html" class="nav-link">
-                                    Tickets
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="clientesAdmin.html" class="nav-link">
-                                    Clientes
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="analitica.html" class="nav-link">
-                                    Analítica
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="baseConocimiento.html" class="nav-link">
-                                    Base de conocimientos
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="activities.html" class="nav-link">
-                                    Actividades
-                                </a>
-                            </li>
-                            </li>
+    <div class="container">
+    <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
+        <div class="container-fluid justify-content-between">
+            <a href="/PlataformaWebInicio/PW_Inicio.html" class="navbar-brand mb-0 h1 mx-auto">
+                <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
+                H2C
+            </a> 
+            <!--Botón hamburguesa para pantallas sm y md-->        
+            <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler" aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación">
+                <span class="navbar-toggler-icon"></span>
+            </button>        
+            <div class="collapse navbar-collapse" id="navbarContenido">
+                <div class="navbar-content ms-4">
+                    <ul class="navbar-nav me-auto ms-2 ">
+                        <li class="nav-item active mb-1 me-3 ">
+                            <a href="PlataformaWebInicio/PW_Inicio.html" class="nav-link">
+                                Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item active me-3">
+                            <a href="tickets.html" class="nav-link">
+                                Tickets
+                            </a>
+                        </li>
+                        <li class="nav-item active me-3">
+                            <a href="clientesAdmin.html" class="nav-link">
+                                Clientes
+                            </a>
+                        </li>
+                        <li class="nav-item active me-3">
+                            <a href="analitica.html" class="nav-link">
+                                Analítica
+                            </a>
+                        </li>
+                        <li class="nav-item active me-3">
+                            <a href="baseConocimiento.html" class="nav-link">
+                                Base de conocimientos
+                            </a>
+                        </li>
+                        <li class="nav-item active me-3">
+                            <a href="activities.html" class="nav-link">
+                                Actividades
+                            </a>
+                        </li>
                             <div class="d-sm-block d-xl-none">
                                 <hr class="nav-separator mt-2 mb-2">
                                 <li class="nav-item active me-3">
-                                    <a href="#" class="nav-link">Notificaciones</a>
+                                    <img src="img/notificationIcon.png" alt="">
+                                    <a href="#" class="nav-link">
+                                        Notificaciones
+                                    </a>
                                 </li>
                                 <li class="nav-item active me-3">
                                     <a href="#" class="nav-link">
+                                        <img src="img/configIcon.png" alt="">
                                         Configuración
                                     </a>
                                 </li>
                                 <li class="nav-item active me-3">
                                     <a href="#" class="nav-link">
+                                        <img src="img/userIcon.png" style="width: 2rem; margin-right: 4px;" alt="">
                                         Mi Perfil
                                     </a>
                                 </li>
                             </div>
-
                         </ul>
                     </div>
                 </div>
 
                 <div class="d-none align-items-center gap-2 d-none d-xl-flex">
                     <button type="button" class="btn botonNotificaciones mx-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
-                            <path
-                                d="M17.5 2.91675C14.7926 2.91675 12.1961 3.99227 10.2816 5.9067C8.36721 7.82113 7.2917 10.4177 7.2917 13.1251V18.2701C7.29191 18.4963 7.23948 18.7195 7.13857 18.922L4.63461 23.9284C4.5123 24.173 4.45454 24.4448 4.46683 24.718C4.47912 24.9912 4.56104 25.2567 4.70483 25.4893C4.84861 25.722 5.04947 25.914 5.28834 26.0471C5.5272 26.1803 5.79614 26.2501 6.06961 26.2501H28.9304C29.2039 26.2501 29.4729 26.1803 29.7117 26.0471C29.9506 25.914 30.1515 25.722 30.2952 25.4893C30.439 25.2567 30.5209 24.9912 30.5332 24.718C30.5455 24.4448 30.4878 24.173 30.3654 23.9284L27.8629 18.922C27.7615 18.7196 27.7086 18.4964 27.7084 18.2701V13.1251C27.7084 10.4177 26.6328 7.82113 24.7184 5.9067C22.804 3.99227 20.2074 2.91675 17.5 2.91675ZM17.5 30.6251C16.5949 30.6256 15.7119 30.3453 14.9728 29.8229C14.2336 29.3005 13.6747 28.5618 13.3729 27.7084H21.6271C21.3254 28.5618 20.7665 29.3005 20.0273 29.8229C19.2881 30.3453 18.4051 30.6256 17.5 30.6251Z"
-                                fill="white" />
-                        </svg>
+                        <img src="img/notificationIcon.png" alt="">
                     </button>
                     <button type="button" class="btn botonConfig me-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
-                            <path
-                                d="M18 23.25C16.6076 23.25 15.2723 22.6969 14.2877 21.7123C13.3031 20.7277 12.75 19.3924 12.75 18C12.75 16.6076 13.3031 15.2723 14.2877 14.2877C15.2723 13.3031 16.6076 12.75 18 12.75C19.3924 12.75 20.7277 13.3031 21.7123 14.2877C22.6969 15.2723 23.25 16.6076 23.25 18C23.25 19.3924 22.6969 20.7277 21.7123 21.7123C20.7277 22.6969 19.3924 23.25 18 23.25ZM29.145 19.455C29.205 18.975 29.25 18.495 29.25 18C29.25 17.505 29.205 17.01 29.145 16.5L32.31 14.055C32.595 13.83 32.67 13.425 32.49 13.095L29.49 7.905C29.31 7.575 28.905 7.44 28.575 7.575L24.84 9.075C24.06 8.49 23.25 7.98 22.305 7.605L21.75 3.63C21.7195 3.45333 21.6275 3.29314 21.4902 3.17783C21.3529 3.06252 21.1793 2.99952 21 3H15C14.625 3 14.31 3.27 14.25 3.63L13.695 7.605C12.75 7.98 11.94 8.49 11.16 9.075L7.425 7.575C7.095 7.44 6.69 7.575 6.51 7.905L3.51 13.095C3.315 13.425 3.405 13.83 3.69 14.055L6.855 16.5C6.795 17.01 6.75 17.505 6.75 18C6.75 18.495 6.795 18.975 6.855 19.455L3.69 21.945C3.405 22.17 3.315 22.575 3.51 22.905L6.51 28.095C6.69 28.425 7.095 28.545 7.425 28.425L11.16 26.91C11.94 27.51 12.75 28.02 13.695 28.395L14.25 32.37C14.31 32.73 14.625 33 15 33H21C21.375 33 21.69 32.73 21.75 32.37L22.305 28.395C23.25 28.005 24.06 27.51 24.84 26.91L28.575 28.425C28.905 28.545 29.31 28.425 29.49 28.095L32.49 22.905C32.67 22.575 32.595 22.17 32.31 21.945L29.145 19.455Z"
-                                fill="white" />
-                        </svg>
+                        <img src="img/configIcon.png" alt="">
                     </button>
                     <div class="separator"></div>
                     <button type="button" class="btn botonUser me-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                            <g clip-path="url(#clip0_315_64)">
-                                <path
-                                    d="M28.875 18.375C28.875 22.7325 25.3575 26.25 21 26.25C16.6425 26.25 13.125 22.7325 13.125 18.375C13.125 14.0175 16.6425 10.5 21 10.5C25.3575 10.5 28.875 14.0175 28.875 18.375Z"
-                                    fill="white" />
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M42 21C42 32.6025 32.6025 42 21 42C9.3975 42 0 32.6025 0 21C0 9.3975 9.3975 0 21 0C32.6025 0 42 9.3975 42 21ZM10.5 36.0938C10.92 35.3955 14.9887 28.875 20.9737 28.875C26.9325 28.875 31.0275 35.4113 31.4475 36.0938C33.8884 34.4058 35.8828 32.1503 37.2591 29.5211C38.6355 26.8919 39.3526 23.9677 39.3488 21C39.3488 10.8413 31.1325 2.625 20.9737 2.625C10.815 2.625 2.59875 10.8413 2.59875 21C2.59875 27.2475 5.7225 32.7863 10.5 36.0938Z"
-                                    fill="white" />
-                            </g>
-                            <defs>
-                                <clipPath id="clip0_315_64">
-                                    <rect width="42" height="42" fill="white" />
-                                </clipPath>
-                            </defs>
-                        </svg>
+                        <img src="img/userIcon.png" alt="">
                     </button>
 
                 </div>
             </div>
         </nav>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script>
+
+    <div class="container-fluid">
 
         <main class="activities-content">
             <h1 class="text-center activities-title">Actividades</h1>

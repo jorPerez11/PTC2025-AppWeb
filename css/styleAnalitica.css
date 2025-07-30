@@ -322,6 +322,7 @@ body {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #555;
+    text-align: center;
     border-bottom: 2px solid #dee2e6;
 }
 
@@ -497,8 +498,89 @@ body {
     }
 }
 
+/* Se activa solo en pantallas de menos de 576px */
 @media (max-width: 575.98px) {
+    .alerts-table {
+        font-size: 0.8rem; /* Un poco más pequeña la fuente general de la tabla para dar más espacio */
+        table-layout: fixed; /* Asegura que las columnas tengan un ancho fijo */
+        width: 100%; /* La tabla ocupa el 100% del ancho disponible */
+    }
 
+    .alerts-table th,
+    .alerts-table td {
+        white-space: normal; /* Permitimos que el texto se parta en varias líneas por defecto */
+        word-break: break-word; /* Asegura que palabras largas se rompan si es necesario */
+        padding: 0.2rem 0.1rem; /* Aumentar ligeramente el padding para que no se vea tan pegado */
+        text-align: center; /* Centrar el texto en las celdas para una mejor apariencia */
+    }
+
+    .alerts-table thead th {
+        /* Reglas generales para todos los encabezados */
+        overflow: hidden;
+        text-overflow: ellipsis; /* Para los headers con nowrap, si el texto se desborda */
+        padding: 0.2rem 0.1rem;
+        box-sizing: border-box;
+        vertical-align: middle; /* Centra verticalmente los headers */
+        text-align: center; /* Asegura que todos los headers estén centrados */
+    }
+
+    /* Reglas para los headers que DEBEN verse completos en una sola línea */
+    .alerts-table th:nth-child(1), /* Métrica */
+    .alerts-table th:nth-child(3), /* Actual */
+    .alerts-table th:nth-child(4) { /* Cumplimiento */
+        white-space: nowrap; /* Fuerza a estas palabras a NO romperse */
+        text-overflow: clip;
+    }
+
+
+    /* Manejo exacto para "Objetivo (SLA) "*/
+    .alerts-table th:nth-child(2) {
+        font-size: 0; /* Oculta el texto original "Objetivo (SLA)" */
+        line-height: 0; /* Reduce la altura de línea del texto oculto */
+        white-space: normal; /* Asegura que el contenido generado pueda romperse */
+        position: relative;
+        padding-top: 0.5rem; /* Ajusta este padding si el header se ve muy arriba o muy abajo */
+        padding-bottom: 0.5rem;
+        vertical-align: middle; /* Asegura que la celda que contiene el contenido generado esté centrada */
+    }
+
+    .alerts-table th:nth-child(2)::before {
+        content: "Objetivo";
+        display: block;
+        font-size: 0.8rem;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+    .alerts-table th:nth-child(2)::after {
+        content: "(SLA)";
+        display: block;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        white-space: normal;
+        margin-top: 0.1rem;
+    }
+
+    /* Redistribuimos el 100% para dar más espacio a las columnas que se truncan */
+    .alerts-table th:nth-child(1) { /* Métrica */
+        width: 25%;
+    }
+    .alerts-table th:nth-child(2) { /* Objetivo (SLA) */
+        width: 23%;
+    }
+    .alerts-table th:nth-child(3) { /* Actual */
+        width: 18%; 
+    }
+    .alerts-table th:nth-child(4) { /* Cumplimiento */
+        width: 34%; 
+    }
+
+    /* Ajustar el tamaño de fuente solo para las celdas de valor numérico si se rompen */
+    .alerts-table tbody td:nth-child(3) { /* Columna 'Actual' en el tbody */
+        font-size: 0.75rem; /* Reduce la fuente para que "45 min" y "28 h" quepan mejor */
+    }
+
+    /* Mantener otras reglas de diseño móvil */
     .h1banner,
     .pbanner {
         display: block;
@@ -520,12 +602,7 @@ body {
         font-size: 1.2rem;
     }
 
-    .alerts-table {
-        font-size: 0.85rem;
-    }
-
-    .alerts-table thead th,
     .alerts-table tbody td {
-        padding: 0.75rem 0.5rem;
+        vertical-align: middle;
     }
 }
