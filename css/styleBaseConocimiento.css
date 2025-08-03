@@ -216,31 +216,46 @@ body {
 }
 
 .custom-dropdown .dropdown-toggle {
+    /* Reducimos padding y tamaño de fuente */
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+
+    /* Conservamos bordes y sombras */
     border: none;
-    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px, rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
     border-radius: 12px !important;
-    padding: 1.25rem 1.5rem;
-    font-size: 1.25rem;
     color: #000;
     font-weight: 500;
 }
 
 .custom-dropdown .dropdown-toggle:focus {
-    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px, rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
+    /* Mantenemos la misma sombra al pulsar */
+    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px,
+        rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
 }
 
 .custom-dropdown .dropdown-toggle::after {
     display: none;
 }
 
-.dropdown-menu {
+.custom-dropdown .dropdown-menu {
+    /* Posicionamos justo debajo del botón */
+    top: 100%;
+    left: 0;
+    transform: none !important;
+    margin-top: 0.5rem;
+    /* Separación visual */
+
+    /* Conservamos estilo */
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border: none;
     padding: 0.5rem;
-    min-width: 15rem;
-    transform: translate(0, 10px) !important;
+    min-width: 12rem;
+    /* Ancho mínimo */
 }
+
 
 .dropdown-menu .dropdown-item {
     display: flex;
@@ -335,61 +350,76 @@ body {
     text-decoration: underline;
 }
 
-.plus{
+.plus {
     width: 20px;
 }
 
-.header h2{
+.header h2 {
     margin-top: 50px;
     font-weight: 600;
 }
 
 .botones {
-    width: 100%;
-    max-width: 1107px;
-    margin: 0 auto 1rem auto;
-    position: relative;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto 1rem;
+  padding: 1rem 0;
 }
 
 .linea {
-    width: 100%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
+  flex: 1;
+  min-width: 0;
+  height: 1px;
+  background-color: #3A008C;
+  z-index: 1;
 }
 
 .controls {
-    position: relative;
-    z-index: 2;
-    background-color: #f8f9fa; /* Color de fondo para ocultar la línea */
-    padding-left: 1rem;
-    gap: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  padding: 0 1rem;
+  z-index: 2;
 }
 
+
 .botones .linea {
-  flex: 1 1 0;              /* crece para llenar el espacio */
-  min-width: 0;             /* importante: permite que flex-shrink funcione */
-  height: 1px;              /* grosor de la línea */
+    flex: 1 1 0;
+    /* crece para llenar el espacio */
+    min-width: 0;
+    /* importante: permite que flex-shrink funcione */
+    height: 1px;
+    /* grosor de la línea */
 }
 
 .botones .controls {
-  display: flex;
-  align-items: center;
-  gap: 1rem;                /* separa dropdown y enlace */
-  margin-left: 1rem;        /* espacio respecto a la línea */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* separa dropdown y enlace */
+    margin-left: 1rem;
+    /* espacio respecto a la línea */
 }
 
 .crear-articulo {
-  display: inline-flex;
-  align-items: center;
-  color: #0066FF;
-  text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    color: #0066FF;
+    text-decoration: none;
+    font-weight: 600;
 }
 
 .crear-articulo svg {
-  flex-shrink: 0;
-  margin-right: .5rem;
+    flex-shrink: 0;
+    margin-right: .5rem;
+}
+
+.crear-articulo:hover {
+    display: inline-flex;
+    align-items: center;
+    color: #0044ab;
+    text-decoration: none;
+    font-weight: 600;
 }
