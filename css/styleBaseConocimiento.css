@@ -1,7 +1,9 @@
 body {
     font-family: "Montserrat", sans-serif;
-    background-color: #f8f9fa; /* Fondo más claro para el resto de la página */
-    margin: 0; /* Asegura que no haya márgenes por defecto */
+    background-color: #f8f9fa;
+    /* Fondo más claro para el resto de la página */
+    margin: 0;
+    /* Asegura que no haya márgenes por defecto */
     padding: 0;
 }
 
@@ -13,7 +15,7 @@ body {
 .separator {
     width: 2px;
     height: 25px;
-    background-color: rgba(255, 255, 255, 0.5); 
+    background-color: rgba(255, 255, 255, 0.5);
     margin: 0 10px;
 }
 
@@ -110,19 +112,22 @@ body {
     background-image: url('../img/baseConocimientoImg/34 1.png'), linear-gradient(to right, #03071E, #3D0007);
     background-size: auto 100%, cover;
     /* Ajuste clave aquí: Mover la imagen de fondo verticalmente */
-    background-position: right 20%, center center; /* Horizontal a la derecha, vertical ajustado a 20% */
+    background-position: right 20%, center center;
+    /* Horizontal a la derecha, vertical ajustado a 20% */
     background-repeat: no-repeat, no-repeat;
-    
+
     color: white;
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     /* Ajuste de altura: Reducir el padding superior e inferior */
-    padding: 2rem 1rem 2rem 1rem; /* Reducido de 8rem/6rem a 6rem/4rem */
-    min-height: 250px; /* Altura mínima ligeramente reducida */
+    padding: 2rem 1rem 2rem 1rem;
+    /* Reducido de 8rem/6rem a 6rem/4rem */
+    min-height: 250px;
+    /* Altura mínima ligeramente reducida */
 
     margin-top: 5rem;
     position: relative;
@@ -169,8 +174,8 @@ body {
     width: 60%;
     max-width: 600px;
     margin: 2rem auto 0 auto;
-    
-    background-color: transparent; 
+
+    background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 50px;
     padding: 0.5rem 1rem;
@@ -194,10 +199,14 @@ body {
 
 /* Estilo para el input cuando está en foco (al hacer clic) */
 .search-bar-container input:focus {
-    background-color: transparent; /* Mantiene el fondo transparente al enfocar */
-    box-shadow: none; /* Elimina cualquier sombra que Bootstrap pueda añadir al enfocar */
-    border-color: rgba(255, 255, 255, 0.9); /* Opcional: hacer el borde un poco más visible al enfocar */
-    color: white; /* Asegura que el texto siga siendo blanco */
+    background-color: transparent;
+    /* Mantiene el fondo transparente al enfocar */
+    box-shadow: none;
+    /* Elimina cualquier sombra que Bootstrap pueda añadir al enfocar */
+    border-color: rgba(255, 255, 255, 0.9);
+    /* Opcional: hacer el borde un poco más visible al enfocar */
+    color: white;
+    /* Asegura que el texto siga siendo blanco */
 }
 
 .search-bar-container svg {
@@ -206,12 +215,181 @@ body {
     fill: white;
 }
 
-.dropdown-item i {
-    margin-right: 0.5rem;
+.custom-dropdown .dropdown-toggle {
+    border: none;
+    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px, rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
+    border-radius: 12px !important;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.25rem;
+    color: #000;
+    font-weight: 500;
 }
 
-.card-custom {
+.custom-dropdown .dropdown-toggle:focus {
+    box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px, rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
+}
+
+.custom-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-menu {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    padding: 0.5rem;
+    min-width: 15rem;
+    transform: translate(0, 10px) !important;
+}
+
+.dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    font-size: 16px;
+    color: #333;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #e9ecef;
+    color: #000;
+}
+
+.dropdown-item svg {
+    width: 28px;
+    height: 28px;
+    /* Ajustar tamaño de iconos SVG */
+}
+
+/* Clases para la animación del icono de la flecha */
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+.arrow.up {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu .dropdown-item.active {
+    background-color: #e9ecef;
+    font-weight: 600;
+    position: relative;
+}
+
+.dropdown-menu .dropdown-item.active .check-icon {
+    display: block !important;
+}
+
+/* 1. Sombra, fondo y bordes redondeados */
+.card-custom {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 15px;
+    /* Cambiado de 20% a 20px para un efecto de borde redondeado consistente */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s ease-in-out;
+    padding: 1rem;
+    height: 100%;
+}
+
+.card-custom:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.20);
+}
+
+/* 2. Título más grande y seminegrita */
+.card-custom h6 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+}
+
+/* 3. Descripción más pequeña y clara */
+.card-custom .text-muted {
+    flex: 1 1 auto;
+    font-size: 15px;
+    color: #6c757d;
+    /* gris Bootstrap */
+    margin-bottom: 1rem;
+    /* deja espacio antes del Read more */
+    line-height: 1.4;
+}
+
+/* 4. “Leer más” al fondo y en seminegrita */
+.readmore {
+    margin-top: auto;
+    /* empuja al extremo inferior */
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d6efd;
+    /* azul Bootstrap */
+    text-decoration: none;
+    transition: color 0.15s ease-in-out;
+}
+
+.readmore:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.plus{
+    width: 20px;
+}
+
+.header h2{
+    margin-top: 50px;
+    font-weight: 600;
+}
+
+.botones {
+    width: 100%;
+    max-width: 1107px;
+    margin: 0 auto 1rem auto;
+    position: relative;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.linea {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.controls {
+    position: relative;
+    z-index: 2;
+    background-color: #f8f9fa; /* Color de fondo para ocultar la línea */
+    padding-left: 1rem;
+    gap: 1.5rem;
+}
+
+.botones .linea {
+  flex: 1 1 0;              /* crece para llenar el espacio */
+  min-width: 0;             /* importante: permite que flex-shrink funcione */
+  height: 1px;              /* grosor de la línea */
+}
+
+.botones .controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;                /* separa dropdown y enlace */
+  margin-left: 1rem;        /* espacio respecto a la línea */
+}
+
+.crear-articulo {
+  display: inline-flex;
+  align-items: center;
+  color: #0066FF;
+  text-decoration: none;
+}
+
+.crear-articulo svg {
+  flex-shrink: 0;
+  margin-right: .5rem;
 }
