@@ -256,14 +256,15 @@ h6 {
 .status-header p {
     margin-left: 0.5rem;
     font-size: 1.1em;
-    line-height: 1.2; 
+    line-height: 1.2;
 }
+
 .ticket-card {
     background-color: white;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .ticket-card:hover {
@@ -275,6 +276,42 @@ h6 {
 
 .ticket-container {
     padding-top: 20px;
-    background-color: #d5d7e3; 
+    background-color: #d5d7e3;
     padding-bottom: 20px;
+}
+
+/* --- Colores para los íconos de calendario --- */
+.calendar-danger { color: #E57373; } /* Rojo Pastel */
+.calendar-warning { color: #FFB74D; } /* Naranja Pastel */
+.calendar-success { color: #81C784; } /* Verde Pastel */
+
+/* --- Estilos para el nuevo badge de estado (como en el Figma) --- */
+.status-badge {
+    display: inline-flex; /* Para alinear el texto y la flecha */
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.status-badge i {
+    font-size: 10px; /* Tamaño de la flecha */
+    margin-left: 8px; /* Espacio entre el texto y la flecha */
+}
+
+/* Colores de fondo y texto para cada estado */
+.status-danger {
+    background-color: #FFEBEE; /* Fondo rojo muy pálido */
+    color: #C62828;          /* Texto rojo oscuro */
+}
+
+.status-warning {
+    background-color: #FFF3E0; /* Fondo naranja muy pálido */
+    color: #E65100;          /* Texto naranja oscuro */
+}
+
+.status-success {
+    background-color: #E8F5E9; /* Fondo verde muy pálido */
+    color: #2E7D32;          /* Texto verde oscuro */
 }
