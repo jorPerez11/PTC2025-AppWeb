@@ -65,19 +65,19 @@
                                 <hr class="nav-separator mt-2 mb-2">
                                 <li class="nav-item active me-3">
                                     <img src="img/notificationIcon.png" alt="">
-                                    <a href="#" class="nav-link">
+                                    <a href="navbarNotificaciones.html" class="nav-link">
                                         Notificaciones
                                     </a>
                                 </li>
                                 <li class="nav-item active me-3">
-                                    <a href="#" class="nav-link">
-                                        <img src="img/configIcon.png" alt="">
+                                    <img src="img/configIcon.png" alt="">
+                                    <a href="navbarConfig.html" class="nav-link">
                                         Configuración
                                     </a>
                                 </li>
                                 <li class="nav-item active me-3">
+                                    <img src="img/userIcon.png" style="width: 2rem; margin-right: 4px;" alt="">
                                     <a href="#" class="nav-link">
-                                        <img src="img/userIcon.png" style="width: 2rem; margin-right: 4px;" alt="">
                                         Mi Perfil
                                     </a>
                                 </li>
@@ -87,17 +87,20 @@
                 </div>
 
                 <div class="d-none align-items-center gap-2 d-none d-xl-flex">
-                    <button type="button" class="btn botonNotificaciones mx-2">
-                        <img src="img/notificationIcon.png" alt="">
-                    </button>
-                    <button type="button" class="btn botonConfig me-2">
-                        <img src="img/configIcon.png" alt="">
-                    </button>
+                    <a href="navbarNotificaciones.html">
+                        <button type="button" class="btn botonNotificaciones mx-2">
+                            <img src="img/notificationIcon.png" alt="">
+                        </button>
+                    </a>
+                    <a href="navbarConfig.html">
+                        <button type="button" class="btn botonConfig me-2">
+                            <img src="img/configIcon.png" alt="">
+                        </button>
+                    </a>
                     <div class="separator"></div>
                     <button type="button" class="btn botonUser me-2">
                         <img src="img/userIcon.png" alt="">
                     </button>
-
                 </div>
             </div>
         </nav>
@@ -132,7 +135,7 @@
                         <path d="M12 7V12L15 15" stroke="#DC2F02" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    <p class="mb-0 ms-1">Esperando Respuesta <span id="en-espera-header-count"></span></p>
+                    <p class="mb-0 ms-1" style="font-weight: 550;">Esperando Respuesta <span id="en-espera-header-count"></span></p>
                 </div>
                 <div id="en-espera-list"></div>
             </div>
@@ -143,7 +146,7 @@
                             d="M5.625 3.375C5.02826 3.375 4.45597 3.61205 4.03401 4.03401C3.61205 4.45597 3.375 5.02826 3.375 5.625V21.375C3.375 21.9717 3.61205 22.544 4.03401 22.966C14.3879 22.544 14.625 21.9717 14.625 21.375V14.625H21.375C21.9717 14.625 22.544 14.3879 22.966 13.966C23.3879 13.544 23.625 12.9717 23.625 12.375V5.625C23.625 5.02826 23.3879 4.45597 22.966 4.03401C22.544 3.61205 21.9717 3.375 21.375 3.375H5.625ZM14.625 12.375H21.375V5.625H14.625V12.375ZM5.625 14.625V21.375H12.375V14.625H5.625ZM5.625 12.375H12.375V5.625H5.625V12.375Z"
                             fill="#F48C06" />
                     </svg>
-                    <p class="mb-0 ms-1">En progreso <span id="en-progreso-header-count"></span></p>
+                    <p class="mb-0 ms-1" style="font-weight: 550;">En progreso <span id="en-progreso-header-count"></span></p>
                 </div>
                 <div id="en-progreso-list"></div>
             </div>
@@ -157,7 +160,7 @@
                             d="M1 12C1 5.925 5.925 1 12 1C18.075 1 23 5.925 23 12C23 18.075 18.075 23 12 23C5.925 23 1 18.075 1 12ZM12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 10.8181 3.23279 9.64778 3.68508 8.55585C4.13738 7.46392 4.80031 6.47177 5.63604 5.63604C6.47177 4.80031 7.46392 4.13738 8.55585 3.68508C9.64778 3.23279 10.8181 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21Z"
                             fill="#32C91E" />
                     </svg>
-                    <p class="mb-0 ms-1">Completado <span id="completado-header-count"></span></p>
+                    <p class="mb-0 ms-1" style="font-weight: 550;">Completado <span id="completado-header-count"></span></p>
                 </div>
                 <div id="completado-list"></div>
             </div>
