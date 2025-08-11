@@ -133,6 +133,10 @@ html {
     width: calc(100% - 30px);
 }
 
+.icon-disabled {
+  filter: grayscale(100%) brightness(80%) opacity(0.6);
+  pointer-events: none;
+}
 
 /* Contenedor principal con márgenes automáticos */
 .main-container {

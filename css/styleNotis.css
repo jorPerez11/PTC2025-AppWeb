@@ -136,26 +136,26 @@ body {
 .header::after {
   content: '';
   position: absolute;
-  width: 700px;
-  height: 300px;
+  display: block;
+  width: clamp(300px, 45vw, 900px); /* Se adapta mejor a distintos tamaños */
+  aspect-ratio: 2.3 / 1;
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 1;
-  opacity: 0.9;
+  opacity: 0.8;
+  pointer-events: none;
 }
 
 .header::before {
   background-image: url('../img/notificacionesImg/hexagon-left.png');
   top: 0;
   left: 0;
-  transform: translate(-20%, -20%);
 }
 
 .header::after {
   background-image: url('../img/notificacionesImg/hexagon-right.png');
-  bottom: 0;
+  top: 0;
   right: 0;
-  transform: translate(20%, 20%);
 }
 
 .header h2 {
@@ -171,28 +171,31 @@ body {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* ===== NUEVOS ESTILOS PARA EL CONTENIDO PRINCIPAL ===== */
+/* ===== ESTILOS PARA EL CONTENIDO PRINCIPAL ===== */
 
+/* ==== MAIN-CONTENT ACTUALIZADO ==== */
 .main-content {
-    position: relative; /* Necesario para posicionar el pseudo-elemento */
+    position: relative;
     background-color: #f8f9fa;
     padding-top: 4rem;
     padding-bottom: 4rem;
+    overflow: hidden; /* Evita que pseudo-elemento sobresalga */
 }
 
-/* Patrón de hexágonos para el área de contenido (como en Figma) */
+/* Hexágono superior izquierdo - se adapta por tamaño */
 .main-content::before {
     content: '';
     position: absolute;
-    top: -50px; /* Lo posicionamos un poco arriba */
+    top: 0;
     left: 0;
-    width: 250px;  /* Tamaño ajustado */
-    height: 350px; /* Tamaño ajustado */
+    width: clamp(200px, 25vw, 400px); /* Responsive */
+    aspect-ratio: 1.2 / 1;
     background-image: url('../img/notificacionesImg/hexagons-left-main.png');
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     z-index: 1;
-    opacity: 0.4; /* Opacidad para que no sea tan dominante */
+    opacity: 0.99;
+    pointer-events: none;
 }
 
 .notifications-container {
@@ -224,7 +227,7 @@ body {
     color: #6c757d; /* Un gris sutil */
 }
 
-/* ===== ESTILOS RESPONSIVOS PARA MÓVILES ===== */
+/* ===== ESTILOS RESPONSIVOS ===== */
 
 @media (max-width: 768px) {
     .header {
@@ -254,4 +257,18 @@ body {
     .notifications-container .subtitle {
         font-size: 1rem;
     }
+}
+
+@media (max-width: 975px) {
+  .main-content::before {
+    width: 400px;
+    aspect-ratio: 1 / 1;
+    top: -20px;
+    left: -10px;
+  }
+
+  .header::before,
+  .header::after {
+    display: none;
+  }
 }

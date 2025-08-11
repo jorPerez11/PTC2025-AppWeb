@@ -45,6 +45,11 @@ body {
     margin: 0 10px;
 }
 
+.icon-disabled {
+  filter: grayscale(100%) brightness(80%) opacity(0.6);
+  pointer-events: none;
+}
+
 .botonInicioSesion,
 .botonRegistro {
     white-space: nowrap;
