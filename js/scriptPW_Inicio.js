@@ -112,7 +112,7 @@ $(document).ready(function () {
         series: [36, 30, 34],
         chart: {
             type: 'donut',
-            height: 380, // **Altura por defecto para DESKTOP GRANDE**. Coincide con el min-height del CSS.
+            height: 0, // **Altura por defecto para DESKTOP GRANDE**. Coincide con el min-height del CSS.
             width: '100%',
             toolbar: {
                 show: false
@@ -155,7 +155,7 @@ $(document).ready(function () {
         },
         legend: {
             position: 'left', // Valor por defecto (desktop más grande)
-            offsetY: 0,
+            offsetY: 80,
             height: 150, // Altura de la leyenda, ajústala si es muy grande
             fontSize: '14px',
             fontFamily: 'Poppins',
@@ -183,7 +183,7 @@ $(document).ready(function () {
                 breakpoint: 768, // Esto cubre de 0px a 767.98px
                 options: {
                     chart: {
-                        height: 280, // **AJUSTE CLAVE PARA TABLET**. Un poco más grande, leyenda puede ir abajo.
+                        height: 400, // **AJUSTE CLAVE PARA TABLET**. Un poco más grande, leyenda puede ir abajo.
                     },
                     legend: {
                         position: 'bottom', // **LEYENDA ABAJO PARA TABLET** si el espacio horizontal es limitado
@@ -213,10 +213,11 @@ $(document).ready(function () {
                 breakpoint: 992, // Esto cubre de 768px a 991.98px
                 options: {
                     chart: {
-                        height: 280, // **AJUSTE CLAVE PARA TABLET**. Un poco más grande, leyenda puede ir abajo.
+                        height: 400, // **AJUSTE CLAVE PARA TABLET**. Un poco más grande, leyenda puede ir abajo.
                     },
                     legend: {
                         position: 'bottom', // **LEYENDA ABAJO PARA TABLET** si el espacio horizontal es limitado
+                        offsetY: 0,
                         horizontalAlign: 'center',
                         fontSize: '13px',
                         itemMargin: {
@@ -240,13 +241,13 @@ $(document).ready(function () {
             },
             // Desktop: 992px y más
             {
-                breakpoint: 1200, // Esto cubre de 992px a 1199.98px (desktop mediano)
+                breakpoint: 1667, // Esto cubre de 992px a 1199.98px (desktop mediano)
                 options: {
                     chart: {
-                        height: 350, // **AJUSTE CLAVE PARA DESKTOP MEDIANO**. Menor que el por defecto.
+                        height: 370, // **AJUSTE CLAVE PARA DESKTOP MEDIANO**. Menor que el por defecto.
                     },
                     legend: {
-                        position: 'left', // Leyenda a la izquierda para desktop
+                        position: 'bottom', // Leyenda a la izquierda para desktop
                         offsetY: 0,
                         height: 150,
                         fontSize: '14px',
@@ -282,7 +283,7 @@ $(document).ready(function () {
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- VALORES CONFIGURABLES ---
-    const rendimientoValue = 90; // Valor de 0 a 100
+    const rendimientoValue = 93; // Valor de 0 a 100
 
     // --- 1. LÓGICA PARA GRÁFICO DE RENDIMIENTO (PERSONALIZADO) ---
     function initRendimientoChart(value) {
