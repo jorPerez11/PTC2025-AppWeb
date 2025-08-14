@@ -1,15 +1,15 @@
-const API_URL = "https://6864654f5b5d8d03397d1e12.mockapi.io/Daniela/tbTickets";
+const API_URL = "https://retoolapi.dev/K5cKBM/tbTickets";
 
 const estados = {
-    'En espera': 'en-espera-list',
-    'En progreso': 'en-progreso-list',
-    'Completado': 'completado-list'
+  'En espera': 'en-espera-list',
+  'En progreso': 'en-progreso-list',
+  'Completado': 'completado-list'
 };
 
 const badgeColors = {
-    'En espera': 'danger',
-    'En progreso': 'warning',
-    'Completado': 'success'
+  'En espera': 'danger',
+  'En progreso': 'warning',
+  'Completado': 'success'
 };
 
 // SVG copiados de Figma para cada estado
@@ -56,88 +56,87 @@ const calendarIcons = {
 };
 
 async function obtenerTickets() {
-    try {
-        const res = await fetch(API_URL);
-        if (!res.ok) {
-            throw new Error(`Error HTTP: ${res.status}`);
-        }
-        const tickets = await res.json();
-        mostrarDatos(tickets);
-    } catch (error) {
-        console.error("Error al obtener los tickets:", error);
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) {
+      throw new Error(`Error HTTP: ${res.status}`);
     }
+    const tickets = await res.json();
+    mostrarDatos(tickets);
+  } catch (error) {
+    console.error("Error al obtener los tickets:", error);
+  }
 }
 
 function mostrarDatos(ticketsData) {
-    // Objeto para almacenar el conteo de tickets por estado
-    const conteoEstados = {
-        'En espera': 0,
-        'En progreso': 0,
-        'Completado': 0
-    };
+  const conteoEstados = {
+    'En espera': 0,
+    'En progreso': 0,
+    'Completado': 0
+  };
 
-    // Limpiar todos los contenedores antes de añadir nuevas tarjetas
-    for (const key in estados) {
-        const container = document.getElementById(estados[key]);
-        if (container) {
-            container.innerHTML = '';
-        }
+  // Vacía cada contenedor
+  Object.values(estados).forEach(id => {
+    const c = document.getElementById(id);
+    if (c) c.innerHTML = '';
+  });
+
+  ticketsData.forEach(ticket => {
+    const estado = ticket.status;
+    conteoEstados[estado]++;
+
+    const container = document.getElementById(estados[estado]);
+    if (!container) {
+      console.warn(`Contenedor para estado "${estado}" no existe.`);
+      return;
     }
 
-    ticketsData.forEach(ticket => {
-        const estadoActual = ticket.status;
+    // Ajuste de campos: usa `id`, `userId` y `updateDate`
+    const rawId    = ticket.id;
+    const rawDate  = ticket.updateDate;
+    const rawUser  = ticket.userId;
 
-        let ticketNumber = '';
-      if (ticket.ticketId < 10) {
-        ticketNumber = `000${ticket.ticketId}`;
-      } else if (ticket.ticketId < 100) {
-        ticketNumber = `00${ticket.ticketId}`;
-      } else if (ticket.ticketId < 1000) {
-        ticketNumber = `0${ticket.ticketId}`;
-      }
+    // Formatea número de ticket
+    const ticketNumber = String(rawId).padStart(4, '0');
 
-        // Incrementar el contador para el estado actual
-        if (conteoEstados.hasOwnProperty(estadoActual)) {
-            conteoEstados[estadoActual]++;
-        }
+    // Formatea fecha (DD/MM/YYYY)
+    const creationDate = rawDate
+      ? new Date(rawDate).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        })
+      : 'N/A';
 
-        const container = document.getElementById(estados[estadoActual]);
-
-        if (container) {
-            const card = document.createElement('div');
-            card.className = 'ticket-card mb-3';
-
-            card.addEventListener('click', () => {
-                window.location.href = 'chat.html';
-            });
-
-            // Formatear la fecha para mostrar solo la parte de la fecha (YYYY-MM-DD)
-            const creationDate = ticket.creationDate ? new Date(ticket.creationDate).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A';
-
-            card.innerHTML = `
-    <h6>${ticket.title}</h6>
-        <p class="mb-1 datos"><small>#${ticketNumber} · ${ticket.user}</small></p>
-
-            <div class="ticket-fecha">
-                ${calendarIcons[estadoActual]}
-                <p class="mb-0 ms-1"><small>${creationDate}</small></p>
-            </div>
-
-        <div class="status-badge status-${badgeColors[estadoActual]}">
-            <span>${ticket.status}</span>
-            <i class="fas fa-chevron-down"></i>
-        </div>
-        `;
-            container.appendChild(card);
-        } else {
-            console.warn(`No se encontró el contenedor para el estado: ${estadoActual}. Ticket:`, ticket);
-        }
+    // Construye la tarjeta
+    const card = document.createElement('div');
+    card.className = 'ticket-card mb-3';
+    card.addEventListener('click', () => {
+      window.location.href = 'chat.html';
     });
 
-    // Actualizar los contadores en el HTML
-    document.querySelector('#en-espera-header-count').innerText = `(${conteoEstados['En espera']})`;
-    document.querySelector('#en-progreso-header-count').innerText = `(${conteoEstados['En progreso']})`;
-    document.querySelector('#completado-header-count').innerText = `(${conteoEstados['Completado']})`;
+    card.innerHTML = `
+      <h6>${ticket.title}</h6>
+      <p class="mb-1 datos">
+        <small>#${ticketNumber} · ${rawUser || 'N/A'}</small>
+      </p>
+      <div class="ticket-fecha">
+        ${calendarIcons[estado] || ''}
+        <p class="mb-0 ms-1"><small>${creationDate}</small></p>
+      </div>
+      <div class="status-badge status-${badgeColors[estado] || 'default'}">
+        <span>${estado}</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  // Actualiza contadores
+  document.querySelector('#en-espera-header-count').innerText   = `(${conteoEstados['En espera']})`;
+  document.querySelector('#en-progreso-header-count').innerText = `(${conteoEstados['En progreso']})`;
+  document.querySelector('#completado-header-count').innerText   = `(${conteoEstados['Completado']})`;
 }
 
 // Llamada inicial para que se carguen los datos que vienen del servidor
