@@ -417,6 +417,11 @@ dd {
     color: white;
 }
 
+.filter-select-quantity{
+    color: white;
+
+}
+
 .filter-select-wrapper .filter-icon {
     position: absolute;
     left: 12px;
@@ -447,6 +452,24 @@ dd {
 }
 
 .styled-select:focus {
+    background-color: #0D122B;
+    color: white;
+    border-color: #F48C06;
+    /* Color de acento al hacer foco */
+    box-shadow: none;
+}
+
+.form-select{
+    background-color: #0D122B;
+    color: white;
+    border: 1px solid #4a4a4a;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.form-select:focus {
     background-color: #0D122B;
     color: white;
     border-color: #F48C06;

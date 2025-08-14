@@ -47,13 +47,9 @@ $(document).ready(function () {
         },
         series: [{
             data: [{
-                x: 'Abiertas',
-                y: 14,
-                fillColor: '#68C0FF',
-            }, {
                 x: 'En Proceso',
                 y: 20,
-                fillColor: '#33D8A4',
+                fillColor: '#2196F3',
             }, {
                 x: 'Cerradas',
                 y: 32,
@@ -188,6 +184,7 @@ $(document).ready(function () {
                     legend: {
                         position: 'bottom', // **LEYENDA ABAJO PARA TABLET** si el espacio horizontal es limitado
                         horizontalAlign: 'center',
+                        offsetY: 0,
                         fontSize: '13px',
                         itemMargin: {
                             horizontal: 8,
@@ -216,12 +213,11 @@ $(document).ready(function () {
                         height: 400, // **AJUSTE CLAVE PARA TABLET**. Un poco más grande, leyenda puede ir abajo.
                     },
                     legend: {
-                        position: 'bottom', // **LEYENDA ABAJO PARA TABLET** si el espacio horizontal es limitado
-                        offsetY: 0,
-                        horizontalAlign: 'center',
+                        position: 'left', // **LEYENDA ABAJO PARA TABLET** si el espacio horizontal es limitado
+                        offsetY: 100,
                         fontSize: '13px',
                         itemMargin: {
-                            horizontal: 8,
+                            horizontal: 80,
                             vertical: 0
                         }
                     },

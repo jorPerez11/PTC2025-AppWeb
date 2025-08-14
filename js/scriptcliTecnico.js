@@ -64,6 +64,17 @@ function renderFilterBar() {
             <option value="En Espera">En Espera</option>
           </select>
         </div>
+
+        <div class="d-flex align-items-center filter-select-quantity">
+          <label for="ticketsPerPage" class="form-label me-2 ">Filtrar por cantidad:</label>
+          <select id="ticketsPerPage" class="form-select" style="width: auto;">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+
       </div>
     </div>
   `;
