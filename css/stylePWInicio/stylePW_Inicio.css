@@ -152,8 +152,8 @@ body {
 
 /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
 .gauge-container {
-    width: 180px;
-    height: 90px;
+    width: 360px;
+    height: 180px;
     position: relative;
 }
 
@@ -161,30 +161,31 @@ body {
     width: 100%;
     height: 100%;
     background: #dc3545;
-    border-radius: 90px 90px 0 0;
+    border-radius: 180px 180px 0 0;
 }
 
 .gauge-cover {
-    width: 140px;
-    height: 70px;
+    width: 280px;
+    height: 180px;
     background: #fff;
-    border-radius: 70px 70px 0 0;
+    border-radius: 140px 140px 0 0;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 40px;
+    left: 40px;
 }
 
 .gauge-needle {
     position: absolute;
-    bottom: -15px;
-    left: calc(50% - 4px);
-    width: 8px;
-    height: 80px;
+    bottom: -30px;
+    left: calc(50% - 8px);
+    width: 16px;
+    height: 160px;
     background: #7b001c;
     transform-origin: 50% 100%;
     transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
 
-    clip-path: polygon(50% 0%,
+    clip-path: polygon(
+            50% 0%,
             /* punta exacta en el centro arriba */
             100% 15%,
             /* ancho máximo tras la punta */
@@ -199,12 +200,13 @@ body {
 
 .rendimiento-stars {
     color: #ffc107;
-    font-size: 1.5rem;
+    font-size: 3rem;
 }
 
 .rendimiento-text {
     color: #dc3545;
     font-weight: 600;
+    font-size: 1.5rem;
 }
 
 /* Estilos base para el contenedor de los gráficos */
@@ -328,6 +330,306 @@ body {
 
 .btn-link:hover {
     text-decoration: underline;
+}
+
+@media(max-width: 2161px){
+    /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    /* Aumentado en un 75% del tamaño original de 180px */
+    width: 315px; 
+    height: 157.5px; 
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    /* Aumentado en un 75% del tamaño original de 90px */
+    border-radius: 157.5px 157.5px 0 0;
+}
+
+.gauge-cover {
+    /* Aumentado en un 75% del tamaño original de 140px */
+    width: 245px; 
+    height: 157.5px;
+    background: #fff;
+    /* Aumentado en un 75% del tamaño original de 70px */
+    border-radius: 122.5px 122.5px 0 0;
+    position: absolute;
+    /* Aumentado en un 75% del tamaño original de 20px */
+    top: 35px; 
+    left: 35px; 
+}
+
+.gauge-needle {
+    position: absolute;
+    /* Aumentado en un 75% del tamaño original de -15px */
+    bottom: -26.25px; 
+    left: calc(50% - 7px);
+    /* Aumentado en un 75% del tamaño original de 8px */
+    width: 14px; 
+    height: 140px; /* Aumentado en un 75% del tamaño original de 80px */
+    background: #7b001c;
+    transform-origin: 50% 100%;
+    transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    clip-path: polygon(
+        50% 0%,
+        100% 15%,
+        100% 100%,
+        0% 100%,
+        0% 15%
+    );
+}
+
+.rendimiento-stars {
+    color: #ffc107;
+    /* Aumentado en un 75% del tamaño original de 1.5rem */
+    font-size: 2.625rem; 
+}
+
+.rendimiento-text {
+    color: #dc3545;
+    font-weight: 600;
+    /* Aumentado en un 75% del tamaño original */
+    font-size: 1.75rem; 
+}
+}
+
+@media (max-width: 1623px){
+    /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    /* Aumentado en un 60% del tamaño original de 180px */
+    width: 288px; 
+    height: 144px; 
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    /* Aumentado en un 60% del tamaño original de 90px */
+    border-radius: 144px 144px 0 0;
+}
+
+.gauge-cover {
+    /* Aumentado en un 60% del tamaño original de 140px */
+    width: 224px; 
+    height: 144px;
+    background: #fff;
+    /* Aumentado en un 60% del tamaño original de 70px */
+    border-radius: 112px 112px 0 0;
+    position: absolute;
+    /* Aumentado en un 60% del tamaño original de 20px */
+    top: 32px; 
+    left: 32px; 
+}
+
+.gauge-needle {
+    position: absolute;
+    /* Aumentado en un 60% del tamaño original de -15px */
+    bottom: -24px; 
+    left: calc(50% - 6.4px); /* Ajustado para un mejor centro */
+    /* Aumentado en un 60% del tamaño original de 8px */
+    width: 12.8px;
+}
+}
+
+@media (max-width: 1445px){
+    /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    /* Aumentado en un 40% del tamaño original de 180px */
+    width: 252px; 
+    height: 126px; 
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    /* Aumentado en un 40% del tamaño original de 90px */
+    border-radius: 126px 126px 0 0;
+}
+
+.gauge-cover {
+    /* Aumentado en un 40% del tamaño original de 140px */
+    width: 196px; 
+    height: 126px;
+    background: #fff;
+    /* Aumentado en un 40% del tamaño original de 70px */
+    border-radius: 98px 98px 0 0;
+    position: absolute;
+    /* Aumentado en un 40% del tamaño original de 20px */
+    top: 28px; 
+    left: 28px; 
+}
+
+.gauge-needle {
+    position: absolute;
+    /* Aumentado en un 40% del tamaño original de -15px */
+    bottom: -21px; 
+    left: calc(50% - 5.6px); /* Ajustado para un mejor centro */
+    /* Aumentado en un 40% del tamaño original de 8px */
+    width: 11.2px; 
+    height: 112px; /* Aumentado en un 40% del tamaño original de 80px */
+    background: #7b001c;
+    transform-origin: 50% 100%;
+    transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    clip-path: polygon(
+        50% 0%,
+        100% 15%,
+        100% 100%,
+        0% 100%,
+        0% 15%
+    );
+}
+
+.rendimiento-stars {
+    color: #ffc107;
+    /* Aumentado en un 40% del tamaño original de 1.5rem */
+    font-size: 2.1rem; 
+}
+
+.rendimiento-text {
+    color: #dc3545;
+    font-weight: 600;
+    /* Aumentado en un 40% del tamaño original */
+    font-size: 1.4rem; 
+}
+}
+
+@media (max-width: 1245px) {
+    /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    /* Aumentado en un 25% del tamaño original de 180px */
+    width: 225px; 
+    height: 112.5px; 
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    /* Aumentado en un 25% del tamaño original de 90px */
+    border-radius: 112.5px 112.5px 0 0;
+}
+
+.gauge-cover {
+    /* Aumentado en un 25% del tamaño original de 140px */
+    width: 175px; 
+    height: 112.5px;
+    background: #fff;
+    /* Aumentado en un 25% del tamaño original de 70px */
+    border-radius: 87.5px 87.5px 0 0;
+    position: absolute;
+    /* Aumentado en un 25% del tamaño original de 20px */
+    top: 25px; 
+    left: 25px; 
+}
+
+.gauge-needle {
+    position: absolute;
+    /* Aumentado en un 25% del tamaño original de -15px */
+    bottom: -18.75px; 
+    left: calc(50% - 5px); 
+    /* Aumentado en un 25% del tamaño original de 8px */
+    width: 10px; 
+    height: 100px; /* Aumentado en un 25% del tamaño original de 80px */
+    background: #7b001c;
+    transform-origin: 50% 100%;
+    transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    clip-path: polygon(
+        50% 0%,
+        100% 15%,
+        100% 100%,
+        0% 100%,
+        0% 15%
+    );
+}
+
+.rendimiento-stars {
+    color: #ffc107;
+    /* Aumentado en un 25% del tamaño original de 1.5rem */
+    font-size: 1.875rem; 
+}
+
+.rendimiento-text {
+    color: #dc3545;
+    font-weight: 600;
+    /* Aumentado en un 25% del tamaño original */
+    font-size: 1.2rem; 
+}
+}
+
+@media (max-width: 1166px){
+    /* 1. GRÁFICO DE RENDIMIENTO (GAUGE) */
+.gauge-container {
+    /* Aumentado en un 25% del tamaño original de 180px */
+    width: 225px; 
+    height: 112.5px; 
+    position: relative;
+}
+
+.gauge-bg {
+    width: 100%;
+    height: 100%;
+    background: #dc3545;
+    /* Aumentado en un 25% del tamaño original de 90px */
+    border-radius: 112.5px 112.5px 0 0;
+}
+
+.gauge-cover {
+    /* Aumentado en un 25% del tamaño original de 140px */
+    width: 175px; 
+    height: 112.5px;
+    background: #fff;
+    /* Aumentado en un 25% del tamaño original de 70px */
+    border-radius: 87.5px 87.5px 0 0;
+    position: absolute;
+    /* Aumentado en un 25% del tamaño original de 20px */
+    top: 25px; 
+    left: 25px; 
+}
+
+.gauge-needle {
+    position: absolute;
+    /* Aumentado en un 25% del tamaño original de -15px */
+    bottom: -18.75px; 
+    left: calc(50% - 5px); 
+    /* Aumentado en un 25% del tamaño original de 8px */
+    width: 10px; 
+    height: 100px; /* Aumentado en un 25% del tamaño original de 80px */
+    background: #7b001c;
+    transform-origin: 50% 100%;
+    transition: transform 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+    clip-path: polygon(
+        50% 0%,
+        100% 15%,
+        100% 100%,
+        0% 100%,
+        0% 15%
+    );
+}
+
+.rendimiento-stars {
+    color: #ffc107;
+    /* Aumentado en un 25% del tamaño original de 1.5rem */
+    font-size: 1.875rem; 
+}
+
+.rendimiento-text {
+    color: #dc3545;
+    font-weight: 600;
+    /* Aumentado en un 25% del tamaño original */
+    font-size: 1.2rem; 
+}
 }
 
 /* Media Queries para ajustar el diseño en pantallas pequeñas */
