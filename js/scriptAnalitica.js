@@ -14,9 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIÓN PARA POPULAR TARJETAS DE RESUMEN ---
     function populateCards() {
         const cardData = {
-            ticketsAbiertos: { title: 'Tickets Abiertos', number: 13, description: 'Solictudes recién creadas. Aún no han sido atendidas.' },
             ticketsEnProceso: { title: 'Tickets En Proceso', number: 20, description: 'Solicitudes siendo gestionadas. Uno o más agentes se encargan.' },
-            ticketsCerrados: { title: 'Tickets Cerrados', number: 37, description: 'Solicitudes que han sido resueltas. Los casos son almacenados.' },
+            ticketsCerrados: { title: 'Tickets Completados', number: 37, description: 'Solicitudes que han sido resueltas. Los casos son almacenados.' },
             ticketsEnEspera: { title: 'Tickets En Espera', number: 5, description: 'Solicitudes a la espera de acción. Todavía no han sido atendidos' }
         };
         for (const [key, value] of Object.entries(cardData)) {

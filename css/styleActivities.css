@@ -355,6 +355,10 @@ h4 {
     margin-right: 10px;
 }
 
+.gapDiv{
+    justify-content: space-between;
+}
+
 /* Encabezados */
 .headers-usuario {
     padding: .5rem 1rem;
