@@ -142,24 +142,25 @@
                         H2C - Help To Comply
                     </div>
                     <!-- Input hidden para enviar el valor con el formulario -->
-                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply">
+                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply" maxlength="100" minlength="2" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="correoEmpresa" class="form-label">Correo corporativo principal</label>
                     <input type="email" class="form-control" id="correoEmpresa" placeholder="correo@empresa.com"
-                        maxlength="100">
+                        maxlength="100" minlength="6" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefonoEmpresa" class="form-label">Teléfono de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoEmpresa">
+                    <input type="tel" class="form-control" id="telefonoEmpresa" minlength="9" maxlength="20" pattern="^\+?[0-9()\s-]+$"
+      inputmode="tel">
                 </div>
 
                 <div class="mb-3">
                     <label for="sitioWeb" class="form-label">Sitio web (opcional)</label>
                     <input type="url" class="form-control" id="sitioWeb" placeholder="https://www.miempresa.com"
-                        maxlength="150">
+                       minlength="10" maxlength="200">
                 </div>
             </div>
 
@@ -170,18 +171,18 @@
                 <div class="mb-3">
                     <label for="nombreAdmin" class="form-label">Nombre completo</label>
                     <input type="text" class="form-control" id="nombreAdmin" placeholder="Nombre del administrador"
-                        maxlength="90">
+                        maxlength="100" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="correoAdmin" class="form-label">Correo electrónico</label>
                     <input type="email" class="form-control" id="correoAdmin" placeholder="correo@ejemplo.com"
-                        maxlength="100">
+                        maxlength="100" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefonoAdmin" class="form-label">Número de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoAdmin">
+                    <input type="tel" class="form-control" id="telefonoAdmin" maxlength="9" minlength="9">
                 </div>
 
                 <div class="mb-3">
@@ -190,7 +191,7 @@
                         Administrador
                     </div>
                     <!-- Input hidden para enviar el valor con el formulario -->
-                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply">
+                    <input type="hidden" name="rolAdmin" value="Administrador">
                 </div>
             </div>
         </div>
