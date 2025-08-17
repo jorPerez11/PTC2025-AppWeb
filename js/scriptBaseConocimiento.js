@@ -19,17 +19,97 @@ async function obtenerSoluciones() {
 // 3) Renderiza un array de soluciones en tarjetas
 function mostrarDatos(datos) {
     const contenedor = document.getElementById("contenedor-articulos");
-    contenedor.innerHTML = "";
+    contenedor.innerHTML = ""; // Limpia el contenido del contenedor de cards
+
     datos.forEach(sol => {
-        contenedor.innerHTML += `
-      <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-        <div class="card-custom">
-          <h6 class="fw-semibold fs-5 mb-3">${sol.title}</h6>
-          <p class="text-muted flex-grow-1">${sol.description}</p>
-          <a href="#" class="readmore text-primary fw-semibold">Leer más</a>
-        </div>
-      </div>`;
+        // crea un div para cada elemento
+        const colDiv = document.createElement('div');
+        colDiv.className = 'col-xl-3 col-lg-4 col-md-6 mb-4';
+
+        colDiv.innerHTML = `
+            <div class="card-custom">
+                <h6 class="fw-semibold fs-5 mb-3">${sol.title}</h6>
+                <p class="text-muted flex-grow-1">${sol.description}</p>
+                <a href="#" class="readmore text-primary fw-semibold">Leer más</a>
+
+
+                <div class="dropdown more-options">
+                    <button class="btn btn-sm btn-icon border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <ul class="dropdown-menu" data-action="delete">
+                        <li><a class="dropdown-item" data-action="update"><i class="fas fa-pencil-alt me-2"></i>Actualizar artículo</a></li>
+                        <li><a class="dropdown-item"  data-action="delete"><i class="fas fa-trash-alt me-2"></i>Eliminar artículo</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+        `;
+
+        const dropdownItems = colDiv.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const action = event.currentTarget.dataset.action;
+
+                if (action === 'update') {
+                    // Lógica para actualizar (por ahora, solo un log)
+                    console.log(`Action: Actualizar artículo | ID: ${sol.id}`);
+                    alert('hoal');
+                    // Aquí puedes llamar a una función para abrir un modal de actualización.
+                } else if (action === 'delete') {
+                    // Lógica de confirmación con SweetAlert2
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "No podrás revertir esto!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#dc3545', // Color rojo de Bootstrap
+                        cancelButtonColor: '#6c757d', // Color gris de Bootstrap
+                        confirmButtonText: 'Sí, eliminarlo!',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            eliminarArticulo(sol.id);
+                        }
+                    });
+                }
+            });
+        });
+
+        contenedor.appendChild(colDiv);
     });
+}
+
+async function eliminarArticulo(id) {
+    try {
+        const res = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+
+        // Muestra una alerta de éxito
+        Swal.fire(
+            'Eliminado!',
+            'El artículo ha sido eliminado.',
+            'success'
+        );
+
+        // Vuelve a cargar los datos para actualizar la vista
+        obtenerSoluciones();
+
+    } catch (error) {
+        console.error("Error al eliminar el artículo:", error);
+        Swal.fire(
+            'Error!',
+            'Hubo un problema al intentar eliminar el artículo.',
+            'error'
+        );
+    }
 }
 
 // 4) Filtra por título O por keywords

@@ -111,9 +111,8 @@ function mostrarDatos(ticketsData) {
     // Construye la tarjeta
     const card = document.createElement('div');
     card.className = 'ticket-card mb-3';
-    card.addEventListener('click', () => {
-      window.location.href = 'chat.html';
-    });
+    
+
 
     card.innerHTML = `
       <h6>${ticket.title}</h6>
@@ -124,20 +123,89 @@ function mostrarDatos(ticketsData) {
         ${calendarIcons[estado] || ''}
         <p class="mb-0 ms-1"><small>${creationDate}</small></p>
       </div>
-      <div class="status-badge status-${badgeColors[estado] || 'default'}">
-        <span>${estado}</span>
-        <i class="fas fa-chevron-down"></i>
-      </div>
+
+    <div class="dropdown">
+        <button class="status-badge status-${badgeColors[estado] || 'default'} dropdown-toggle" 
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                data-ticket-id="${ticket.id}"
+                data-ticket-status="${ticket.status}">
+            <span>${ticket.status}</span>
+        </button>
+        <ul class="dropdown-menu">
+            <li style="cursor: pointer"><a class="dropdown-item" data-new-status="En espera">En espera</a></li>
+            <li style="cursor: pointer"><a class="dropdown-item" data-new-status="En progreso">En progreso</a></li>
+            <li style="cursor: pointer"><a class="dropdown-item" data-new-status="Completado">Completado</a></li>
+        </ul>
+
+        <div class="chat-button" id="chatButton">
+          <i class="fas fa-comment-alt"></i>
+        </div>
+    </div>
+      
     `;
+
+
+    //EventListener para cada elemento del dropdown
+    card.addEventListener('click', (event) => {
+        // Asegura que el evento no se propague
+        event.stopPropagation();
+
+        const dropdownItem = event.target.closest('.dropdown-item');
+        if (dropdownItem) {
+            const ticketId = event.currentTarget.querySelector('button').dataset.ticketId;
+            const newStatus = dropdownItem.dataset.newStatus;
+            
+            // Llama a la función de actualización
+            actualizarEstadoTicket(ticketId, newStatus);
+        }
+    });
+
+    card.querySelector('.chat-button').addEventListener('click', (event) => {
+        // Detiene la propagación para evitar que el click de la tarjeta se active
+        event.stopPropagation();
+        window.location.href = 'chat.html';
+    });
 
     container.appendChild(card);
   });
 
+  async function actualizarEstadoTicket(ticketId, newStatus){
+    try {
+        // La URL para actualizar un ticket específico
+        const updateURL = `${API_URL}/${ticketId}`;
+        
+        const res = await fetch(updateURL, {
+            method: 'PATCH', // O 'PUT', dependiendo de tu API
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+
+        if (!res.ok) {
+            throw new Error(`Error al actualizar el ticket: ${res.status}`);
+        }
+
+        console.log(`Ticket ${ticketId} actualizado a estado: ${newStatus}`);
+        
+        // Vuelve a cargar los datos para reflejar los cambios
+        obtenerTickets();
+
+    } catch (error) {
+        console.error("Error al actualizar el estado del ticket:", error);
+    }
+  }
+
+  
   // Actualiza contadores
   document.querySelector('#en-espera-header-count').innerText   = `(${conteoEstados['En espera']})`;
   document.querySelector('#en-progreso-header-count').innerText = `(${conteoEstados['En progreso']})`;
   document.querySelector('#completado-header-count').innerText   = `(${conteoEstados['Completado']})`;
 }
+
+
 
 // Llamada inicial para que se carguen los datos que vienen del servidor
 obtenerTickets();

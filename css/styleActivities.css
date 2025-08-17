@@ -359,6 +359,20 @@ h4 {
     justify-content: space-between;
 }
 
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
 /* Encabezados */
 .headers-usuario {
     padding: .5rem 1rem;
