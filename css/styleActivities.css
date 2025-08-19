@@ -437,3 +437,15 @@ text-decoration: none;
         display: none;
     }
 }
+
+/*Test Modal*/
+.editor-content {
+    min-height: 150px;
+    border: 1px solid #ced4da;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+}
+.editor-content:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}

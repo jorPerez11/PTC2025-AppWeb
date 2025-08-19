@@ -158,7 +158,7 @@
                                 consectetur adipisicing elit. Optio incidunt fugit ad cum quia, sit, dolorem ratione ut
                                 necessitatibus </p>
                             <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
+                                <button class="btn edit-activity-button" data-bs-toggle="modal" data-bs-target="#editNoteModal">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </div>
@@ -177,7 +177,7 @@
                                 adipisicing elit. Optio incidunt fugit ad cum quia, sit, dolorem ratione ut
                                 necessitatibus </p>
                             <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
+                                <button class="btn edit-activity-button" data-bs-toggle="modal" data-bs-target="#editNoteModal">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </div>
@@ -329,6 +329,37 @@
         </div>
 
     </div>
+
+    <!--PRUEBA MODAL NOTAS (EDITAR)-->
+    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editNoteModalLabel">Editar Nota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="noteTitle" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="noteTitle">
+                    </div>
+                    <div class="editor-toolbar mb-2">
+                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('bold')"><i class="bi bi-type-bold"></i></button>
+                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('italic')"><i class="bi bi-type-italic"></i></button>
+                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('underline')"><i class="bi bi-type-underline"></i></button>
+                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('insertUnorderedList')"><i class="bi bi-list-ul"></i></button>
+                    </div>
+                    <textarea id="noteContent" class="form-control editor-content" contenteditable="true"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveNoteChanges">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
