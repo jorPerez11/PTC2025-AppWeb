@@ -49,15 +49,15 @@ $(document).ready(function () {
             data: [{
                 x: 'En Proceso',
                 y: 20,
-                fillColor: '#2196F3',
+                fillColor: '#FF7753',
             }, {
                 x: 'Cerradas',
                 y: 32,
-                fillColor: '#79DA66',
+                fillColor: '#79DA66',   
             }, {
                 x: 'En Espera',
                 y: 6,
-                fillColor: '#FF7753'
+                fillColor: '#DC2F02'
             }]
         }],
         xaxis: {

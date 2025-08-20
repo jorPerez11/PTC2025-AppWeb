@@ -47,6 +47,20 @@ h4 {
     padding-right: 15px;
 }
 
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
 .header-title {
     flex-grow: 1;
 }

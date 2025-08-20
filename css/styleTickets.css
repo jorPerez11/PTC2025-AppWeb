@@ -15,6 +15,20 @@ body {
     background-color: #d5d7e3;
 }
 
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
 h4 {
     background-color: white;
     color: black;
@@ -130,6 +144,39 @@ h4 {
 .botonInicioSesion:focus {
     box-shadow: none;
 }
+
+
+.dropdown{
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-badge {
+    border: none !important;
+}
+
+.ticket-card:hover .chat-button {
+    display: flex; /* O 'block', dependiendo del diseño del botón */
+}
+
+.chat-button {
+    position: fixed;
+    bottom: 20px;    /* Posición desde la parte inferior */
+    right: 20px;     /* Posición desde la derecha */
+    width: 50px;
+    height: 50px;
+    background-color: #DC2F02
+    ; /* Color de fondo */
+    color: white;             /* Color del ícono */
+    border-radius: 50%;      /* Forma circular */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;           /* Asegura que esté por encima de otros elementos */
+}
+
 
 .navbar-brand {
     size: 100px;
