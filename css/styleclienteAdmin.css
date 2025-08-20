@@ -459,6 +459,20 @@ dd {
     box-shadow: none;
 }
 
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
 .form-select{
     background-color: #0D122B;
     color: white;
