@@ -32,9 +32,57 @@ document.addEventListener("DOMContentLoaded", () => {
             phone: phoneNumber // Asigna el número completo con el prefijo
         };
 
-        // Validación simple en el frontend
+        // --- VALIDACIONES DE JAVASCRIPT ---
+
+        // 1. Validación de campos vacíos
         if (!userData.name || !userData.username || !userData.email || !userData.phone) {
             showGlobalMessage("Todos los campos son obligatorios.", 'error');
+            return;
+        }
+
+        // 2. Validación de formato de nombre (al menos dos palabras, cada una con al menos una letra)
+        const nameRegex = /^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/;
+        const nameParts = userData.name.split(/\s+/).filter(Boolean);
+        if (!nameRegex.test(userData.name) || nameParts.length < 2) {
+            showGlobalMessage("Por favor, ingresa tu nombre completo (nombre y apellido). Solo se permiten letras y espacios.", 'error');
+            return;
+        }
+
+        // 3. Validación de nombre de usuario (sin espacios, alfanumérico con guiones bajos)
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        if (!usernameRegex.test(userData.username)) {
+            showGlobalMessage("El nombre de usuario solo puede contener letras, números y guiones bajos.", 'error');
+            return;
+        }
+        
+        // 4. Validación de formato de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userData.email)) {
+            showGlobalMessage("Por favor, ingresa una dirección de correo electrónico válida.", 'error');
+            return;
+        }
+
+        // 5. Validación de número de teléfono con la librería intl-tel-input
+        if (!iti.isValidNumber()) {
+            showGlobalMessage("Por favor, ingresa un número de teléfono válido.", 'error');
+            return;
+        }
+        
+        // 6. Validación de la cantidad de caracteres (min y max)
+        if (userData.name.length < 5 || userData.name.length > 100) {
+            showGlobalMessage("El nombre completo debe tener entre 5 y 100 caracteres.", 'error');
+            return;
+        }
+        if (userData.username.length < 3 || userData.username.length > 100) {
+            showGlobalMessage("El nombre de usuario debe tener entre 3 y 100 caracteres.", 'error');
+            return;
+        }
+        if (userData.email.length > 100) {
+            showGlobalMessage("El email excede el límite de 100 caracteres.", 'error');
+            return;
+        }
+        if (userData.phone.length > 20) {
+            showGlobalMessage("El número de teléfono excede el límite de 20 caracteres.", 'error');
             return;
         }
 

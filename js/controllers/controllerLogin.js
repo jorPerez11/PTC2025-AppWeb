@@ -24,11 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </form>
             `,
-            // ... (el resto de las propiedades de Swal.fire) ...
+            
             confirmButtonText: 'Cambiar Contraseña',
             preConfirm: () => {
                 const newPassword = document.getElementById('newPasswordInput').value;
                 const confirmPassword = document.getElementById('confirmPasswordInput').value;
+                // Validación de longitud mínima para la nueva contraseña en el modal
+                if (newPassword.length < 12) {
+                    Swal.showValidationMessage('La nueva contraseña debe tener al menos 12 caracteres.');
+                    return false;
+                }
+
+                // Validación de coincidencia de contraseñas
                 if (newPassword !== confirmPassword) {
                     Swal.showValidationMessage('Las contraseñas no coinciden.');
                     return false;
@@ -86,8 +93,23 @@ document.addEventListener("DOMContentLoaded", () => {
             password: passwordInput.value.trim()
         };
 
+        // --- VALIDACIONES DE JAVASCRIPT ---
+
+        // 1. Validación de campos vacíos
         if (!credentials.username || !credentials.password) {
             showGlobalMessage("Por favor, ingresa tu usuario y contraseña.", 'error');
+            return;
+        }
+
+        // 2. Validación de longitud mínima del usuario (3 caracteres)
+        if (credentials.username.length < 3) {
+            showGlobalMessage("El usuario debe tener al menos 3 caracteres.", 'error');
+            return;
+        }
+
+        // 3. Validación de longitud mínima de la contraseña (12 caracteres)
+        if (credentials.password.length < 12) {
+            showGlobalMessage("La contraseña debe tener al menos 12 caracteres.", 'error');
             return;
         }
 
@@ -102,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- ESTE ES EL CÓDIGO QUE TE HACE FALTA PARA CUANDO EL LOGIN ES EXITOSO ---
             // 2. Si la contraseña es válida, guarda el token de larga duración
             localStorage.setItem('authToken', loginResponse.token);
             localStorage.setItem('username', loginResponse.username);

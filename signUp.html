@@ -106,26 +106,29 @@
                     <label for="inputName" class="form-label">
                         <h5>Nombre completo</h5>
                     </label>
-                    <input type="text" class="form-control" id="inputFullName" placeholder="Ingresa tu nombre completo">
+                    <input type="text" class="form-control" id="inputFullName" placeholder="Ingresa tu nombre completo"
+                        required maxlength="100" minlength="10">
                 </div>
                 <div class="formInput mb-4">
                     <label for="inputName" class="form-label">
                         <h5>Nombre de usuario</h5>
                     </label>
                     <input type="text" class="form-control" id="inputUsername"
-                        placeholder="Ingresa tu nombre de usuario">
+                        placeholder="Ingresa tu nombre de usuario" required maxlength="100" minlength="3">
                 </div>
                 <div class="formInput mb-4">
                     <label for="inputName" class="form-label">
                         <h5>Dirección de correo electrónico</h5>
                     </label>
-                    <input type="email" class="form-control" id="inputEmail" placeholder="Ingresa tu email">
+                    <input type="email" class="form-control" id="inputEmail" placeholder="Ingresa tu email" required
+                        maxlength="100" minlength="6">
                 </div>
                 <div class="formInput mb-5">
                     <label for="inputName" class="form-label">
                         <h5>Número de teléfono</h5>
                     </label>
-                    <input type="tel" class="form-control" id="inputNumber">
+                    <input type="tel" class="form-control" id="inputNumber" required maxlength="20" minlength="4"
+                        pattern="[0-9()\-]+" inputmode="numeric">
                 </div>
                 <div class="d-grid gap-4 pb-3">
                     <button class="btn botonRegistroV3 py-3 d-flex justify-content-center mb-4" type="submit">
