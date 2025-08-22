@@ -24,8 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </form>
             `,
-            
             confirmButtonText: 'Cambiar Contraseña',
+            customClass: {
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-button',
+                htmlContainer: 'custom-html-container',
+                input: 'custom-input'            // si quieres class extra en inputs
+            },
             preConfirm: () => {
                 const newPassword = document.getElementById('newPasswordInput').value;
                 const confirmPassword = document.getElementById('confirmPasswordInput').value;

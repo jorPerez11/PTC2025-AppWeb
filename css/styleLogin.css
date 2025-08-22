@@ -139,10 +139,20 @@ body{
 }
 
 .contSignText h1 {
-    font-size: 3.7rem; 
-    background: -webkit-linear-gradient(#727272, #FFFFFF);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  
+  /* Fallback para navegadores sin gradiente/text-clip */
+  color: #333;
+
+  font-size: 3.7rem;
+
+  /* Gradiente estándar y prefijado */
+  background: linear-gradient(#727272, #fff);
+  background-clip: text;               /* propiedad estándar */
+  -webkit-background-clip: text;       /* prefijo WebKit */
+
+  /* Transparencia del texto */
+  color: transparent;                  /* reemplaza text-fill en no-WebKit */
+  -webkit-text-fill-color: transparent;
 }
 
 .contSignText{
