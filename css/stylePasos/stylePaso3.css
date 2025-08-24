@@ -561,6 +561,121 @@ dialog:not([open]) {
     cursor: pointer;
 }
 
+/* Quitar interactividad de las imágenes en modales */
+.modal-perfil .foto-col img,
+.modal-perfil .label-foto img,
+#modal-agregar-equipo .foto-col img {
+    cursor: default !important;
+    transition: none !important;
+}
+
+.modal-perfil .foto-col img:hover,
+.modal-perfil .label-foto img:hover,
+#modal-agregar-equipo .foto-col img:hover {
+    transform: none !important;
+}
+
+/* Quitar el borde y fondo de las imágenes para hacerlas más estáticas */
+.modal-perfil .foto-col img,
+#modal-agregar-equipo .foto-col img {
+    border: 1px solid #ddd !important;
+    background-color: #f9f9f9 !important;
+}
+
+/* Específicamente para la imagen en el modal de agregar equipo */
+#imgEquipo {
+    border: 1px solid #ddd !important;
+    background-color: #f9f9f9 !important;
+    cursor: default !important;
+}
+
+/* Quitar el efecto de hover en todas las imágenes de técnicos */
+.tecnico-fila img:hover {
+    transform: none !important;
+    cursor: default !important;
+}
+
+/* Quitar el estilo de label clickeable */
+.label-foto {
+    cursor: default !important;
+}
+
+.label-foto:hover {
+    transform: none !important;
+}
+
+/* Ocultar completamente los inputs de file */
+#foto,
+#fotoEditar {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Ocultar completamente los inputs de file */
+#foto,
+#fotoEditar {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
+/* Eliminar completamente la interactividad de las imágenes */
+.modal-perfil .foto-col img,
+.modal-perfil .label-foto img,
+#modal-agregar-equipo .foto-col img,
+#previewAgregar,
+#fotoActual,
+#imgEquipo,
+.tecnico-fila img.foto-tecnico {
+    cursor: default !important;
+    transition: none !important;
+    pointer-events: none !important;
+}
+
+/* Quitar efectos hover */
+.modal-perfil .foto-col img:hover,
+.modal-perfil .label-foto img:hover,
+#modal-agregar-equipo .foto-col img:hover,
+#previewAgregar:hover,
+#fotoActual:hover,
+#imgEquipo:hover,
+.tecnico-fila img.foto-tecnico:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Estilos para las imágenes en modales */
+.modal-perfil .foto-col img,
+#modal-agregar-equipo .foto-col img {
+    border: 1px solid #ddd !important;
+    background-color: #f9f9f9 !important;
+}
+
+/* Ocultar inputs de file permanentemente */
+#foto,
+#fotoEditar {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+}
+
+/* Quitar el estilo de label clickeable */
+.label-foto {
+    cursor: default !important;
+    pointer-events: none !important;
+}
+
+.label-foto:hover {
+    transform: none !important;
+}
+
 @media (max-width: 576px) {
 
     /* For screens up to 576px wide */

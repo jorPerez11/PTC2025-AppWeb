@@ -87,10 +87,37 @@ export function cargarPaso() {
     }
 }
 
-export function siguientePaso() {
+export async function siguientePaso() {
     if (pasoActualGlobal === 1) {
         if (!validarPaso1()) return;
         guardarDatosPaso1();
+    }
+
+    // Validación específica para el Paso 3
+    if (pasoActualGlobal === 3) {
+        try {
+            // Importar el módulo del Paso 3 dinámicamente
+            const { accionSiguientePaso } = await import('./controllerPaso3.js');
+            
+            // Ejecutar la validación específica del Paso 3
+            const puedeAvanzar = await accionSiguientePaso();
+            
+            if (!puedeAvanzar) {
+                return; // Detener si la validación falla
+            }
+            
+            // Si la validación es exitosa, guardar datos y continuar
+            guardarDatosPaso3();
+        } catch (error) {
+            console.error('Error al validar el paso 3:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: 'No se pudo validar la información del equipo. Por favor, intente nuevamente.',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
     }
 
     if (pasoActualGlobal === 4) {
@@ -120,7 +147,6 @@ export function siguientePaso() {
     }
 
     if (pasoActualGlobal === 2) guardarDatosPaso2();
-    if (pasoActualGlobal === 3) guardarDatosPaso3();
     if (pasoActualGlobal === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
 
     if (pasoActualGlobal < 4) {
