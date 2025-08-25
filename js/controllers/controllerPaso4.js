@@ -10,7 +10,7 @@ export function restaurarDatosPaso4() {
   // 1. Recuperar todos los datos necesarios desde localStorage
   const listaTecnicos = JSON.parse(localStorage.getItem("listaTecnicos") || "[]");
   const listaCategorias = JSON.parse(localStorage.getItem("listaCategorias") || "[]");
-  const datosPaso1 = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
+  const datosPaso1 = JSON.parse(localStorage.getItem("datosPaso1") || "{}"); // Clave correcta
   const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]");
   const contenedor = document.getElementById("lista-integrantes-paso4");
 
@@ -21,15 +21,19 @@ export function restaurarDatosPaso4() {
 
   // 2. Mostrar datos de empresa
   const defaultEmpresa = "H2C - Help To Comply";
-  const nombreEmpresa = datosPaso1.empresaNombre?.trim() || defaultEmpresa;
+  // Usar la clave correcta: companyName
+  const nombreEmpresa = datosPaso1.companyName?.trim() || defaultEmpresa;
   document.getElementById("displayNombreEmpresa").textContent = nombreEmpresa;
 
-  document.getElementById("displayCorreoEmpresa").textContent = datosPaso1.correoEmpresa?.trim() || "N/A";
+  // Usar la clave correcta: emailCompany
+  document.getElementById("displayCorreoEmpresa").textContent = datosPaso1.emailCompany?.trim() || "N/A";
 
-  const telEmpRaw = datosPaso1.telefonoEmpresa?.trim() || "";
+  // Usar la clave correcta: contactPhone
+  const telEmpRaw = datosPaso1.contactPhone?.trim() || "";
   document.getElementById("displayTelefonoEmpresa").textContent = telEmpRaw ? formatoLegibleTelefono(telEmpRaw) : "N/A";
 
-  const sitio = datosPaso1.sitioWeb?.trim();
+  // Usar la clave correcta: websiteUrl
+  const sitio = datosPaso1.websiteUrl?.trim();
   const dispWeb = document.getElementById("displaySitioWebEmpresa");
   if (dispWeb) {
     if (sitio) {
@@ -41,10 +45,14 @@ export function restaurarDatosPaso4() {
   }
 
   // 3. Mostrar datos del administrador
-  document.getElementById("displayNombreAdmin").textContent = datosPaso1.adminNombre?.trim() || "N/A";
-  document.getElementById("displayCorreoAdmin").textContent = datosPaso1.adminCorreo?.trim() || "N/A";
+  // Usar la clave correcta: name
+  document.getElementById("displayNombreAdmin").textContent = datosPaso1.name?.trim() || "N/A";
 
-  const telAdminRaw = datosPaso1.telefonoAdmin?.trim() || "";
+  // Usar la clave correcta: email
+  document.getElementById("displayCorreoAdmin").textContent = datosPaso1.email?.trim() || "N/A";
+
+  // Usar la clave correcta: phone
+  const telAdminRaw = datosPaso1.phone?.trim() || "";
   document.getElementById("displayTelefonoAdmin").textContent = telAdminRaw ? formatoLegibleTelefono(telAdminRaw) : "N/A";
 
   // 4. Agrupar técnicos por categoría
@@ -69,20 +77,20 @@ export function restaurarDatosPaso4() {
     "Soporte Técnico": "#F39C12", // Naranja amigable
     "Gestión de Usuarios": "#2ECC71", // Verde fresco (con U mayúscula)
     "Incidentes críticos": "#E74C3C", // Rojo alerta
-    "Consultas": "#3498DB",      // Azul profesional
-    "Redes": "#9B59B6"          // Púrpura distintivo
+    "Consultas": "#3498DB",// Azul profesional
+    "Redes": "#9B59B6"// Púrpura distintivo
   };
-  const defaultColor = "#95A5A6";  // Gris neutro
+  const defaultColor = "#95A5A6"; // Gris neutro
 
   // 6. Construir el HTML
   let html = "";
 
   if (Object.keys(grupos).length === 0) {
     html = `
-        <div class="alert alert-info text-center">
-            No hay integrantes agregados al equipo.
-        </div>
-    `;
+ <div class="alert alert-info text-center">
+ No hay integrantes agregados al equipo.
+ </div>
+ `;
   } else {
     // Ordenar según el orden definido en catColors
     const categoriasOrdenadas = Object.keys(catColors);
@@ -93,11 +101,11 @@ export function restaurarDatosPaso4() {
         const color = catColors[catNombre] || defaultColor;
 
         html += `
-                <div class="mb-4">
-                    <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
-                        ${catNombre}
-                    </h5>
-            `;
+ <div class="mb-4">
+ <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
+ ${catNombre}
+</h5>
+ `;
 
         grupos[catNombre].forEach(tecnico => {
           const foto = tecnico.Foto?.trim() ? tecnico.Foto : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -105,26 +113,26 @@ export function restaurarDatosPaso4() {
           const telefono = tecnico["Número de tel."] || tecnico.Telefono || "";
 
           html += `
-                    <div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
-                        <div class="row g-0 align-items-center">
-                            <div class="col-auto p-3">
-                                <img src="${foto}" alt="Foto de ${tecnico.Nombre}" class="rounded-circle" width="56" height="56">
-                            </div>
-                            <div class="col px-3">
-                                <h6 class="mb-1">${tecnico.Nombre}</h6>
-                                <p class="mb-1 text-muted small">
-                                    <i class="bi bi-envelope-at" style="color: #dc2f02;"></i> ${correo}
-                                </p>
-                                <p class="mb-0 text-muted small">
-                                    <i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
-                                </p>
-                            </div>
-                            <div class="col-auto pe-3">
-                                <i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
-                            </div>
-                        </div>
-                    </div>
-                `;
+<div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
+<div class="row g-0 align-items-center">
+ <div class="col-auto p-3">
+<img src="${foto}" alt="Foto de ${tecnico.Nombre}" class="rounded-circle" width="56" height="56">
+ </div>
+ <div class="col px-3">
+<h6 class="mb-1">${tecnico.Nombre}</h6>
+<p class="mb-1 text-muted small">
+<i class="bi bi-envelope-at" style="color: #dc2f02;"></i> ${correo}
+</p>
+<p class="mb-0 text-muted small">
+<i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
+ </p>
+ </div>
+ <div class="col-auto pe-3">
+<i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
+  </div>
+ </div>
+  </div>
+ `;
         });
 
         html += `</div>`;
@@ -140,11 +148,11 @@ export function restaurarDatosPaso4() {
       const color = defaultColor;
 
       html += `
-            <div class="mb-4">
-                <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
-                    ${catNombre}
-                </h5>
-        `;
+ <div class="mb-4">
+ <h5 class="fw-semibold mb-3 pb-2" style="color: ${color}; border-bottom: 2px solid ${color};">
+ ${catNombre}
+ </h5>
+  `;
 
       grupos[catNombre].forEach(tecnico => {
         const foto = tecnico.Foto?.trim() ? tecnico.Foto : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
@@ -152,26 +160,26 @@ export function restaurarDatosPaso4() {
         const telefono = tecnico["Número de tel."] || tecnico.Telefono || "";
 
         html += `
-                <div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
-                    <div class="row g-0 align-items-center">
-                        <div class="col-auto p-3">
-                            <img src="${foto}" alt="Foto de ${tecnico.Nombre}" class="rounded-circle" width="56" height="56">
-                        </div>
-                        <div class="col px-3">
-                            <h6 class="mb-1">${tecnico.Nombre}</h6>
-                            <p class="mb-1 text-muted small">
-                                <i class="bi bi-envelope-at" style="color: #dc2f02;"></i> ${correo}
-                            </p>
-                            <p class="mb-0 text-muted small">
-                                <i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
-                            </p>
-                        </div>
-                        <div class="col-auto pe-3">
-                            <i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
-                        </div>
-                    </div>
-                </div>
-            `;
+ <div class="card mb-4 shadow-sm" style="border-left: 4px solid ${color};">
+ <div class="row g-0 align-items-center">
+ <div class="col-auto p-3">
+ <img src="${foto}" alt="Foto de ${tecnico.Nombre}" class="rounded-circle" width="56" height="56">
+ </div>
+  <div class="col px-3">
+   <h6 class="mb-1">${tecnico.Nombre}</h6>
+    <p class="mb-1 text-muted small">
+ <i class="bi bi-envelope-at" style="color: #dc2f02;"></i> ${correo}
+ </p>
+ <p class="mb-0 text-muted small">
+ <i class="bi bi-telephone" style="color:rgb(33, 174, 21);"></i> ${formatoLegibleTelefono(telefono)}
+ </p>
+ </div>
+ <div class="col-auto pe-3">
+<i class="bi bi-check-circle-fill" style="font-size:1.5rem; color:${color};"></i>
+ </div>
+ </div>
+ </div>
+ `;
       });
 
       html += `</div>`;
@@ -222,32 +230,32 @@ export function formatoLegibleTelefono(telefono) {
 }
 
 export async function handleFinalizarSetup() {
-    try {
-        // Asegúrate de tener el adminId disponible, ya sea de localStorage o de una variable global.
-        const userId = adminId; // Usa la variable global que creaste.
+  try {
+    // Asegúrate de tener el adminId disponible, ya sea de localStorage o de una variable global.
+    const userId = adminId; // Usa la variable global que creaste.
 
-        console.log("Iniciando la configuración final del administrador para el usuario:", userId);
+    console.log("Iniciando la configuración final del administrador para el usuario:", userId);
 
-        const resultado = await finalizarAdminSetupAPI(userId);
+    const resultado = await finalizarAdminSetupAPI(userId);
 
-        console.log("Configuración finalizada exitosamente:", resultado);
+    console.log("Configuración finalizada exitosamente:", resultado);
 
-        Swal.fire({
-            icon: "success",
-            title: "Configuración Finalizada",
-            text: "El administrador ha sido activado y recibirá un correo con sus credenciales.",
-            showConfirmButton: false,
-            timer: 3000
-        }).then(() => {
-            window.location.href = 'login.html';
-        });
+    Swal.fire({
+      icon: "success",
+      title: "Configuración Finalizada",
+      text: "El administrador ha sido activado y recibirá un correo con sus credenciales.",
+      showConfirmButton: false,
+      timer: 3000
+    }).then(() => {
+      window.location.href = 'login.html';
+    });
 
-    } catch (error) {
-        console.error("Error al finalizar la configuración del administrador:", error);
-        Swal.fire({
-            icon: "error",
-            title: "Error de Finalización",
-            text: error.message || "No se pudo finalizar la configuración del administrador.",
-        });
-    }
+  } catch (error) {
+    console.error("Error al finalizar la configuración del administrador:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error de Finalización",
+      text: error.message || "No se pudo finalizar la configuración del administrador.",
+    });
+  }
 }
