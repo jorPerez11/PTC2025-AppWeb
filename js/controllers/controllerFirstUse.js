@@ -8,10 +8,11 @@ import {
     guardarPaso1EnAPI
 } from '../services/serviceFirstUse.js';
 
+import { deleteRecordsFromAPI, updateDataInAPI } from '../services/serviceFirstUse.js';
+
 import { finalizarAdminSetupAPI } from '../services/serviceFirstUse.js';
 
 import {
-    guardarDatosPaso1,
     restaurarDatosPaso1,
     guardarDatosPaso2,
     guardarDatosPaso3,
@@ -71,7 +72,7 @@ export function cargarPaso() {
 
                 requestAnimationFrame(() => {
                     if (pasoActualGlobal === 1) {
-                        restaurarDatosPaso1();
+                        cargarDatosPaso1();
                     }
                     if (pasoActualGlobal === 2) {
                         initPaso2();
@@ -95,71 +96,146 @@ export function cargarPaso() {
     }
 }
 
+export function cargarDatosPaso1() {
+    // Obtener los datos de localStorage. Si no existen, inicializa un objeto vacío para evitar errores.
+    const companyData = JSON.parse(localStorage.getItem('companyData') || '{}');
+    const adminData = JSON.parse(localStorage.getItem('adminData') || '{}');
+
+    // Rellenar los inputs de los datos de la compañía
+    if (companyData.companyName) {
+        document.getElementById("nombreEmpresa").value = companyData.companyName;
+    }
+    if (companyData.emailCompany) {
+        document.getElementById("correoEmpresa").value = companyData.emailCompany;
+    }
+    if (companyData.contactPhone) {
+        document.getElementById("telefonoEmpresa").value = companyData.contactPhone;
+    }
+    if (companyData.websiteUrl) {
+        document.getElementById("sitioWeb").value = companyData.websiteUrl;
+    }
+
+    // Rellenar los inputs de los datos del administrador
+    if (adminData.name) {
+        document.getElementById("nombreAdmin").value = adminData.name;
+    }
+    if (adminData.username) {
+        document.getElementById("adminUsername").value = adminData.username;
+    }
+    if (adminData.email) {
+        document.getElementById("correoAdmin").value = adminData.email;
+    }
+    if (adminData.phone) {
+        document.getElementById("telefonoAdmin").value = adminData.phone;
+    }
+    // No es necesario cargar la contraseña ya que no se guarda en localStorage por seguridad.
+}
+
+export function guardarDatosPaso1() {
+    const companyData = obtenerDatosCompania();
+    const adminData = obtenerDatosAdmin();
+
+    // Guarda los datos en localStorage
+    localStorage.setItem('companyData', JSON.stringify(companyData));
+    localStorage.setItem('adminData', JSON.stringify(adminData));
+}
+
 export async function siguientePaso() {
     if (pasoActualGlobal === 1) {
         if (!validarPaso1()) {
             return;
         }
 
+        guardarDatosPaso1();
+
         const companyData = obtenerDatosCompania();
         const adminData = obtenerDatosAdmin();
         const storedCompanyId = localStorage.getItem('companyId');
         const storedAdminId = localStorage.getItem('adminId');
+        // Combina los datos de la compañía y del administrador en un solo objeto para simplificar
+        const datosPaso1 = { ...companyData, ...adminData };
+
+        // Guarda el objeto combinado en localStorage
+        localStorage.setItem('datosPaso1', JSON.stringify(datosPaso1));
+
+        // Obtener datos guardados o inicializar a un objeto vacío si no existen
+        const savedCompanyData = JSON.parse(localStorage.getItem('companyData') || '{}');
+        const savedAdminData = JSON.parse(localStorage.getItem('adminData') || '{}');
 
         try {
-            console.log("Valor de adminName:", adminData.name);
-            console.log("Objeto adminData a enviar:", adminData);
-
-            const result = await guardarPaso1EnAPI(companyData, adminData, storedCompanyId, storedAdminId);
-
-            if (result && result.company && result.company.id) {
+            // Caso 1: Es el primer registro o IDs no existen. Realiza un POST.
+            if (!storedCompanyId || !storedAdminId) {
+                const result = await guardarPaso1EnAPI(companyData, adminData);
                 localStorage.setItem('companyId', result.company.id);
-            }
-            if (result && result.admin && result.admin.id) {
                 localStorage.setItem('adminId', result.admin.id);
+                localStorage.setItem('companyData', JSON.stringify(companyData));
+                localStorage.setItem('adminData', JSON.stringify(adminData));
+
+                // Avanza al siguiente paso.
+                pasoActualGlobal++;
+                cargarPaso();
+                return;
             }
 
-            guardarDatosPaso1();
+            // Caso 2: Compara los datos del formulario con los de localStorage.
+            const companyDataChanged = JSON.stringify(companyData) !== JSON.stringify(savedCompanyData);
+            const adminDataChanged = JSON.stringify(adminData) !== JSON.stringify(savedAdminData);
 
-            console.log("Datos del Paso 1 guardados/actualizados correctamente. IDs:", localStorage.getItem('companyId'), localStorage.getItem('adminId'));
+            if (!companyDataChanged && !adminDataChanged) {
+                console.log("No se detectaron cambios. Avanzando al siguiente paso.");
+                pasoActualGlobal++;
+                cargarPaso();
+                return;
+            }
 
-            // Avanza al siguiente paso y detiene la función
-            pasoActualGlobal++;
-            cargarPaso();
-            return; // Detiene el flujo para que no salte de paso
+            // Caso 3: Si hay cambios, verifica si son en campos únicos.
+            const uniqueCompanyChanged = companyData.emailCompany !== savedCompanyData.emailCompany;
+            const uniqueAdminChanged = adminData.email !== savedAdminData.email || adminData.username !== savedAdminData.username;
 
+            if (uniqueCompanyChanged || uniqueAdminChanged) {
+                const confirmed = await Swal.fire({
+                    title: 'Cambios en datos únicos',
+                    text: "Cambiar un campo único implica eliminar el registro anterior para crear uno nuevo. ¿Desea continuar?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, continuar',
+                    cancelButtonText: 'No, cancelar'
+                }).then(res => res.isConfirmed);
+
+                if (confirmed) {
+                    // Elimina los registros anteriores y crea nuevos.
+                    await deleteRecordsFromAPI(storedCompanyId, storedAdminId);
+                    const result = await guardarPaso1EnAPI(companyData, adminData);
+
+                    // Actualiza localStorage.
+                    localStorage.setItem('companyId', result.company.id);
+                    localStorage.setItem('adminId', result.admin.id);
+                    localStorage.setItem('companyData', JSON.stringify(companyData));
+                    localStorage.setItem('adminData', JSON.stringify(adminData));
+
+                    pasoActualGlobal++;
+                    cargarPaso();
+                }
+            } else {
+                // Solo hay cambios en campos no únicos, haz PATCH.
+                await updateDataInAPI('company', storedCompanyId, companyData);
+                await updateDataInAPI('admin', storedAdminId, adminData);
+
+                // Actualiza localStorage con los nuevos datos.
+                localStorage.setItem('companyData', JSON.stringify(companyData));
+                localStorage.setItem('adminData', JSON.stringify(adminData));
+
+                pasoActualGlobal++;
+                cargarPaso();
+            }
         } catch (error) {
             console.error("Error al guardar en la API:", error);
-
-            let errorMessage = "Hubo un problema al guardar los datos iniciales. Por favor, intenta de nuevo.";
-
-            // Intenta analizar el mensaje de error de la API
-            // El formato del error es: "Error al crear la compañía: {"error":"..."}"
-            const errorMatch = error.message.match(/Error al crear la compa\u00f1\u00eda: (.*)/);
-
-            if (errorMatch && errorMatch[1]) {
-                try {
-                    const apiError = JSON.parse(errorMatch[1]);
-                    if (apiError && apiError.error) {
-                        errorMessage = apiError.error;
-                    }
-                } catch (parseError) {
-                    console.error("No se pudo analizar el mensaje de error de la API:", parseError);
-                }
-            }
-
-            // Muestra el mensaje de error al usuario
             Swal.fire({
                 icon: 'error',
                 title: 'Error de registro',
-                text: errorMessage,
+                text: error.message,
                 confirmButtonText: 'Entendido'
             });
-
-            // Rompe el bucle de reintento
-            localStorage.removeItem('companyId');
-            localStorage.removeItem('adminId');
-
             return;
         }
     }
@@ -278,7 +354,7 @@ function obtenerDatosAdmin() {
     return {
         name: document.getElementById("nombreAdmin")?.value.trim(),
         username: document.getElementById("adminUsername")?.value.trim(),
-        email: document.getElementById("adminEmail")?.value.trim(),
+        email: document.getElementById("correoAdmin")?.value.trim(),
         phone: document.getElementById("telefonoAdmin")?.value.trim(),
         password: document.getElementById("adminPassword")?.value.trim(),
         rolId: 3 // Asume el rol de administrador

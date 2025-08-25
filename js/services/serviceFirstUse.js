@@ -8,55 +8,74 @@ const API_COMPANY_URL = 'http://localhost:8080/api';
 const API_REGISTER_ADMIN = 'http://localhost:8080/api/firstuse/register-admin';
 const API_USERS_URL = 'http://localhost:8080/api/users';
 
-/**
- * Guarda la información de la compañía y el usuario administrador en la API.
- * Si ya existen los IDs, los datos se actualizan (PATCH). Si no, se crean (POST).
- * @param {object} companyData - Los datos de la compañía.
- * @param {object} adminData - Los datos del usuario administrador.
- * @param {string} [companyId=null] - El ID de la compañía si ya existe.
- * @param {string} [adminId=null] - El ID del usuario si ya existe.
- * @returns {Promise<object>} - Un objeto con las respuestas de ambas peticiones.
- */
-export async function guardarPaso1EnAPI(companyData, adminData, companyId = null, adminId = null) {
-    try {
-        // Lógica de Compañía
-        // El endpoint para POST ya no es necesario, ya que la API se encarga de eso.
-        const companyUrl = companyId ? `${API_COMPANY_URL}/companies/${companyId}` : `${API_COMPANY_URL}/PostCompany`;
-        const companyMethod = companyId ? 'PATCH' : 'POST';
+// Función para el registro inicial (POST)
+export async function guardarPaso1EnAPI(companyData, adminData) {
+    const companyResponse = await fetch(`${API_COMPANY_URL}/PostCompany`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(companyData)
+    });
 
-        const companyResponse = await fetch(companyUrl, {
-            method: companyMethod,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(companyData)
-        });
+    if (!companyResponse.ok) {
+        const errorData = await companyResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        throw new Error(errorData.error || `Error al crear la compañía: ${companyResponse.status}`);
+    }
+    const companyResult = await companyResponse.json();
 
-        if (!companyResponse.ok) {
-            const errorText = await companyResponse.text();
-            throw new Error(`Error al ${companyId ? 'actualizar' : 'crear'} la compañía: ${errorText}`);
-        }
-        const companyResult = await companyResponse.json();
+    const adminResponse = await fetch(API_REGISTER_ADMIN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adminData)
+    });
 
-        // Lógica de Usuario Administrador
-        // Se usa el endpoint de registro para el primer POST y luego el de usuarios para el PATCH
-        const adminUrl = adminId ? `${API_USERS_URL}/${adminId}` : API_REGISTER_ADMIN; 
-        const adminMethod = adminId ? 'PATCH' : 'POST';
+    if (!adminResponse.ok) {
+        const errorData = await adminResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        throw new Error(errorData.error || `Error al crear al administrador: ${adminResponse.status}`);
+    }
+    const adminResult = await adminResponse.json();
 
-        const adminResponse = await fetch(adminUrl, {
-            method: adminMethod,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(adminData)
-        });
+    return { company: companyResult, admin: adminResult };
+}
 
-        if (!adminResponse.ok) {
-            const errorText = await adminResponse.text();
-            throw new Error(`Error al ${adminId ? 'actualizar' : 'crear'} al administrador: ${errorText}`);
-        }
-        const adminResult = await adminResponse.json();
+// Nueva función genérica para actualizaciones con PATCH
+export async function updateDataInAPI(type, id, data) {
+    const url = type === 'company' ? `${API_COMPANY_URL}/companies/${id}` : `${API_USERS_URL}/users/${id}`;
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
 
-        return { company: companyResult, admin: adminResult };
-    } catch (error) {
-        console.error("Error en guardarPaso1EnAPI:", error);
-        throw error;
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        throw new Error(errorData.error || `Error al actualizar ${type}: ${response.status}`);
+    }
+    return await response.json();
+}
+
+// Función para eliminar registros de manera robusta
+export async function deleteRecordsFromAPI(companyId, adminId) {
+    // Intenta eliminar al usuario.
+    const adminResponse = await fetch(`http://localhost:8080/api/users/${adminId}`, {
+        method: 'DELETE',
+    });
+
+    // Si la respuesta es 404, significa que el registro no existe, lo cual está bien.
+    // Si la respuesta es 204 (No Content), significa que la eliminación fue exitosa.
+    if (!adminResponse.ok && adminResponse.status !== 404 && adminResponse.status !== 204) {
+        // Lanza un error solo para otros códigos de estado.
+        const errorData = await adminResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        throw new Error(errorData.error || `Error al eliminar al administrador: ${adminResponse.status}`);
+    }
+
+    // Intenta eliminar la compañía.
+    const companyResponse = await fetch(`${API_COMPANY_URL}/companies/${companyId}`, {
+        method: 'DELETE',
+    });
+
+    if (!companyResponse.ok && companyResponse.status !== 404 && companyResponse.status !== 204) {
+        const errorData = await companyResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        throw new Error(errorData.error || `Error al eliminar la compañía: ${companyResponse.status}`);
     }
 }
 
@@ -170,7 +189,7 @@ export async function agregarTecnicoPendienteAPI(datosTecnico, companyId) {
     if (!companyId) {
         throw new Error("companyId no es válido o está ausente.");
     }
-    
+
     // Combinar los datos del técnico con el companyId
     const datosCompletosTecnico = {
         ...datosTecnico,

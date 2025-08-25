@@ -1,22 +1,3 @@
-// Funciones de almacenamiento para el Paso 1
-export function guardarDatosPaso1() {
-    const telefonoEmpresaEl = document.getElementById("telefonoEmpresa");
-    const telefonoAdminEl = document.getElementById("telefonoAdmin");
-    
-    const datos = {
-        nombreEmpresa: document.getElementById("nombreEmpresaInput")?.value || '',
-        correoEmpresa: document.getElementById("correoEmpresa")?.value || '',
-        telefonoEmpresa: telefonoEmpresaEl ? window.intlTelInputGlobals?.getInstance(telefonoEmpresaEl)?.getNumber() : null,
-        sitioWeb: document.getElementById("sitioWeb")?.value || '',
-        adminNombre: document.getElementById("nombreAdmin")?.value || '',
-        adminCorreo: document.getElementById("adminEmail")?.value || '',
-        telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
-    };
-    
-    localStorage.setItem("datosPaso1", JSON.stringify(datos));
-    console.log("Datos del Paso 1 guardados en localStorage:", datos);
-}
-
 export function restaurarDatosPaso1() {
     const data = JSON.parse(localStorage.getItem("datosPaso1") || "{}");
     
