@@ -140,13 +140,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // 3. Redirección basada en el rol
             switch (loginResponse.rolId) {
                 case 3: // Administrador
-                    window.location.href = 'primerUso.html';
+                    window.location.href = 'PlataformaWebInicio/PW_Inicio.html';
                     break;
                 case 2: // Técnico
                     window.location.href = "PlataformaWebInicio/PW_Inicio.html";
                     break;
                 case 1: // Cliente
-                    window.location.href = "PlataformaWebInicio/PW_Inicio.html";
+                    window.location.href = "index.html";
                     break;
                 default:
                     window.location.href = "index.html";

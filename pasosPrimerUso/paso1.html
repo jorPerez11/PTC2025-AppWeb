@@ -142,7 +142,7 @@
                         H2C - Help To Comply
                     </div>
                     <!-- Input hidden para enviar el valor con el formulario -->
-                    <input type="hidden" name="nombreEmpresa" value="H2C - Help To Comply" maxlength="100" minlength="2" required>
+                    <input type="hidden" name="nombreEmpresa" id="nombreEmpresa" value="H2C - Help To Comply" maxlength="100" minlength="2" required>
                 </div>
 
                 <div class="mb-3">
@@ -153,8 +153,7 @@
 
                 <div class="mb-3">
                     <label for="telefonoEmpresa" class="form-label">Teléfono de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoEmpresa" minlength="9" maxlength="20" pattern="^\+?[0-9()\s-]+$"
-      inputmode="tel">
+                    <input type="tel" class="form-control" id="telefonoEmpresa" minlength="9" maxlength="20">
                 </div>
 
                 <div class="mb-3">
@@ -176,13 +175,13 @@
 
                 <div class="mb-3">
                     <label for="correoAdmin" class="form-label">Correo electrónico</label>
-                    <input type="email" class="form-control" id="correoAdmin" placeholder="correo@ejemplo.com"
+                    <input type="email" class="form-control" id="adminEmail" placeholder="correo@ejemplo.com"
                         maxlength="100" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefonoAdmin" class="form-label">Número de contacto</label>
-                    <input type="tel" class="form-control" id="telefonoAdmin" maxlength="9" minlength="9">
+                    <input type="tel" class="form-control" id="telefonoAdmin" maxlength="20" minlength="9">
                 </div>
 
                 <div class="mb-3">

@@ -9,7 +9,7 @@ export function guardarDatosPaso1() {
         telefonoEmpresa: telefonoEmpresaEl ? window.intlTelInputGlobals?.getInstance(telefonoEmpresaEl)?.getNumber() : null,
         sitioWeb: document.getElementById("sitioWeb")?.value || '',
         adminNombre: document.getElementById("nombreAdmin")?.value || '',
-        adminCorreo: document.getElementById("correoAdmin")?.value || '',
+        adminCorreo: document.getElementById("adminEmail")?.value || '',
         telefonoAdmin: telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null,
     };
     

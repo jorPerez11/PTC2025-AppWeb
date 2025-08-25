@@ -5,6 +5,8 @@ import {
   editarTecnicoAPI,
   eliminarTecnicoAPI,
   subirImagenAPI,
+  agregarTecnicoPendienteAPI,
+  asignarCategoriaYActivarTecnicoAPI,
   obtenerCategoriasAPI
 } from '../services/serviceFirstUse.js';
 
@@ -13,6 +15,8 @@ import {
   obtenerTelefonoConPrefijo,
   formatearTelefonoParaMostrar
 } from '../utils/validacionesFirstUse.js';
+
+import { companyId, adminId } from './controllerFirstUse.js';
 
 // Variables globales
 let listaTecnicos = [];
@@ -72,7 +76,7 @@ export async function obtenerCategorias3() {
       { id: 3, nombre: "Técnico Junior" },
       { id: 4, nombre: "Especialista" }
     ];
-    localStorage.setItem("listaCategorias", JSON.stringify(listaCategorias)); 
+    localStorage.setItem("listaCategorias", JSON.stringify(listaCategorias));
     cargarCategoriasEnDropdown();
   }
 }
@@ -141,9 +145,8 @@ export function mostrarDatos(tecnicos) {
   console.log("Equipo actual al renderizar:", equipoActual);
 
   tecnicos.forEach((tecnico) => {
-    const imgSrc = tecnico.Foto && tecnico.Foto.trim()
-      ? tecnico.Foto
-      : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    // SIEMPRE usar la imagen por defecto, ignorando cualquier foto existente
+    const imgSrc = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     const nombreLimpio = limpiarTexto(tecnico.Nombre);
     const telefonoFormateado = formatearTelefonoInteligente(tecnico["Número de tel."]);
@@ -196,7 +199,7 @@ export function mostrarDatos(tecnicos) {
 
     contenedor.appendChild(fila);
 
-    const miembroEquipo = equipoActual.find(miembro => miembro.id == tecnico.id);
+    const miembroEquipo = equipoActual.find(miembro => miembro.id === tecnico.id);
     const contenedorAcciones = document.getElementById(`acciones-${tecnico.id}`);
 
     if (miembroEquipo && contenedorAcciones) {
@@ -342,6 +345,29 @@ export function configurarEventosModales() {
   const btnAbrirModalAgregar = document.getElementById("btnAbrirModal");
   const btnFlotante = document.getElementById("btnFlotanteAgregar");
   const btnCerrarAgregar = document.getElementById("btnCerrarModal");
+  // Ocultar y deshabilitar inputs de foto en modales
+  const inputFotoAgregar = document.getElementById("foto");
+  const previewAgregar = document.getElementById("previewAgregar");
+  const inputFotoEditar = document.getElementById("fotoEditar");
+  const fotoActual = document.getElementById("fotoActual");
+
+  if (inputFotoAgregar) {
+    inputFotoAgregar.style.display = "none";
+    inputFotoAgregar.disabled = true;
+  }
+
+  if (previewAgregar) {
+    previewAgregar.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  }
+
+  if (inputFotoEditar) {
+    inputFotoEditar.style.display = "none";
+    inputFotoEditar.disabled = true;
+  }
+
+  if (fotoActual) {
+    fotoActual.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  }
 
   if (btnAbrirModalAgregar) {
     btnAbrirModalAgregar.addEventListener("click", () => {
@@ -480,13 +506,24 @@ export async function agregarTecnico() {
     return;
   }
 
-  await enviarTecnico(nombre, correo, telefono, archivoFoto);
+  await enviarTecnico(nombre, correo, telefono, null);
 }
 
 export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
   try {
-    let urlFoto = "";
-    if (archivoFoto) urlFoto = await subirImagen(archivoFoto);
+    const urlFoto = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    const companyId = Number(localStorage.getItem('companyId'));
+
+    if (!companyId) {
+      console.error("Error: companyId no se encontró en el localStorage.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de configuración',
+        text: 'No se encontró el ID de la compañía. Por favor, reinicie el proceso desde el Paso 1.',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
 
     const nuevoTecnico = {
       Nombre: nombre,
@@ -495,7 +532,8 @@ export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
       Foto: urlFoto
     };
 
-    await agregarTecnicoAPI(nuevoTecnico);
+    // 💡 Aquí está el cambio importante: pasamos el ID como segundo argumento
+    await agregarTecnicoPendienteAPI(nuevoTecnico, companyId);
 
     Swal.fire({
       icon: "success",
@@ -507,13 +545,10 @@ export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
 
     const frmAgregar = document.getElementById("frmAgregar");
     if (frmAgregar) frmAgregar.reset();
-
     const previewAgregar = document.getElementById("previewAgregar");
     if (previewAgregar) previewAgregar.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
     const modalAgregar = document.getElementById("modal-agregar");
     if (modalAgregar) modalAgregar.close();
-
     obtenerTecnicos();
   } catch (error) {
     console.error("Error al agregar técnico:", error);
@@ -535,7 +570,7 @@ export function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 
   const fotoActual = document.getElementById("fotoActual");
   if (fotoActual) {
-    fotoActual.src = foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    fotoActual.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   }
 
   const modalEditar = document.getElementById("modal-editar");
@@ -560,7 +595,7 @@ export function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
 }
 
 export function abrirModalAgregarEquipo(tecnico) {
-  document.getElementById("imgEquipo").src = tecnico.Foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  document.getElementById("imgEquipo").src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   document.getElementById("nombreEquipo").value = tecnico.Nombre || "";
   document.getElementById("correoEquipo").value = tecnico["Correo Electrónico"] || "";
   document.getElementById("telefonoEquipo").value = formatearTelefonoParaMostrar(tecnico["Número de tel."]) || "";
@@ -599,9 +634,6 @@ export async function editarTecnico() {
   const nombre = limpiarTexto(document.getElementById("nombreEditar").value.trim());
   const correo = document.getElementById("emailEditar").value.trim();
   const telefonoInput = document.getElementById("telefonoEditar");
-  const nuevaFoto = document.getElementById("fotoEditar").files[0];
-  const previewFoto = document.getElementById("fotoActual");
-  let urlFinal = previewFoto ? previewFoto.src : "";
 
   let telefono = "";
   if (telefonoInput) {
@@ -619,7 +651,7 @@ export async function editarTecnico() {
   }
 
   try {
-    if (nuevaFoto) urlFinal = await subirImagen(nuevaFoto);
+    const urlFinal = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     const actualizado = {
       Nombre: nombre,
@@ -719,10 +751,17 @@ export function validarAntesDeEnviar(idInput) {
 
 export function actualizarEquipoEnStorage(id, accion, categoria, username = '') {
   let equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
-  const idx = equipo.findIndex(m => m.id == id);
+
+  // Normalizar ID a string para consistencia
+  const idNormalizado = String(id);
+  const idx = equipo.findIndex(m => String(m.id) === idNormalizado);
 
   if (accion === 'agregar') {
-    const nuevo = { id, categoria, username };
+    const nuevo = {
+      id: idNormalizado,
+      categoria: String(categoria), // También normalizar categoría a string
+      username
+    };
     if (idx === -1) equipo.push(nuevo);
     else equipo[idx] = nuevo;
   } else if (accion === 'eliminar' && idx !== -1) {
@@ -730,6 +769,7 @@ export function actualizarEquipoEnStorage(id, accion, categoria, username = '') 
   }
 
   localStorage.setItem("miEquipo", JSON.stringify(equipo));
+  console.log("Equipo actualizado en storage:", equipo);
 }
 
 export function marcarTecnicoComoAñadido(idTecnico, categoria, username, restaurando = false) {
@@ -764,7 +804,7 @@ export function marcarTecnicoComoAñadidoVisual(idTecnico, contenedorAcciones, r
   }
 
   const equipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
-  const miembroDelEquipo = equipo.find(item => item.id == idTecnico);
+  const miembroDelEquipo = equipo.find(item => item.id === idTecnico);
 
   const categoriaId = miembroDelEquipo ? String(miembroDelEquipo.categoria).trim() : '';
 
@@ -857,11 +897,17 @@ export async function obtenerTecnicos() {
 
   try {
     const data = await obtenerTecnicosAPI();
-    listaTecnicos = data;
-    localStorage.setItem("listaTecnicos", JSON.stringify(listaTecnicos)); 
-    console.log("Técnicos cargados:", listaTecnicos);
-    mostrarDatos(data);
-    return data;
+
+    // Normalizar IDs a string para consistencia
+    listaTecnicos = data.map(tecnico => ({
+      ...tecnico,
+      id: String(tecnico.id) // Convertir ID a string
+    }));
+
+    localStorage.setItem("listaTecnicos", JSON.stringify(listaTecnicos));
+    console.log("Técnicos cargados y normalizados:", listaTecnicos);
+    mostrarDatos(listaTecnicos);
+    return listaTecnicos;
   } catch (error) {
     console.error("Error al obtener técnicos:", error);
     contenedor.innerHTML = `
@@ -881,8 +927,8 @@ export function removerDelEquipo(idTecnico) {
     text: 'Esta persona ya no formará parte de tu equipo de trabajo.',
     icon: 'question',
     showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#6c757d',
+    confirmButtonColor: '#0066FF',
+    cancelButtonColor: '#d33',
     confirmButtonText: 'Sí, remover',
     cancelButtonText: 'Cancelar'
   }).then((result) => {
@@ -962,6 +1008,107 @@ export function limpiarTexto(texto) {
     .trim();
 }
 
-export function accionSiguientePaso() {
-  siguientePaso();
+// Función auxiliar para extraer primer nombre y apellido
+function obtenerNombreCorto(nombreCompleto) {
+  const partes = nombreCompleto.split(' ');
+  if (partes.length <= 2) return nombreCompleto;
+
+  // Tomar el primer nombre y el primer apellido (asumiendo formato: nombre apellido1 apellido2)
+  return `${partes[0]} ${partes[partes.length - 2]}`;
+}
+
+// Función para generar HTML de lista de técnicos
+function generarListaTecnicos(tecnicos, titulo) {
+  if (tecnicos.length === 0) return '';
+
+  let html = `<p style="margin-bottom: 10px; font-weight: bold;">${titulo}</p>`;
+  html += '<ul style="text-align: left; margin-left: 20px; margin-bottom: 15px;">';
+
+  // Mostrar máximo 5 técnicos y agregar "entre otros" si hay más
+  const mostrarTecnicos = tecnicos.slice(0, 5);
+  const hayMas = tecnicos.length > 5;
+
+  mostrarTecnicos.forEach(tecnico => {
+    html += `<li>${obtenerNombreCorto(tecnico)}</li>`;
+  });
+
+  if (hayMas) {
+    html += `<li>entre otros (${tecnicos.length - 5} más)</li>`;
+  }
+
+  html += '</ul>';
+  return html;
+}
+
+// Prevenir clicks en imágenes de perfil
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.modal-perfil img, #imgEquipo').forEach(img => {
+    img.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    img.style.pointerEvents = 'none';
+  });
+});
+
+export async function accionSiguientePaso() {
+  return new Promise((resolve) => {
+    console.log("=== INICIANDO VALIDACIÓN DEL PASO 3 ===");
+
+    // Obtener todos los técnicos y el equipo actual
+    const todosTecnicos = listaTecnicos;
+    const miEquipo = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+
+    console.log("Técnicos en el sistema:", todosTecnicos);
+    console.log("Mi equipo actual:", miEquipo);
+
+    // Verificar que cada técnico esté en el equipo y tenga categoría
+    const tecnicosFaltantes = [];
+    const tecnicosSinCategoria = [];
+
+    todosTecnicos.forEach(tecnico => {
+      // Convertir ambos IDs a string para comparación consistente
+      const idTecnicoStr = String(tecnico.id);
+      const enEquipo = miEquipo.find(m => String(m.id) === idTecnicoStr);
+
+      if (!enEquipo) {
+        tecnicosFaltantes.push(tecnico.Nombre);
+      } else if (!enEquipo.categoria || enEquipo.categoria === "") {
+        tecnicosSinCategoria.push(tecnico.Nombre);
+      }
+    });
+
+    console.log("Técnicos faltantes en equipo:", tecnicosFaltantes);
+    console.log("Técnicos sin categoría:", tecnicosSinCategoria);
+
+    // Si hay técnicos faltantes o sin categoría, mostrar alerta
+    if (tecnicosFaltantes.length > 0 || tecnicosSinCategoria.length > 0) {
+      let htmlContent = "";
+
+      if (tecnicosFaltantes.length > 0) {
+        htmlContent += generarListaTecnicos(tecnicosFaltantes, "Faltan técnicos en el equipo:");
+      }
+
+      if (tecnicosSinCategoria.length > 0) {
+        htmlContent += generarListaTecnicos(tecnicosSinCategoria, "Técnicos sin categoría asignada:");
+      }
+
+      htmlContent += "<p>Todos los técnicos deben tener una categoría asignada y ser parte del equipo. De lo contrario, elimine el técnico que no desee que forme parte de su equipo.</p>";
+
+      console.log("Mostrando alerta de error");
+
+      Swal.fire({
+        icon: "warning",
+        title: "Conformación incompleta",
+        html: htmlContent,
+        confirmButtonText: "Entendido"
+      }).then(() => {
+        resolve(false); // Validación fallida
+      });
+    } else {
+      console.log("Validación exitosa - Puede avanzar al siguiente paso");
+      resolve(true); // Validación exitosa
+    }
+  });
 }

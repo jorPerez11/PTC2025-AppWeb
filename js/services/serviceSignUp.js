@@ -21,6 +21,25 @@ export async function login(credentials) {
 }
 
 /**
+ * Verifica si ya existe al menos una compañía en el backend.
+ * @returns {Promise<boolean>} - True si hay compañías, false si no.
+ */
+export async function checkCompanyExistence() {
+    const response = await fetch(`${API_URL}/check-company-existence`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (!response.ok) {
+        // En caso de error, asumimos que no hay compañías para no bloquear el flujo.
+        console.error("Error al verificar la existencia de compañías:", await response.text());
+        return false;
+    }
+    
+    return response.json();
+}
+
+/**
  * Envía los datos de un nuevo usuario para registrarlo en el sistema.
  * @param {object} userData - Objeto con los datos del usuario (fullName, username, email, password).
  * @returns {Promise<object>} - El objeto del usuario registrado devuelto por la API.

@@ -1,11 +1,17 @@
 // Importaciones
-import { 
-    validarPaso1, 
-    inicializarInputsTelefono 
+import {
+    validarPaso1,
+    inicializarInputsTelefono
 } from '../utils/validacionesFirstUse.js';
 
-import { 
-    guardarDatosPaso1, 
+import {
+    guardarPaso1EnAPI
+} from '../services/serviceFirstUse.js';
+
+import { finalizarAdminSetupAPI } from '../services/serviceFirstUse.js';
+
+import {
+    guardarDatosPaso1,
     restaurarDatosPaso1,
     guardarDatosPaso2,
     guardarDatosPaso3,
@@ -18,6 +24,8 @@ import { restaurarDatosPaso4 } from './controllerPaso4.js';
 
 // Variable global
 export let pasoActualGlobal = 1;
+export let companyId = null;
+export let adminId = null;
 
 // Funciones principales
 export function actualizarIndicadorPaso() {
@@ -87,10 +95,100 @@ export function cargarPaso() {
     }
 }
 
-export function siguientePaso() {
+export async function siguientePaso() {
     if (pasoActualGlobal === 1) {
-        if (!validarPaso1()) return;
-        guardarDatosPaso1();
+        if (!validarPaso1()) {
+            return;
+        }
+
+        const companyData = obtenerDatosCompania();
+        const adminData = obtenerDatosAdmin();
+        const storedCompanyId = localStorage.getItem('companyId');
+        const storedAdminId = localStorage.getItem('adminId');
+
+        try {
+            console.log("Valor de adminName:", adminData.name);
+            console.log("Objeto adminData a enviar:", adminData);
+
+            const result = await guardarPaso1EnAPI(companyData, adminData, storedCompanyId, storedAdminId);
+
+            if (result && result.company && result.company.id) {
+                localStorage.setItem('companyId', result.company.id);
+            }
+            if (result && result.admin && result.admin.id) {
+                localStorage.setItem('adminId', result.admin.id);
+            }
+
+            guardarDatosPaso1();
+
+            console.log("Datos del Paso 1 guardados/actualizados correctamente. IDs:", localStorage.getItem('companyId'), localStorage.getItem('adminId'));
+
+            // Avanza al siguiente paso y detiene la función
+            pasoActualGlobal++;
+            cargarPaso();
+            return; // Detiene el flujo para que no salte de paso
+
+        } catch (error) {
+            console.error("Error al guardar en la API:", error);
+
+            let errorMessage = "Hubo un problema al guardar los datos iniciales. Por favor, intenta de nuevo.";
+
+            // Intenta analizar el mensaje de error de la API
+            // El formato del error es: "Error al crear la compañía: {"error":"..."}"
+            const errorMatch = error.message.match(/Error al crear la compa\u00f1\u00eda: (.*)/);
+
+            if (errorMatch && errorMatch[1]) {
+                try {
+                    const apiError = JSON.parse(errorMatch[1]);
+                    if (apiError && apiError.error) {
+                        errorMessage = apiError.error;
+                    }
+                } catch (parseError) {
+                    console.error("No se pudo analizar el mensaje de error de la API:", parseError);
+                }
+            }
+
+            // Muestra el mensaje de error al usuario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de registro',
+                text: errorMessage,
+                confirmButtonText: 'Entendido'
+            });
+
+            // Rompe el bucle de reintento
+            localStorage.removeItem('companyId');
+            localStorage.removeItem('adminId');
+
+            return;
+        }
+    }
+
+    // Validación específica para el Paso 3
+    if (pasoActualGlobal === 3) {
+        try {
+            // Importar el módulo del Paso 3 dinámicamente
+            const { accionSiguientePaso } = await import('./controllerPaso3.js');
+
+            // Ejecutar la validación específica del Paso 3
+            const puedeAvanzar = await accionSiguientePaso();
+
+            if (!puedeAvanzar) {
+                return; // Detener si la validación falla
+            }
+
+            // Si la validación es exitosa, guardar datos y continuar
+            guardarDatosPaso3();
+        } catch (error) {
+            console.error('Error al validar el paso 3:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: 'No se pudo validar la información del equipo. Por favor, intente nuevamente.',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
     }
 
     if (pasoActualGlobal === 4) {
@@ -103,24 +201,55 @@ export function siguientePaso() {
             confirmButtonColor: '#28a745',
             cancelButtonText: 'Revisar',
             cancelButtonColor: '#dc3545'
-        }).then((result) => {
+        }).then(async (result) => {
             if (!result.isConfirmed) return;
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Enhorabuena!',
-                html: `<p>Haz creado tu propio equipo.</p><p>puedes dirigirte al panel principal para gestionarlo</p>`,
-                confirmButtonText: 'Ir al Inicio',
-                confirmButtonColor: '#28a745'
-            }).then(() => {
-                window.location.href = './PlataformaWebInicio/PW_Inicio.html';
-            });
+            // Muestra un cursor de espera
+            document.body.style.cursor = 'wait';
+
+            try {
+                const adminId = localStorage.getItem('adminId');
+                if (!adminId) {
+                    throw new Error("El ID del administrador no se encontró. Por favor, vuelva a iniciar el proceso.");
+                }
+
+                const resultado = await finalizarAdminSetupAPI(adminId);
+                console.log("Configuración finalizada exitosamente:", resultado);
+
+                // Restaura el cursor a su estado normal en caso de éxito
+                document.body.style.cursor = 'default';
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Configuración completa!',
+                    html: `
+                        <p>La configuración de tu equipo ha finalizado.</p>
+                        <p>Las credenciales de acceso han sido enviadas al correo electrónico del administrador.</p>
+                        <p class="mt-3">Por favor, revisa tu bandeja de entrada y utiliza la contraseña temporal para iniciar sesión.</p>
+                     `,
+                    confirmButtonText: 'Ir a Iniciar Sesión',
+                    confirmButtonColor: '#28a745'
+                }).then(() => {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                });
+
+            } catch (error) {
+                // Restaura el cursor a su estado normal en caso de error
+                document.body.style.cursor = 'default';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de finalización',
+                    text: error.message
+                });
+                console.error("Error al finalizar la configuración:", error);
+            }
         });
         return;
     }
 
     if (pasoActualGlobal === 2) guardarDatosPaso2();
-    if (pasoActualGlobal === 3) guardarDatosPaso3();
     if (pasoActualGlobal === 4 && typeof guardarDatosPaso4 === 'function') guardarDatosPaso4();
 
     if (pasoActualGlobal < 4) {
@@ -134,6 +263,26 @@ export function anteriorPaso() {
         pasoActualGlobal--;
         cargarPaso();
     }
+}
+
+function obtenerDatosCompania() {
+    return {
+        companyName: document.getElementById("nombreEmpresa")?.value.trim(),
+        emailCompany: document.getElementById("correoEmpresa")?.value.trim(),
+        contactPhone: document.getElementById("telefonoEmpresa")?.value.trim(),
+        websiteUrl: document.getElementById("sitioWeb")?.value.trim()
+    };
+}
+
+function obtenerDatosAdmin() {
+    return {
+        name: document.getElementById("nombreAdmin")?.value.trim(),
+        username: document.getElementById("adminUsername")?.value.trim(),
+        email: document.getElementById("adminEmail")?.value.trim(),
+        phone: document.getElementById("telefonoAdmin")?.value.trim(),
+        password: document.getElementById("adminPassword")?.value.trim(),
+        rolId: 3 // Asume el rol de administrador
+    };
 }
 
 export function cancelarPaso() {
@@ -206,51 +355,51 @@ export function navegarAPaso(numeroPasoDestino) {
 }
 
 export function inicializarComponentesPaso(pasoActualGlobal) {
-  fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`)
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("contenido-dinamico").innerHTML = html;
-      document.getElementById("paso-actual").textContent = pasoActualGlobal;
-      actualizarIndicadorPaso();
+    fetch(`pasosPrimerUso/paso${pasoActualGlobal}.html`)
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById("contenido-dinamico").innerHTML = html;
+            document.getElementById("paso-actual").textContent = pasoActualGlobal;
+            actualizarIndicadorPaso();
 
-      setTimeout(() => {
-        inicializarInputsTelefono();
-
-        requestAnimationFrame(async () => {
-          if (pasoActualGlobal === 1) {
-            restaurarDatosPaso1();
-          }
-
-          if (pasoActualGlobal === 2) {
-            initPaso2();
             setTimeout(() => {
-              restaurarDatosPaso2();
-            }, 500);
-          }
+                inicializarInputsTelefono();
 
-          if (pasoActualGlobal === 3) {
-            await initPaso3(); // Asegúrate de que initPaso3 sea async
-            const { listaTecnicos } = await import('./controllerPaso3.js');
-            restaurarDatosPaso4(listaTecnicos);
-          }
+                requestAnimationFrame(async () => {
+                    if (pasoActualGlobal === 1) {
+                        restaurarDatosPaso1();
+                    }
 
-          if (pasoActualGlobal === 4) {
-            const { listaTecnicos } = await import('./controllerPaso3.js');
-            restaurarDatosPaso4(listaTecnicos);
-          }
+                    if (pasoActualGlobal === 2) {
+                        initPaso2();
+                        setTimeout(() => {
+                            restaurarDatosPaso2();
+                        }, 500);
+                    }
+
+                    if (pasoActualGlobal === 3) {
+                        await initPaso3(); // Asegúrate de que initPaso3 sea async
+                        const { listaTecnicos } = await import('./controllerPaso3.js');
+                        restaurarDatosPaso4(listaTecnicos);
+                    }
+
+                    if (pasoActualGlobal === 4) {
+                        const { listaTecnicos } = await import('./controllerPaso3.js');
+                        restaurarDatosPaso4(listaTecnicos);
+                    }
+                });
+            }, 0);
+
+            const btnAtras = document.getElementById("btn-atras");
+            if (btnAtras) {
+                btnAtras.style.display = pasoActualGlobal === 1 ? "none" : "inline-flex";
+            }
         });
-      }, 0);
-
-      const btnAtras = document.getElementById("btn-atras");
-      if (btnAtras) {
-        btnAtras.style.display = pasoActualGlobal === 1 ? "none" : "inline-flex";
-      }
-    });
 }
 
 export function inicializarAplicacion() {
     cargarPaso();
-    
+
     // Configurar event listeners para navegación entre pasos
     document.addEventListener("click", function (e) {
         const botonNavegar = e.target.closest("[data-navegar-paso]");

@@ -207,41 +207,51 @@ export async function editarCategoria(id, nombre) {
 }
 
 export async function eliminarCategoria(id, nombre) {
-    if (typeof Swal !== 'undefined') {
-        const result = await Swal.fire({
-            title: '¿Estás seguro?',
-            text: `¿Deseas eliminar la categoría "${nombre}"?`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        });
-        
-        if (!result.isConfirmed) return;
-    }
-    
     try {
-        await eliminarCategoriaAPI(id);
-        
         if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Eliminado',
-                text: 'Categoría eliminada correctamente',
-                timer: 2000,
-                showConfirmButton: false
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: `¿Deseas eliminar la categoría "${nombre}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
             });
+            
+            if (!result.isConfirmed) return;
         }
         
-        obtenerCategorias();
+        const resultado = await eliminarCategoriaAPI(id);
+        
+        if (resultado.success) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Eliminado',
+                    text: resultado.message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+            obtenerCategorias();
+        } else {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: resultado.message
+                });
+            }
+        }
     } catch (error) {
+        console.error("Error al eliminar categoría:", error);
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Error al eliminar categoría'
+                text: error.message || 'Error al eliminar categoría'
             });
         }
     }

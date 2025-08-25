@@ -8,7 +8,7 @@ export function validarPaso1() {
     const sitioWeb = document.getElementById("sitioWeb")?.value.trim();
     
     const adminNombre = document.getElementById("nombreAdmin")?.value.trim();
-    const adminCorreo = document.getElementById("correoAdmin")?.value.trim();
+    const adminCorreo = document.getElementById("adminEmail")?.value.trim();
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
     const telefonoAdmin = telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null;
     
