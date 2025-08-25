@@ -1,7 +1,20 @@
 // Importamos la función de registro desde nuestro servicio.
-import { register } from "../services/serviceSignUp.js";
+import { register, checkCompanyExistence } from "../services/serviceSignUp.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+     // **AÑADE ESTA LÓGICA AL INICIO DEL LISTENER**
+    try {
+        const hasCompanies = await checkCompanyExistence();
+        if (!hasCompanies) {
+            // Si no hay compañías, redirige al primer uso
+            console.log("No se encontraron compañías. Redirigiendo a la página de primer uso.");
+            window.location.href = "primerUso.html";
+            return; // Detiene la ejecución del resto del script
+        }
+    } catch (error) {
+        console.error("Fallo la verificación de la compañía:", error);
+    }
+
     // --- Referencias a elementos del DOM ---
     const registerForm = document.getElementById("registerForm");
     const fullNameInput = document.getElementById("inputFullName");

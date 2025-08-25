@@ -1,5 +1,7 @@
 // Importaciones
 import { obtenerDatosPaso1, obtenerEquipoGuardado } from '../utils/storageHelperFirstUse.js';
+import { finalizarAdminSetupAPI } from '../services/serviceFirstUse.js';
+import { adminId } from './controllerFirstUse.js';
 
 // Funciones específicas del Paso 4
 export function restaurarDatosPaso4() {
@@ -217,4 +219,35 @@ export function formatoLegibleTelefono(telefono) {
 
   const grupos = resto.match(/.{1,3}/g) || [resto];
   return `${prefijo} ${grupos.join(" ")}`;
+}
+
+export async function handleFinalizarSetup() {
+    try {
+        // Asegúrate de tener el adminId disponible, ya sea de localStorage o de una variable global.
+        const userId = adminId; // Usa la variable global que creaste.
+
+        console.log("Iniciando la configuración final del administrador para el usuario:", userId);
+
+        const resultado = await finalizarAdminSetupAPI(userId);
+
+        console.log("Configuración finalizada exitosamente:", resultado);
+
+        Swal.fire({
+            icon: "success",
+            title: "Configuración Finalizada",
+            text: "El administrador ha sido activado y recibirá un correo con sus credenciales.",
+            showConfirmButton: false,
+            timer: 3000
+        }).then(() => {
+            window.location.href = 'login.html';
+        });
+
+    } catch (error) {
+        console.error("Error al finalizar la configuración del administrador:", error);
+        Swal.fire({
+            icon: "error",
+            title: "Error de Finalización",
+            text: error.message || "No se pudo finalizar la configuración del administrador.",
+        });
+    }
 }

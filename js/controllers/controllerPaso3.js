@@ -16,6 +16,8 @@ import {
   formatearTelefonoParaMostrar
 } from '../utils/validacionesFirstUse.js';
 
+import { companyId, adminId } from './controllerFirstUse.js';
+
 // Variables globales
 let listaTecnicos = [];
 let tecnicosAgregados = [];
@@ -510,6 +512,18 @@ export async function agregarTecnico() {
 export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
   try {
     const urlFoto = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    const companyId = Number(localStorage.getItem('companyId'));
+
+    if (!companyId) {
+      console.error("Error: companyId no se encontró en el localStorage.");
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de configuración',
+        text: 'No se encontró el ID de la compañía. Por favor, reinicie el proceso desde el Paso 1.',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
 
     const nuevoTecnico = {
       Nombre: nombre,
@@ -518,7 +532,8 @@ export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
       Foto: urlFoto
     };
 
-    await agregarTecnicoAPI(nuevoTecnico);
+    // 💡 Aquí está el cambio importante: pasamos el ID como segundo argumento
+    await agregarTecnicoPendienteAPI(nuevoTecnico, companyId);
 
     Swal.fire({
       icon: "success",
@@ -530,13 +545,10 @@ export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
 
     const frmAgregar = document.getElementById("frmAgregar");
     if (frmAgregar) frmAgregar.reset();
-
     const previewAgregar = document.getElementById("previewAgregar");
     if (previewAgregar) previewAgregar.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
     const modalAgregar = document.getElementById("modal-agregar");
     if (modalAgregar) modalAgregar.close();
-
     obtenerTecnicos();
   } catch (error) {
     console.error("Error al agregar técnico:", error);
