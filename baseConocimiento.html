@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/styleBaseConocimiento.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.min.css">
+
 </head>
 
 <body>
@@ -168,6 +170,24 @@
                         </span>
                     </button>
                     <ul class="dropdown-menu">
+                        
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="#" data-value="Equipo">
+                                <svg width="34" height="35" viewBox="0 0 34 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.91842 12.0184L14.5842 0.871575C14.7632 0.565765 14.9868 0.343747 15.2553 0.20552C15.5237 0.0672943 15.807 -0.00120714 16.1053 1.60953e-05C16.4035 0.00123934 16.6868 0.0703527 16.9553 0.207356C17.2237 0.344358 17.4474 0.565765 17.6263 0.871575L24.2921 12.0184C24.471 12.3242 24.5605 12.6453 24.5605 12.9817C24.5605 13.318 24.486 13.6239 24.3368 13.8991C24.1877 14.1743 23.9789 14.3963 23.7105 14.5651C23.4421 14.7339 23.1289 14.8177 22.771 14.8165H9.43947C9.08157 14.8165 8.76842 14.7327 8.5 14.5651C8.23158 14.3976 8.0228 14.1755 7.87368 13.8991C7.72456 13.6226 7.65 13.3168 7.65 12.9817C7.65 12.6465 7.73947 12.3254 7.91842 12.0184ZM25.9474 35C23.7105 35 21.8095 34.1975 20.2443 32.5926C18.6791 30.9877 17.8959 29.0379 17.8947 26.7431C17.8935 24.4483 18.6767 22.4991 20.2443 20.8954C21.8119 19.2917 23.7129 18.4887 25.9474 18.4862C28.1818 18.4838 30.0834 19.2868 31.6522 20.8954C33.221 22.504 34.0036 24.4532 34 26.7431C33.9964 29.033 33.2138 30.9829 31.6522 32.5926C30.0906 34.2024 28.189 35.0049 25.9474 35ZM0 32.2477V21.2385C0 20.7186 0.17179 20.2832 0.515368 19.9321C0.858947 19.581 1.28365 19.4049 1.78947 19.4037H12.5263C13.0333 19.4037 13.4586 19.5798 13.8022 19.9321C14.1458 20.2844 14.317 20.7199 14.3158 21.2385V32.2477C14.3158 32.7676 14.144 33.2036 13.8004 33.5559C13.4568 33.9082 13.0321 34.0838 12.5263 34.0825H1.78947C1.28246 34.0825 0.857754 33.9064 0.515368 33.5541C0.172983 33.2018 0.00119298 32.7663 0 32.2477Z" fill="black"/>
+                                </svg>
+
+                                <span class="ms-3">Todos</span>
+                                <span class="check-icon ms-auto d-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
                         <li>
                             <a class="dropdown-item d-flex align-items-center" href="#" data-value="Equipo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="47" viewBox="0 0 48 47"
@@ -191,6 +211,8 @@
                                 </span>
                             </a>
                         </li>
+                        <li>
+
                         <li>
                             <a class="dropdown-item d-flex align-items-center active" href="#" data-value="Sistema">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="41" height="41" viewBox="0 0 41 41"
@@ -275,9 +297,52 @@
 
     </div>
 
-    <script src="js/scriptBaseConocimiento.js"></script>
+    <!--Modal crear articulo-->
+    <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createArticleModalLabel">Crear Nuevo Artículo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createArticleForm">
+          <div class="mb-3">
+            <label for="articleTitle" class="form-label">Título</label>
+            <input type="text" class="form-control" id="articleTitle" required>
+          </div>
+          <div class="mb-3">
+            <label for="articleDescription" class="form-label">Descripción</label>
+            <textarea class="form-control" id="articleDescription" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="articleSteps" class="form-label">Pasos de solución</label>
+            <textarea class="form-control" id="articleSteps" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="articleKeywords" class="form-label">Palabras clave</label>
+            <textarea class="form-control" id="articleKeywords" rows="2" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="articleCategory" class="form-label">Categoría</label>
+            <select class="form-select" id="articleCategory" required>
+              <option selected disabled value="">Selecciona una categoría</option>
+              </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" form="createArticleForm" class="btn btn-primary" id="createArticleSubmitBtn">Guardar Artículo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.2/dist/sweetalert2.all.min.js"></script>
+    <script type="module" src="js/controllers/baseConocimientosController.js"></script>
 </body>
 
 </html>
