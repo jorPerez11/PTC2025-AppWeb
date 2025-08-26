@@ -130,7 +130,7 @@ $(document).ready(function () {
                             show: true,
                             showAlways: true,
                             label: 'Total',
-                            fontSize: '18px',
+                            fontSize: '25px',
                             fontFamily: 'Poppins',
                             fontWeight: 'bold',
                             color: '#333333',

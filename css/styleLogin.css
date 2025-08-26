@@ -139,10 +139,20 @@ body{
 }
 
 .contSignText h1 {
-    font-size: 3.7rem; 
-    background: -webkit-linear-gradient(#727272, #FFFFFF);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  
+  /* Fallback para navegadores sin gradiente/text-clip */
+  color: #333;
+
+  font-size: 3.7rem;
+
+  /* Gradiente estándar y prefijado */
+  background: linear-gradient(#727272, #fff);
+  background-clip: text;               /* propiedad estándar */
+  -webkit-background-clip: text;       /* prefijo WebKit */
+
+  /* Transparencia del texto */
+  color: transparent;                  /* reemplaza text-fill en no-WebKit */
+  -webkit-text-fill-color: transparent;
 }
 
 .contSignText{
@@ -277,6 +287,46 @@ body{
 
 .footerInfo h5, p {
     overflow-wrap: break-word; /* Versión más moderna de word-wrap */
+}
+
+/* Estilo del contenedor principal del modal */
+.custom-popup {
+    background-color: #2b3040 !important; /* Mismo color de fondo que tu formulario */
+    color: #fff !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Estilo para el título del modal */
+.custom-title {
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+/* Estilo para el botón de confirmación del modal */
+.custom-confirm-button {
+    background-color: #f77000 !important; /* Mismo color del botón de login */
+    color: #fff !important;
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 0.5rem !important;
+    transition: background-color 0.3s ease !important;
+}
+
+/* Estilo para los inputs inyectados en el modal */
+#newPasswordInput,
+#confirmPasswordInput {
+    background-color: #1a1e27 !important; /* Fondo de inputs más oscuro */
+    color: #fff !important;
+    border: 1px solid #444 !important;
+    border-radius: 0.5rem !important;
+    padding: 12px !important;
+}
+
+/* Estilo para el texto dentro del modal */
+.custom-html-container p {
+    color: #ccc !important;
 }
 
 

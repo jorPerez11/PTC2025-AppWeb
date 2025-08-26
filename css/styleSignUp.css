@@ -1,4 +1,4 @@
-body{
+body {
     font-family: "Montserrat", sans-serif;
     padding-top: 5.5rem;
     background-color: #000417;
@@ -7,14 +7,14 @@ body{
     background-size: 120rem;
 }
 
-.navbar{
+.navbar {
     background-color: #03071E;
     transition: background-color 0.4s, box-shadow 0.4s;
 }
 
-.nav-separator{
+.nav-separator {
     border: 0;
-    height: 1px; 
+    height: 1px;
     background-color: white;
     width: 25%;
     width: calc(100% - 30px);
@@ -23,50 +23,51 @@ body{
 .botonInicioSesion,
 .botonRegistro,
 .botonComenzar {
-  white-space: nowrap;
-  padding-left: 1rem;
-  padding-right: 1rem;
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.botonComenzar{
+.botonComenzar {
     color: white;
     background-color: #DC2F02;
 }
 
-.botonComenzar:hover{
+.botonComenzar:hover {
     background-color: #FF3500;
     color: white;
 }
 
-.botonComenzar:focus{
+.botonComenzar:focus {
     background-color: #CE2B00;
     color: white;
 }
 
-.navbar-nav{
+.navbar-nav {
     padding-right: 30px;
 }
 
-.nav-item{
+.nav-item {
     font-size: 18px;
     font-weight: 300;
     white-space: nowrap;
 }
 
-.navbar-toggler{
-   border: none;
+.navbar-toggler {
+    border: none;
 }
-.navbar-toggler:focus{
+
+.navbar-toggler:focus {
     box-shadow: none;
 }
 
-.navbar-toggler-icon:focus{
+.navbar-toggler-icon:focus {
     outline: none;
     border: none;
     box-shadow: none;
 }
 
-.botonRegistro{
+.botonRegistro {
     background-color: #F48C06;
     color: white;
     width: auto;
@@ -74,44 +75,44 @@ body{
     font-size: 18px;
 }
 
-.botonRegistro:hover{
+.botonRegistro:hover {
     background-color: #a45d00;
     color: white;
 }
 
-.botonRegistro:focus{
-   background-color: #a45d00;
+.botonRegistro:focus {
+    background-color: #a45d00;
     color: white;
 }
 
-.botonInicioSesion{
+.botonInicioSesion {
     width: auto;
     height: auto;
     font-size: 18px;
 }
 
-.botonInicioSesion:focus{
+.botonInicioSesion:focus {
     box-shadow: none;
 }
 
 
-.navbar-brand{
+.navbar-brand {
     size: 100px;
 }
 
-.nav-link{
+.nav-link {
     color: white;
     display: inline-block;
     text-decoration: none;
     position: relative;
 }
 
-.nav-link:hover{
+.nav-link:hover {
     color: #F48C06;
     position: relative;
 }
 
-.nav-link::before{
+.nav-link::before {
     content: '';
     position: absolute;
     bottom: 5px;
@@ -122,11 +123,11 @@ body{
     transition: width 0.3s ease;
 }
 
-.nav-link:hover::before{
+.nav-link:hover::before {
     width: 100%;
 }
 
-.contSign{
+.contSign {
     color: white;
     background: linear-gradient(to bottom, #03071e8a, #00000084);
     max-width: 60rem;
@@ -135,17 +136,17 @@ body{
 }
 
 .contSignText h1 {
-  font-size: 72px;
-  background: -webkit-linear-gradient(#727272, #FFFFFF);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+    font-size: 72px;
+    background: -webkit-linear-gradient(#727272, #FFFFFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.contSignText{
+.contSignText {
     color: white;
 }
 
-.botonRegistroV2{
+.botonRegistroV2 {
     width: auto;
     height: auto;
     color: white;
@@ -155,13 +156,13 @@ body{
     border-radius: 10px;
 }
 
-.botonRegistroV2 img{
+.botonRegistroV2 img {
     max-width: 100%;
     height: auto;
     object-fit: contain;
 }
 
-.botonRegistroV2:hover{
+.botonRegistroV2:hover {
     color: white;
     background-color: #171717;
     border-color: white;
@@ -192,19 +193,48 @@ body{
     opacity: 0;
     border-radius: inherit;
 
-    transition: opacity 0.3s ease-in-out; 
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Asegura que el contenedor del input y el menú desplegable ocupen todo el ancho disponible */
+.iti {
+    width: 100%;
+}
+
+/* Aplica los estilos del input de Bootstrap al campo de la librería */
+.iti__country-list {
+    color: #000;
+}
+
+.iti__country-list.dropdown-menu {
+    border-radius: 0.5rem;
+    /* Opcional: para que coincida con el borde de tus inputs */
+}
+
+/* Cambia el color del fondo del menú desplegable y de las opciones */
+.iti__country-list {
+    background-color: #111111;
+    /* Color de fondo oscuro, similar a tu diseño */
+    color: #fff;
+    /* Color de texto claro */
+}
+
+/* Estilo para las opciones al pasar el cursor */
+.iti__country-list .iti__country:hover {
+    background-color: #2b3040;
+    /* Un tono más claro para el hover */
 }
 
 .botonRegistroV3:hover::before {
     opacity: 1;
 }
 
-.botonRegistroV3:hover{
+.botonRegistroV3:hover {
     color: white;
     background: linear-gradient(to left, #e08105, #ba2601);
 }
 
-.hr-text{
+.hr-text {
     line-height: 1em;
     position: relative;
     outline: 0;
@@ -216,7 +246,7 @@ body{
     font-size: 18px;
 }
 
-.hr-text:before{
+.hr-text:before {
     content: "";
     background: linear-gradient(to right, transparent, #ffffff, transparent);
     position: absolute;
@@ -227,7 +257,7 @@ body{
     color: #FFFFFF;
 }
 
-.hr-text::after{
+.hr-text::after {
     content: attr(data-content);
     position: relative;
     display: inline-block;
@@ -238,7 +268,7 @@ body{
     background-color: #03071E;
 }
 
-.form-control{
+.form-control {
     font-size: 20px;
     font-weight: 300;
     background-color: #111111;
@@ -247,29 +277,32 @@ body{
     padding-bottom: 1rem;
 }
 
-.form-control:focus{
+.form-control:focus {
     font-weight: 300;
     background-color: #111111;
     color: white;
 }
 
-.form-control::placeholder{
+.form-control::placeholder {
     color: rgba(252, 252, 252, 0.276);
 }
-.footer{
+
+.footer {
     background-color: #03071E;
     color: white;
 }
 
-.footer a{
+.footer a {
     text-decoration: none;
     color: white;
 }
 
-.footer a:hover{
+.footer a:hover {
     color: rgb(205, 205, 205);
 }
 
-.footerInfo h5, p {
-    overflow-wrap: break-word; /* Versión más moderna de word-wrap */
+.footerInfo h5,
+p {
+    overflow-wrap: break-word;
+    /* Versión más moderna de word-wrap */
 }

@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/stylePasos/stylePaso3.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/css/intlTelInput.min.css" />
+    <link rel="stylesheet" href="css/stylePasos/stylePaso3.css">
 </head>
 
 <body>
@@ -172,14 +172,12 @@
             <h5 class="titulo-modal">Agregar Técnico</h5>
 
             <div class="contenido-modal d-flex gap-4">
-                <div class="foto-col">
-                    <label for="foto" class="label-foto">
+                <div class="no-clickeable" class="foto-col">
+                    <div class="label-foto">
                         <img id="previewAgregar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                             alt="Foto" />
-                        <input type="file" id="foto" accept="image/*" hidden>
-                    </label>
+                    </div>
                 </div>
-
                 <div class="datos-col flex-grow-1">
                     <input type="text" id="nombre" placeholder="Nombre completo" class="form-control mb-3" required>
                     <input type="email" id="email" placeholder="Correo electrónico" class="form-control mb-3" required>
@@ -200,11 +198,10 @@
             <h5 class="titulo-modal">Editar Técnico</h5>
 
             <div class="contenido-modal d-flex gap-4">
-                <div class="foto-col">
-                    <label for="fotoEditar" class="label-foto">
+                <div class="no-clickeable" class="foto-col">
+                    <div class="label-foto">
                         <img id="fotoActual" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Foto" />
-                        <input type="file" id="fotoEditar" accept="image/*" hidden>
-                    </label>
+                    </div>
                 </div>
 
                 <div class="datos-col flex-grow-1">
@@ -232,7 +229,7 @@
             <h5 class="titulo-modal">Confirmar miembro del equipo</h5>
 
             <div class="contenido-modal d-flex gap-4">
-                <div class="foto-col">
+                <div class="no-clickeable" class="foto-col">
                     <img id="imgEquipo" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" width="64"
                         height="64" class="rounded-circle border" style="object-fit: cover; background-color: #f3f3f3;">
                 </div>
@@ -244,7 +241,8 @@
 
                     <div class="mb-3">
                         <label for="usernameEquipo" class="form-label">Nombre de Usuario</label>
-                        <input type="text" id="usernameEquipo" class="form-control" readonly style="cursor: not-allowed;">
+                        <input type="text" id="usernameEquipo" class="form-control" readonly
+                            style="cursor: not-allowed;">
                     </div>
 
                     <label for="categoriaEquipo" class="form-label mt-2">Categoría asignada</label>
@@ -269,9 +267,8 @@
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="js/scriptPasos.js" defer></script>
-    </div>
-    </div>
+    <!-- Script personalizado -->
+    <script type="module" src="../js/scriptPasos.js" defer></script>
     <span id="paso-actual">3</span>
 </body>
 
