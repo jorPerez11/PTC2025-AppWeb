@@ -24,7 +24,6 @@
                     <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
                     H2C
                 </a>
-                <!--Botón hamburguesa para pantallas sm y md-->
                 <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
                     aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación">
                     <span class="navbar-toggler-icon"></span>
@@ -141,171 +140,13 @@
                     </select>
                 </div>
 
-                <a href="#" class="create-note-link me-4">
+                <a href="#" class="create-note-link me-4" id="createActivityBtn">
                     <i class="bi bi-plus"></i> Crear nota
                 </a>
             </div>
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 activities-cards-container">
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Seguimiento de Ticket de Juan Pérez</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Revisar el ticket #4321 del cliente Juan Pérez.
-                                Esperando respuesta del equipo técnico antes del viernes. Lorem ipsum dolor, sit amet
-                                consectetur adipisicing elit. Optio incidunt fugit ad cum quia, sit, dolorem ratione ut
-                                necessitatibus </p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button" data-bs-toggle="modal" data-bs-target="#editNoteModal">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="activitiesGrid">
                 </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Llamada agendada de seguimiento</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Llamar al cliente Marta López (ticket #5783) el
-                                miércoles a las 3:00 PM para seguimiento. Lorem ipsum dolor, sit amet consectetur
-                                adipisicing elit. Optio incidunt fugit ad cum quia, sit, dolorem ratione ut
-                                necessitatibus </p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button" data-bs-toggle="modal" data-bs-target="#editNoteModal">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Checklist de hoy (14/02/2025)</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="check1">
-                                <label class="form-check-label activity-card-text" for="check1">
-                                    Confirmar tickets resueltos
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="check2">
-                                <label class="form-check-label activity-card-text" for="check2">
-                                    Verificar que todos los clientes recibieron respuesta
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="check3">
-                                <label class="form-check-label activity-card-text" for="check3">
-                                    Cerrar sesión a las 6:00 PM
-                                </label>
-                            </div>
-                            <div class="d-flex justify-content-end mt-2">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Llamada agendada de seguimiento</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Llamar al cliente Marta López (ticket #5783) el
-                                miércoles a las 3:00 PM para seguimiento.</p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Revisar documentación de tickets antiguos</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Aprovechar el tiempo libre para organizar y archivar
-                                documentación de tickets de hace más de 6 meses. Lorem ipsum dolor, sit amet consectetur
-                                adipisicing elit. Optio incidunt fugit ad cum quia, sit, dolorem ratione ut
-                                necessitatibus </p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Preparar informe semanal</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Recopilar datos de tickets cerrados y clientes
-                                atendidos para el informe de la reunión del lunes.</p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Ideas para mejora de procesos</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Anotar ideas para optimizar el flujo de trabajo en
-                                el departamento de soporte técnico.</p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card activity-card">
-                        <div class="card-header activity-card-header">
-                            <h5 class="card-title activity-card-title">Capacitación en nuevo software</h5>
-                        </div>
-                        <div class="card-body activity-card-body">
-                            <p class="card-text activity-card-text">Recordar revisar los módulos de capacitación del
-                                nuevo software CRM antes de su implementación.</p>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn edit-activity-button">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
         </main>
 
         <div class="d-flex justify-content-center mb-4">
@@ -330,41 +171,39 @@
 
     </div>
 
-    <!--PRUEBA MODAL NOTAS (EDITAR)-->
-    <div class="modal fade" id="editNoteModal" tabindex="-1" aria-labelledby="editNoteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editNoteModalLabel">Editar Nota</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="noteTitle" class="form-label">Título</label>
-                        <input type="text" class="form-control" id="noteTitle">
-                    </div>
-                    <div class="editor-toolbar mb-2">
-                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('bold')"><i class="bi bi-type-bold"></i></button>
-                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('italic')"><i class="bi bi-type-italic"></i></button>
-                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('underline')"><i class="bi bi-type-underline"></i></button>
-                        <button type="button" class="btn btn-sm btn-light" onclick="formatDoc('insertUnorderedList')"><i class="bi bi-list-ul"></i></button>
-                    </div>
-                    <textarea id="noteContent" class="form-control editor-content" contenteditable="true"></textarea>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" id="saveNoteChanges">Guardar cambios</button>
+    <div class="modal fade" id="createActivityModal" tabindex="-1" aria-labelledby="createActivityModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createActivityModalLabel">Crear Actividad</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="activityForm">
+                        <input type="hidden" id="activityId">
+                        <div class="mb-3">
+                            <label for="activityTitle" class="form-label">Título</label>
+                            <input type="text" class="form-control" id="activityTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="activityDescription" class="form-label">Descripción</label>
+                            <textarea id="activityDescription" class="form-control" rows="5" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="createActivitySubmitBtn">Crear</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
-        crossorigin="anonymous"></script>
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="js/scriptActivities.js"></script>
+    <script type="module" src="js/controllers/activitiesController.js"></script>
 </body>
 
 </html>
