@@ -117,10 +117,6 @@ async function obtenerTickets() {
                 <p class="mb-1 datos">
                 <small>#${String(ticket.ticketId).padStart(4, '0')} · ${ticket.userName || 'N/A'}</small>
                 </p>
-                <div class="card-header">
-                    <span class="ticket-id">#${String(ticket.ticketId).padStart(4, '0')}</span>
-                    <span class="ticket-status badge bg-${badgeColors[estado] || 'secondary'}">${estado}</span>
-                </div>
                 <div class="card-body">
                     <p class="card-text">${ticket.description}</p>
                 </div>
