@@ -14,17 +14,36 @@ const commonHeaders = {
 };
 
 /**
- * Obtiene los clientes paginados de la API de tu backend.
+ * Obtiene los clientes paginados y filtrados de la API de tu backend.
  * @param {number} page El número de página a obtener (basado en 0).
  * @param {number} size La cantidad de elementos por página.
+ * @param {string} status El estado del ticket a filtrar.
+ * @param {string} period El período de tiempo a filtrar.
+ * @param {string} searchTerm El término de búsqueda.
  * @returns {Promise<Object>} Un objeto de página con el contenido y metadatos.
  */
-async function fetchAllClients(page = 0, size = 10) {
+async function fetchAllClients(page = 0, size = 10, status = 'all', period = 'all', searchTerm = '') {
     try {
-        const response = await fetch(`${API_CLIENTS}/getAllClients?page=${page}&size=${size}`, {
+        const url = new URL(`${API_CLIENTS}/getAllClients`);
+        url.searchParams.append('page', page);
+        url.searchParams.append('size', size);
+
+        // Agrega los parámetros de filtro si no son 'all' o vacíos
+        if (status !== 'all') {
+            url.searchParams.append('status', status);
+        }
+        if (period !== 'all') {
+            url.searchParams.append('period', period);
+        }
+        if (searchTerm !== '') {
+            url.searchParams.append('search', searchTerm);
+        }
+
+        const response = await fetch(url.toString(), {
             method: 'GET',
             headers: commonHeaders
         });
+
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
