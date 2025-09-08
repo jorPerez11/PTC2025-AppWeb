@@ -120,7 +120,7 @@
                 </svg>
             </div>
             <div class="col header-title">
-                <h4 class="mb-0">Todos los Usuarios</h4>
+                <h4 class="mb-0">Todos los Clientes</h4>
             </div>
         </div>
     </div>
@@ -132,25 +132,7 @@
         <!-- B: Aquí muestras las cards-->
         <div id="lista-usuarios"></div>
 
-        <div class="d-flex justify-content-center mt-4 mb-4">
-            <ul class="pagination" id="paginationControls">
-                <li class="page-item" id="prevPage">
-                    <a class="page-link" href="#" aria-label="Anterior">
-                        <i class="bi bi-chevron-left"></i>
-                    </a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" id="currentPage">
-                        2
-                    </a>
-                </li>
-                <li class="page-item" id="nextPage">
-                    <a class="page-link" href="#" aria-label="Siguiente">
-                        <i class="bi bi-chevron-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <div class="pagination-container" id="pagination-container"></div>
     </div>
 
 
@@ -200,7 +182,7 @@
                             <dd id="lblEstadoTicket" class="col-sm-8 d-flex align-items-center">
                             </dd>
                         </div>
-                        
+
                     </dl>
                 </div>
             </div>
@@ -211,7 +193,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
-    <script src="js/scriptAdmin.js"></script>
+    <!-- Incluye SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/controllers/controllerAllClients.js" defer></script>
 </body>
 
 </html>

@@ -61,7 +61,6 @@ function renderFilterBar() {
           <i class="bi bi-ticket filter-icon"></i>
            <select id="statusFilter" class="form-select styled-select">
             <option value="all">Todos los estados</option>
-            <option value="Abierto">Abierto</option>
             <option value="En Proceso">En Proceso</option>
             <option value="Cerrado">Cerrado</option>
             <option value="En Espera">En Espera</option>

@@ -136,13 +136,12 @@
                                     class="mb-3" style="width: 80px;">
                                 <img src="../img/PW_InicioImg/InfoIcon.png" style="object-fit: contain;" alt=""
                                     data-bs-toggle="tooltip" data-bs-placement="top"
-                                    data-bs-title="Conteo de solicitudes abiertas.">
+                                    data-bs-title="Conteo de solicitudes en espera.">
                             </div>
-
                             <h5 class="card-title">Solicitudes en Espera</h5>
                             <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text">14</p>
-                                <a href="/tickets.html">
+                                <p class="card-text" id="tickets-en-espera"></p>
+                                <a href="/PTC2025-AppWeb/tickets.html">
                                     <button class="btn botonVerMasR px-3" type="button">
                                         Ver más ➜
                                     </button>
@@ -161,11 +160,10 @@
                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                     data-bs-title="Conteo de solicitudes en proceso.">
                             </div>
-
                             <h5 class="card-title">Solicitudes en Proceso</h5>
                             <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text">20</p>
-                                <a href="/tickets.html">
+                                <p class="card-text" id="tickets-en-proceso"></p>
+                                <a href="/PTC2025-AppWeb/tickets.html">
                                     <button class="btn botonVerMasN px-3" type="button">
                                         Ver más ➜
                                     </button>
@@ -184,11 +182,10 @@
                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                     data-bs-title="Conteo de solicitudes cerradas.">
                             </div>
-
                             <h5 class="card-title">Solicitudes Cerradas</h5>
                             <div class="d-flex align-items-center justify-content-between">
-                                <p class="card-text">32</p>
-                                <a href="/tickets.html">
+                                <p class="card-text" id="tickets-cerradas"></p>
+                                <a href="/PTC2025-AppWeb/tickets.html">
                                     <button class="btn botonVerMasV px-3" type="button">
                                         Ver más ➜
                                     </button>
@@ -256,12 +253,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-
-
-    <script src="../js/scriptPW_Inicio.js"></script>
-
-
-
+    <script type="module" src="../js/controllers/controllerDashboard.js"></script>
 </body>
 
 </html>

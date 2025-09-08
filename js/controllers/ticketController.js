@@ -26,6 +26,7 @@ const badgeColors = {
 
 let currentPage = 0;
 let currentSize = 10;
+let totalPages = 0;
 
 const calendarIcons = {
     'En espera': `
@@ -75,9 +76,15 @@ async function obtenerTickets() {
         const data = await getTickets(currentPage, currentSize);
         const items = data.content || [];
 
+        // Actualizar variables de paginación con la respuesta de la API
+        totalPages = data.totalPages;
+        currentPage = data.number;
+
         const enEsperaList = document.getElementById(estados['En espera']);
         const enProgresoList = document.getElementById(estados['En progreso']);
         const completadoList = document.getElementById(estados['Completado']);
+        
+        // Los contadores de estados deben reiniciarse para cada nueva página
         const conteoEstados = { 'En espera': 0, 'En progreso': 0, 'Completado': 0 };
 
         if (enEsperaList) enEsperaList.innerHTML = "";
@@ -110,10 +117,6 @@ async function obtenerTickets() {
                 <p class="mb-1 datos">
                 <small>#${String(ticket.ticketId).padStart(4, '0')} · ${ticket.userName || 'N/A'}</small>
                 </p>
-                <div class="card-header">
-                    <span class="ticket-id">#${String(ticket.ticketId).padStart(4, '0')}</span>
-                    <span class="ticket-status badge bg-${badgeColors[estado] || 'secondary'}">${estado}</span>
-                </div>
                 <div class="card-body">
                     <p class="card-text">${ticket.description}</p>
                 </div>
@@ -121,7 +124,6 @@ async function obtenerTickets() {
                     ${calendarIcons[estado] || ''}
                     <p class="mb-0 ms-1"><small>${creationDate}</small></p>
                 </div>
-
                 <div class="dropdown">
                     <button class="status-badge status-${badgeColors[estado] || 'default'} dropdown-toggle" 
                             type="button"
@@ -136,22 +138,17 @@ async function obtenerTickets() {
                         <li style="cursor: pointer"><a class="dropdown-item" data-new-status="En progreso">En progreso</a></li>
                         <li style="cursor: pointer"><a class="dropdown-item" data-new-status="Completado">Completado</a></li>
                     </ul>
-
                     <div class="chat-button" id="chatButton">
                         <i class="fas fa-comment-alt"></i>
                     </div>
                 </div>
             `;
-
-            // El eventListener se agrega al contenedor de la lista desplegable,
-            // no a toda la tarjeta, para evitar que el clic en cualquier lugar
-            // de la tarjeta active el evento.
+            
             card.querySelector('.dropdown-menu').addEventListener('click', (event) => {
                 const dropdownItem = event.target.closest('.dropdown-item');
                 if (dropdownItem) {
                     const ticketId = card.querySelector('button').dataset.ticketId;
                     const newStatus = dropdownItem.dataset.newStatus;
-                    
                     actualizarEstadoTicket(newStatus, ticketId);
                 }
             });
@@ -164,14 +161,35 @@ async function obtenerTickets() {
             container.appendChild(card);
         });
 
-        // La actualización de contadores se mueve dentro de esta función,
-        // ya que `conteoEstados` solo existe aquí.
+        // Actualiza los contadores en el header de cada columna con el conteo de la página actual
         document.querySelector('#en-espera-header-count').innerText = `(${conteoEstados['En espera']})`;
         document.querySelector('#en-progreso-header-count').innerText = `(${conteoEstados['En progreso']})`;
         document.querySelector('#completado-header-count').innerText = `(${conteoEstados['Completado']})`;
 
+        // Llama a la función para actualizar los controles de paginación
+        actualizarPaginacion();
+
     } catch (err) {
         console.error("Error al cargar los tickets:", err);
+    }
+}
+
+function actualizarPaginacion() {
+    const prevButton = document.getElementById('prevPage');
+    const nextButton = document.getElementById('nextPage');
+    const currentPageLink = document.getElementById('currentPage').querySelector('a');
+
+    // Muestra la página actual (la API usa un índice base 0, por eso sumamos 1)
+    if (currentPageLink) {
+        currentPageLink.innerText = currentPage + 1;
+    }
+
+    // Habilita o deshabilita los botones
+    if (prevButton) {
+        prevButton.classList.toggle('disabled', currentPage <= 0);
+    }
+    if (nextButton) {
+        nextButton.classList.toggle('disabled', currentPage >= totalPages - 1);
     }
 }
 
@@ -190,4 +208,31 @@ async function actualizarEstadoTicket(newStatus, ticketId) {
 }
 
 // Llama a la función `obtenerTickets` una vez que el DOM esté completamente cargado.
-document.addEventListener("DOMContentLoaded", obtenerTickets);
+document.addEventListener("DOMContentLoaded", () => {
+    obtenerTickets();
+
+    // Event listener para el botón de página anterior
+    document.getElementById('prevPage').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage > 0) {
+            currentPage--;
+            obtenerTickets();
+        }
+    });
+
+    // Event listener para el botón de página siguiente
+    document.getElementById('nextPage').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages - 1) {
+            currentPage++;
+            obtenerTickets();
+        }
+    });
+
+    // Event listener para el filtro de tamaño
+    document.getElementById('ticketsPerPage').addEventListener('change', (e) => {
+        currentSize = parseInt(e.target.value);
+        currentPage = 0; // Reinicia a la primera página al cambiar el tamaño
+        obtenerTickets();
+    });
+});
