@@ -137,8 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             console.log("Inicio de sesión exitoso. Rol ID:", loginResponse.rolId);
 
+            const rolIdNumber = parseInt(loginResponse.rolId); // Convierte a número
+
             // 3. Redirección basada en el rol
-            switch (loginResponse.rolId) {
+            switch (rolIdNumber) {
                 case 3: // Administrador
                     window.location.href = 'PlataformaWebInicio/PW_Inicio.html';
                     break;
