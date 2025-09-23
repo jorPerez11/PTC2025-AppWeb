@@ -1,3 +1,5 @@
+//sriptcliTecnico
+
 const API_Clients = 'https://retoolapi.dev/KaRBTk/clienteData';
 
 // Acorta un texto a una longitud máxima y añade "..."

@@ -18,7 +18,7 @@
     <div class="container">
         <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
             <div class="container-fluid justify-content-between">
-                <a href="/PlataformaWebInicio/PW_Inicio.html" class="navbar-brand mb-0 h1 mx-auto">
+                <a href="/PTC2025-AppWeb/PlataformaWebInicio/PW_Inicio.html" class="navbar-brand mb-0 h1 mx-auto">
                     <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
                     H2C
                 </a>
@@ -129,6 +129,8 @@
 
                 <div class="profile-info">
                     <h3 id="profile-name">Pablo Martínez</h3>
+                    <input type="text" id="name-input" class="info-input">
+                    <input type="file" id="photo-input" style="display: none;" accept="image/jpeg, image/png, image/jpg">
                     <p id="profile-join-date">Se unió el 08/03/2025</p>
                     <span class="badge-tecnico" id="profile-role">TÉCNICO</span>
                 </div>
@@ -185,6 +187,7 @@
                     </svg>
                     <span class="info-label">Email</span>
                     <span id="user-email" class="info-value">pablomartinez14@gmail.com</span>
+                    <input type="email" id="email-input" class="info-input">
                 </div>
                 <div class="info-row">
                     <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 60 60" fill="none">
@@ -194,6 +197,7 @@
                     </svg>
                     <span class="info-label">Teléfono</span>
                     <span id="user-phone" class="info-value">+503 7693-2354</span>
+                    <input type="tel" id="phone-input" class="info-input">
                 </div>
                 <div id="password-row" class="info-row interactive">
                     <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 60 60" fill="none">
@@ -204,13 +208,19 @@
                     <span class="info-label">Contraseña</span>
                     <div class="password-container">
                         <span id="user-password" class="info-value">••••••••••</span>
-                        <i id="toggle-password" class="bi bi-eye-slash-fill password-icon"></i>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="profile-actions-bottom">
+            <button id="save-profile-btn">Guardar</button>
+            <button id="cancel-edit-btn">Descartar</button>
+        </div>
     </main>
-    <script src="js/scriptConfig.js"></script>
+    <!-- Incluye SweetAlert2 desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/controllers/controllerConfig.js" defer></script>
+    <!-- <script src="js/scriptConfig.js"></script> -->
 </body>
 
 </html>
