@@ -7,14 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const userEmail = document.getElementById('user-email');
     const userPhone = document.getElementById('user-phone');
     const userRole = document.getElementById('profile-role');
-    const userPasswordSpan = document.getElementById('user-password');
-    const passwordRow = document.getElementById('password-row');
-    const togglePasswordIcon = document.getElementById('toggle-password');
+    const profileCard = document.querySelector('.profile-card'); // Referencia al contenedor principal
 
     const moreOptionsBtn = document.getElementById('more-options-btn');
     const dropdownMenu = document.getElementById('dropdown-menu');
     const changePhotoBtn = document.getElementById('change-photo-btn');
     const editProfileBtn = document.getElementById('edit-profile-btn');
+    const saveProfileBtn = document.getElementById('save-profile-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
 
     // --- Datos por Defecto y Claves de LocalStorage ---
     const DEFAULT_PROFILE_PIC = 'img/configImg/profilePhoto.png';
@@ -24,9 +24,13 @@ document.addEventListener('DOMContentLoaded', function () {
         email: 'user_email',
         role: 'user_role',
         phone: 'user_phone',
-        password: 'user_password',
         profilePic: 'user_profile_pic'
     };
+
+    // Referencias a los inputs de edición
+    const nameInput = document.getElementById('name-input');
+    const emailInput = document.getElementById('email-input');
+    const phoneInput = document.getElementById('phone-input');
 
     // --- Cargar Datos del Usuario desde LocalStorage al Iniciar ---
     function loadUserData() {
@@ -34,42 +38,25 @@ document.addEventListener('DOMContentLoaded', function () {
         profileName.textContent = localStorage.getItem(LS_KEYS.name) || 'Pablo Martínez';
         userUsername.textContent = localStorage.getItem(LS_KEYS.username) || 'pabloGMartinez14';
         userEmail.textContent = localStorage.getItem(LS_KEYS.email) || 'pablomartinez14@gmail.com';
-        if (role) {
-            role.textContent = role.toUpperCase();
-        }
-        userRole.textContent = localStorage.getItem(LS_KEYS.role) || 'TÉCNICO';
         userPhone.textContent = localStorage.getItem(LS_KEYS.phone) || '+503 7693-2354';
+        userRole.textContent = localStorage.getItem(LS_KEYS.role) || 'TÉCNICO';
 
         // Cargar foto de perfil
         const savedPic = localStorage.getItem(LS_KEYS.profilePic);
         profileImage.src = savedPic || DEFAULT_PROFILE_PIC;
     }
 
-    // --- Lógica de Edición de Datos ---
-    editProfileBtn.addEventListener('click', (e) => {
-        e.preventDefault();
+    // --- Lógica del Menú Desplegable "Más" ---
+    moreOptionsBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        dropdownMenu.classList.toggle('show');
+    });
 
-        // Solicitar nuevos datos
-        const newName = prompt('Ingresa tu nuevo nombre:', profileName.textContent);
-        const newEmail = prompt('Ingresa tu nuevo email:', userEmail.textContent);
-        const newPhone = prompt('Ingresa tu nuevo teléfono:', userPhone.textContent);
-
-        // Actualizar y guardar si el usuario no canceló
-        if (newName !== null) {
-            profileName.textContent = newName;
-            localStorage.setItem(LS_KEYS.name, newName);
+    window.addEventListener('click', (event) => {
+        if (!moreOptionsBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove('show');
         }
-        if (newEmail !== null) {
-            userEmail.textContent = newEmail;
-            localStorage.setItem(LS_KEYS.email, newEmail);
-        }
-        if (newPhone !== null) {
-            userPhone.textContent = newPhone;
-            localStorage.setItem(LS_KEYS.phone, newPhone);
-        }
-
-        alert('¡Datos actualizados!');
-        dropdownMenu.classList.remove('show');
     });
 
     // --- Lógica para Cambiar Foto de Perfil ---
@@ -86,83 +73,66 @@ document.addEventListener('DOMContentLoaded', function () {
             reader.onload = function (e) {
                 const imageDataUrl = e.target.result;
                 profileImage.src = imageDataUrl;
-                // Guardar la imagen en Base64 en localStorage
-                localStorage.setItem(LS_KEYS.profilePic, imageDataUrl);
+                /* localStorage.setItem(LS_KEYS.profilePic, imageDataUrl); */
             }
             reader.readAsDataURL(file);
         }
     });
 
-    // --- Lógica de Contraseña (Mostrar/Ocultar y Cambiar) ---
-    let isPasswordVisible = false;
+    // Lógica para el botón de edición
+    editProfileBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Ahora añadimos la clase a 'profile-card'
+        profileCard.classList.add('edit-mode');
+        dropdownMenu.classList.remove('show');
 
-    togglePasswordIcon.addEventListener('click', (e) => {
-        e.stopPropagation(); // Evita que se dispare el evento del 'passwordRow'
-        isPasswordVisible = !isPasswordVisible;
-        const savedPassword = localStorage.getItem(LS_KEYS.password) || 'Password123!'; // Contraseña de ejemplo
+        // Lógica para mostrar los botones de Guardar y Descartar
+        saveProfileBtn.style.display = 'inline-block';
+        cancelEditBtn.style.display = 'inline-block';
 
-        if (isPasswordVisible) {
-            userPasswordSpan.textContent = savedPassword;
-            togglePasswordIcon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
-        } else {
-            userPasswordSpan.textContent = '••••••••••';
-            togglePasswordIcon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
-        }
+        // Rellenar los inputs con los valores actuales
+        nameInput.value = profileName.textContent.trim();
+        emailInput.value = userEmail.textContent.trim();
+        phoneInput.value = userPhone.textContent.trim();
     });
 
-    passwordRow.addEventListener('click', async () => {
-        try {
-            // 1. Pedir autenticación del sistema (PIN, Huella, Contraseña de la PC)
-            // Esta es una medida de seguridad avanzada usando la API WebAuthn
-            await navigator.credentials.get({ publicKey: { challenge: new Uint8Array(16), rp: { id: window.location.hostname, name: "Mi App" }, user: { id: new Uint8Array(16), name: "user", displayName: "User" }, pubKeyCredParams: [{ type: "public-key", alg: -7 }], timeout: 60000, } });
+    // --- Lógica para Guardar Cambios ---
+    saveProfileBtn.addEventListener('click', () => {
+        // Guardar datos en localStorage
+        localStorage.setItem(LS_KEYS.name, nameInput.value);
+        localStorage.setItem(LS_KEYS.email, emailInput.value);
+        localStorage.setItem(LS_KEYS.phone, phoneInput.value);
 
-            // 2. Si la autenticación es exitosa, pedir la nueva contraseña
-            const newPassword = prompt("Autenticación exitosa. Ingresa tu nueva contraseña:");
+        // Actualizar el DOM
+        profileName.textContent = nameInput.value;
+        userEmail.textContent = emailInput.value;
+        userPhone.textContent = phoneInput.value;
 
-            if (newPassword === null) return; // El usuario canceló
+        // Volver al modo de visualización
+        profileCard.classList.remove('edit-mode'); // Corregido, la clase está en profileCard
 
-            // 3. Validar la nueva contraseña
-            const validation = validatePassword(newPassword);
-            if (!validation.isValid) {
-                alert(`La contraseña no es válida:\n- ${validation.errors.join('\n- ')}`);
-                return;
-            }
+        // Ocultar los botones de Guardar y Descartar
+        saveProfileBtn.style.display = 'none';
+        cancelEditBtn.style.display = 'none';
 
-            // 4. Guardar la nueva contraseña
-            localStorage.setItem(LS_KEYS.password, newPassword);
-            if (isPasswordVisible) { // Si la contraseña era visible, la actualizamos
-                userPasswordSpan.textContent = newPassword;
-            }
-            alert("¡Contraseña actualizada con éxito!");
-
-        } catch (error) {
-            console.error("Error de autenticación:", error);
-            alert("No se pudo verificar tu identidad o la operación fue cancelada. Inténtalo de nuevo.");
-        }
+        Swal.fire({
+            title: '¡Datos actualizados!',
+            text: 'Los cambios se guardaron correctamente.',
+            icon: 'success',
+            showConfirmButton: true,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Genial'
+        });
     });
 
-    function validatePassword(password) {
-        const errors = [];
-        if (password.length < 8) errors.push("Debe tener al menos 8 caracteres.");
-        if (!/[A-Z]/.test(password)) errors.push("Debe contener al menos una mayúscula.");
-        if (!/[0-9]/.test(password)) errors.push("Debe contener al menos un número.");
-        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) errors.push("Debe contener al menos un símbolo especial.");
+    // --- Lógica para Cancelar Edición ---
+    cancelEditBtn.addEventListener('click', () => {
+        // Volver al modo de visualización sin guardar
+        profileCard.classList.remove('edit-mode'); // Corregido, la clase está en profileCard
 
-        return {
-            isValid: errors.length === 0,
-            errors: errors
-        };
-    }
-
-    // --- Lógica del Menú Desplegable "Más" ---
-    moreOptionsBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        dropdownMenu.classList.toggle('show');
-    });
-    window.addEventListener('click', () => {
-        if (dropdownMenu.classList.contains('show')) {
-            dropdownMenu.classList.remove('show');
-        }
+        // Ocultar los botones de Guardar y Descartar
+        saveProfileBtn.style.display = 'none';
+        cancelEditBtn.style.display = 'none';
     });
 
     // --- Carga inicial de datos ---

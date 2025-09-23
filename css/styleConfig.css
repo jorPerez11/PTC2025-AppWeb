@@ -1,3 +1,8 @@
+html,
+body {
+    overflow-x: hidden;
+}
+
 body {
     font-family: "Montserrat", sans-serif;
     background-color: #f8f9fa;
@@ -415,43 +420,228 @@ body {
     flex: 1 1 auto;
 }
 
-/* Ícono del ojo */
-.password-icon {
-    flex: 0 0 auto;
-    color: #6c757d;
-    cursor: pointer;
+/* Oculta los inputs de edición por defecto */
+.info-input {
+    display: none;
 }
 
-/* Responsive: valores pueden saltar de línea si el ancho es muy pequeño */
+/* Oculta los inputs de edición y muestra los spans por defecto */
+.profile-card .info-input {
+    display: none;
+}
+
+.profile-card .info-value,
+.profile-card h3 {
+    display: block;
+}
+
+/* Cuando el contenedor tiene la clase 'edit-mode': */
+.profile-card.edit-mode .info-input {
+    display: block; /* Muestra los inputs */
+}
+
+/* Modificamos esta regla para que sea más específica y no oculte 'Usuario' y 'Contraseña' */
+.profile-card.edit-mode .info-value:not(#user-username):not(#user-password) {
+    display: none; /* Oculta los textos de visualización, excepto Usuario y Contraseña */
+}
+
+.profile-card.edit-mode .info-value,
+.profile-card.edit-mode h3 {
+    display: none; /* Oculta los textos de visualización */
+}
+
+/* Estilos para los botones "Guardar" y "Descartar" */
+#save-profile-btn,
+#cancel-edit-btn {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+/* Nuevo contenedor para los botones inferiores */
+.profile-actions-bottom {
+    display: flex; /* Habilita flexbox para el contenedor */
+    justify-content: flex-end; /* Alinea los elementos (botones) a la derecha */
+    gap: 15px; /* Añade un espacio entre los botones */
+    margin-top: 20px; /* Separa los botones del contenido superior */
+}
+
+#save-profile-btn {
+    background-color: #4CAF50; /* Un color verde para el botón de guardar */
+    color: white;
+}
+
+#cancel-edit-btn {
+    background-color: #f44336; /* Un color rojo para el botón de descartar */
+    color: white;
+}
+
+/* Oculta los botones por defecto */
+#save-profile-btn,
+#cancel-edit-btn {
+    display: none;
+}
+
+/* Oculta el botón de "Más" y "Editar" en modo de edición */
+.profile-card.edit-mode #more-options-btn,
+.profile-card.edit-mode #edit-profile-btn {
+    display: none;
+}
+
+/* Muestra los botones de guardar y descartar en modo de edición */
+.profile-card.edit-mode #save-profile-btn,
+.profile-card.edit-mode #cancel-edit-btn {
+    display: inline-block;
+}
+
+/* Oculta el texto de los campos que tienen input */
+.profile-card.edit-mode .info-value {
+    display: none;
+}
+
+/* Estilos para los inputs de edición */
+.profile-card.edit-mode input[type="text"],
+.profile-card.edit-mode input[type="email"],
+.profile-card.edit-mode input[type="tel"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    text-align: right; /* Alinea el texto a la derecha */
+    margin-top: 5px; /* Ajusta el margen si es necesario */
+}
+
+/* Nueva regla para centrar el input de 'Nombre' */
+.profile-card.edit-mode #name-input {
+    text-align: center;
+}
+
+/* Muestra el "Usuario" y "Contraseña" spans */
+.profile-card.edit-mode #user-username,
+.profile-card.edit-mode #user-password {
+    display: block; 
+}
+
+/* Oculta los inputs cuando no se está editando */
+.profile-card:not(.edit-mode) input[type="text"] {
+    display: none;
+}
+
+/* Ajustes de estilo para los campos no editables */
+.profile-card:not(.edit-mode) .info-card:nth-child(1) .info-value,
+.profile-card:not(.edit-mode) .info-card:nth-child(4) .info-value {
+    /* Estilo para los campos no editables (ej. Usuario y Contraseña) */
+    font-weight: bold;
+    color: #333;
+}
+
+/* Asegura que los campos editables y no editables tengan una apariencia consistente */
+.info-value {
+    text-align: right; /* Alinea los valores por defecto a la derecha */
+}
+
 @media (max-width: 576px) {
-  .info-row {
-    padding: 10px 12px;
-    gap: 8px;
-    border-radius: 20px;
-    align-items: flex-start;
-  }
 
-  .info-row svg {
-    width: 28px;
-    height: 28px;
-  }
+    /* Título "Mi Perfil" y botón "Más" */
+    .myprofile {
+        font-size: 0.9rem;
+        /* Reducir tamaño para mejor ajuste */
+        padding-left: 20px;
+        /* Ajustar padding para que no se vea tan a la izquierda */
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
 
-  .info-text {
-    /* elimina ancho fijo: ocupa todo el espacio restante */
-    flex: 1 1 0;
-  }
+    /* Ajustar el tamaño del botón "Más" para que coincida */
+    .more-options-button {
+        font-size: 0.9rem;
+        /* Tamaño de fuente del botón más pequeño */
+        padding: 6px 12px;
+        /* Reducir el padding para que el botón no sea tan grande */
+    }
 
-  .info-label,
-  .info-value {
-    font-size: 0.85rem;
-    line-height: 1.3;
-    /* permite salto de línea si el texto es largo */
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-  }
+    /* Contenedor principal del perfil */
+    .profile-header {
+        margin-top: 10px;
+        /* Menos margen superior para subir el contenido */
+    }
 
-  .info-value {
-    margin-top: 4px;
-  }
+    /* Imagen y estado */
+    .profile-image {
+        width: 120px;
+        /* Reducir un poco más el tamaño de la imagen */
+        height: 120px;
+    }
+
+    .profile-status {
+        width: 25px;
+        /* Reducir el tamaño del ícono de estado */
+        height: 25px;
+        bottom: 2px;
+        right: 2px;
+    }
+
+    .profile-info h3 {
+        font-size: 1.2rem;
+        /* Reducir el tamaño del nombre */
+    }
+
+    /* Contenedores de información (Correo, Contraseña, etc.) */
+    .info-row {
+        padding: 12px 15px;
+        /* Menos padding horizontal */
+        border-radius: 10px;
+        /* Bordes más suaves */
+        /* Mantenemos estas propiedades ya que son correctas */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    /* Íconos dentro de las filas */
+    .info-row svg {
+        width: 22px;
+        /* Tamaño del ícono */
+        height: 22px;
+        margin-right: 10px;
+        margin-left: -1px;
+        /* Añadir un pequeño margen para separar del texto */
+    }
+
+    /* Etiqueta del campo (e.g., "Correo:") */
+    .info-label {
+        font-weight: 650;
+        font-size: 0.8rem;
+        /* Tamaño de fuente más pequeño */
+        color: #000000;
+        /* Color más suave para diferenciar de los valores */
+        margin: 0;
+    }
+
+    /* Valor del campo (e.g., "h2c_group@gmail.com") */
+    .info-value {
+        font-weight: 500;
+        color: #363636;
+        font-size: 0.9rem;
+        /* Tamaño de fuente ligeramente más grande para el valor */
+        white-space: normal;
+        /* Permitir salto de línea para correos largos */
+        overflow-wrap: break-word;
+        /* Romper palabras largas si es necesario */
+        text-align: left;
+        /* Alinear a la izquierda para que no se corte */
+        margin: 0;
+    }
+
+    .password-container {
+        align-items: center;
+        justify-content: flex-start;
+        /* Alineamos todo a la izquierda para mejor visualización */
+    }
 }
