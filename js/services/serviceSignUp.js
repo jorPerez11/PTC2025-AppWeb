@@ -25,18 +25,24 @@ export async function login(credentials) {
  * @returns {Promise<boolean>} - True si hay compañías, false si no.
  */
 export async function checkCompanyExistence() {
-    const response = await fetch(`${API_URL}/check-company-existence`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    
-    if (!response.ok) {
-        // En caso de error, asumimos que no hay compañías para no bloquear el flujo.
-        console.error("Error al verificar la existencia de compañías:", await response.text());
+    try {
+        const response = await fetch(`${API_URL}/check-company-existence`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (!response.ok) {
+            console.error("Error del servidor al verificar la existencia de compañías:", response.status, await response.text());
+            return false; // Devuelve false en caso de error HTTP
+        }
+        
+        // Decodificamos el JSON y devolvemos el valor booleano
+        return await response.json();
+    } catch (error) {
+        // En caso de fallo en la red (ej. API no disponible)
+        console.error("Fallo de red al verificar la existencia de compañías:", error);
         return false;
     }
-    
-    return response.json();
 }
 
 /**
