@@ -1,7 +1,6 @@
 const API_URL = "http://localhost:8080/api";
 
-const tokenFijo = 'eyJhbGciOiJIUzI1NiJ9.eyJyb2xJZCI6Mywic3ViIjoiVXNlclRlc3RWMiIsImlhdCI6MTc1NjE1NzE5MCwiZXhwIjoxNzU2NzYxOTkwfQ.xuUET5OpiebwA5zIFigZ9i5sxb6-R1npgm41trpg5bM';
-
+let tokenFijo = localStorage.getItem('authToken');
 // Define los encabezados comunes, incluyendo el token de autorización
 const commonHeaders = {
     'Content-Type': 'application/json',

@@ -36,6 +36,7 @@ body {
     transform: scaleX(-1);
 }
 
+
 /* --- Estilos para el contenido de Actividades --- */
 
 .activities-content {
@@ -448,4 +449,127 @@ text-decoration: none;
 .editor-content:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+}
+
+/*cards*/
+
+.card-agendada {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-agendada-header {
+    background-color: #03071E;
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-agendada-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.btn-close-agendada {
+    background: none;
+    border: none;
+    color: #FF0000;
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out; /* Transición suave */
+}
+
+.btn-close-agendada:hover{
+    color: #c52700;
+    
+}
+
+.card-agendada-title,
+.activity-description{
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limita el texto a 3 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Opcional: añade puntos suspensivos (...) */
+    white-space: normal;
+}
+
+
+.card-agendada-body {
+    padding: 20px;
+}
+
+.activity-description {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.card-agendada-footer {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.btn-edit-agendada {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.btn-edit-agendada:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+/*
+ * Este CSS añade un control de desplazamiento vertical a la descripción de las tarjetas de actividad.
+ * La barra solo aparecerá si el contenido de la descripción es más largo que la altura máxima definida.
+ */
+.activity-description {
+    max-height: 90px; /* Define la altura máxima del área de la descripción */
+    overflow-y: auto; /* Muestra el control de desplazamiento vertical solo si es necesario */
+    padding-bottom: 1rem; /* Añade espacio para que el texto no toque la barra de desplazamiento */
+}
+
+/* Opcional: Estilos para la barra de desplazamiento en navegadores WebKit (Chrome, Safari) */
+.activity-description::-webkit-scrollbar {
+    width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+.activity-description::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color de fondo del carril de la barra */
+    border-radius: 10px;
+}
+
+.activity-description::-webkit-scrollbar-thumb {
+    background: #888; /* Color de la manija de la barra de desplazamiento */
+    border-radius: 10px;
+}
+
+.activity-description::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color de la manija al pasar el mouse por encima */
+}
+
+.list-unstyled{
+    color: #555;
 }
