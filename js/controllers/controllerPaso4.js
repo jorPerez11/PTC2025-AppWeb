@@ -1,6 +1,6 @@
 // Importaciones
 import { obtenerDatosPaso1, obtenerEquipoGuardado } from '../utils/storageHelperFirstUse.js';
-import { finalizarAdminSetupAPI } from '../services/serviceFirstUse.js';
+import { finalizarAdminSetupAPI, activatePendingTechniciansAPI } from '../services/serviceFirstUse.js';
 import { adminId } from './controllerFirstUse.js';
 
 // Funciones específicas del Paso 4
@@ -192,70 +192,131 @@ export function restaurarDatosPaso4() {
 }
 
 export function formatoLegibleTelefono(telefono) {
-  if (!telefono) return "N/A";
+    if (!telefono) return "N/A";
 
-  let t = telefono.replace(/[^\d+]/g, "");
+    let t = telefono.replace(/[^\d+]/g, "");
 
-  if (!t.startsWith("+")) {
-    if (t.startsWith("503")) {
-      t = "+" + t;
-    } else if (/^\d{8}$/.test(t)) {
-      t = "+503" + t;
-    } else {
-      t = "+" + t;
+    if (!t.startsWith("+")) {
+        if (t.startsWith("503")) {
+            t = "+" + t;
+        } else if (/^\d{8}$/.test(t)) {
+            t = "+503" + t;
+        } else {
+            t = "+" + t;
+        }
     }
-  }
 
-  const partes = t.match(/^(\+\d{1,3})(\d+)$/);
-  if (!partes) return telefono;
-  const [, prefijo, resto] = partes;
+    const partes = t.match(/^(\+\d{1,3})(\d+)$/);
+    if (!partes) return telefono;
+    const [, prefijo, resto] = partes;
 
-  switch (prefijo) {
-    case "+503":
-      if (resto.length === 8) return `${prefijo} ${resto.substr(0, 4)}-${resto.substr(4)}`;
-      break;
-    case "+1":
-      if (resto.length === 10) return `${prefijo} (${resto.substr(0, 3)}) ${resto.substr(3, 3)}-${resto.substr(6)}`;
-      break;
-    case "+52":
-      if (resto.length === 10) return `${prefijo} ${resto.substr(0, 2)} ${resto.substr(2, 4)} ${resto.substr(6)}`;
-      break;
-    case "+57":
-      if (resto.length === 10) return `${prefijo} ${resto.substr(0, 3)} ${resto.substr(3, 3)} ${resto.substr(6)}`;
-      break;
-  }
+    switch (prefijo) {
+        case "+503":
+            if (resto.length === 8) return `${prefijo} ${resto.substr(0, 4)}-${resto.substr(4)}`;
+            break;
+        case "+1":
+            if (resto.length === 10) return `${prefijo} (${resto.substr(0, 3)}) ${resto.substr(3, 3)}-${resto.substr(6)}`;
+            break;
+        case "+52":
+            if (resto.length === 10) return `${prefijo} ${resto.substr(0, 2)} ${resto.substr(2, 4)} ${resto.substr(6)}`;
+            break;
+        case "+57":
+            if (resto.length === 10) return `${prefijo} ${resto.substr(0, 3)} ${resto.substr(3, 3)} ${resto.substr(6)}`;
+            break;
+    }
 
-  const grupos = resto.match(/.{1,3}/g) || [resto];
-  return `${prefijo} ${grupos.join(" ")}`;
+    const grupos = resto.match(/.{1,3}/g) || [resto];
+    return `${prefijo} ${grupos.join(" ")}`;
 }
 
 export async function handleFinalizarSetup() {
-  try {
-    // Asegúrate de tener el adminId disponible, ya sea de localStorage o de una variable global.
-    const userId = adminId; // Usa la variable global que creaste.
+    try {
+        console.log("🔍 === INICIANDO handleFinalizarSetup ===");
+        
+        const userId = adminId;
+        const companyId = Number(localStorage.getItem('companyId'));
+        const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]");
 
-    console.log("Iniciando la configuración final del administrador para el usuario:", userId);
+        console.log("📊 Datos de depuración:");
+        console.log("- Admin ID:", userId);
+        console.log("- Company ID:", companyId);
+        console.log("- Equipo guardado:", equipoGuardado);
 
-    const resultado = await finalizarAdminSetupAPI(userId);
+        if (!companyId || companyId === 0) {
+            throw new Error("No se encontró un companyId válido en localStorage.");
+        }
 
-    console.log("Configuración finalizada exitosamente:", resultado);
+        if (!userId) {
+            throw new Error("No se encontró el ID del administrador.");
+        }
 
-    Swal.fire({
-      icon: "success",
-      title: "Configuración Finalizada",
-      text: "El administrador ha sido activado y recibirá un correo con sus credenciales.",
-      showConfirmButton: false,
-      timer: 3000
-    }).then(() => {
-      window.location.href = 'login.html';
-    });
+        // 1. PRIMERO: Enviar credenciales a técnicos
+        console.log("🚀 Paso 1: Enviando credenciales a técnicos...");
+        console.log("📞 Llamando a activatePendingTechniciansAPI con companyId:", companyId);
+        
+        const techniciansResult = await activatePendingTechniciansAPI(companyId);
+        console.log("✅ Resultado de envío de credenciales:", techniciansResult);
 
-  } catch (error) {
-    console.error("Error al finalizar la configuración del administrador:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Error de Finalización",
-      text: error.message || "No se pudo finalizar la configuración del administrador.",
-    });
-  }
+        // Validación más flexible
+        if (!techniciansResult) {
+            throw new Error("No se recibió respuesta del servidor.");
+        }
+        
+        if (techniciansResult.error) {
+            throw new Error(techniciansResult.error);
+        }
+
+        // 2. SEGUNDO: Finalizar configuración del admin
+        console.log("👨‍💼 Paso 2: Finalizando configuración del admin...");
+        const adminResult = await finalizarAdminSetupAPI(userId);
+        console.log("✅ Admin configurado:", adminResult);
+
+        if (!adminResult) {
+            throw new Error("No se pudo finalizar la configuración del administrador.");
+        }
+
+        // 3. Mostrar mensaje de éxito
+        const equipoCount = equipoGuardado.length;
+        const tecnicosNotificados = techniciansResult.activatedCount || equipoCount;
+        
+        console.log("🎉 Proceso completado exitosamente");
+        console.log("- Técnicos notificados:", tecnicosNotificados);
+        console.log("- Admin activado: Sí");
+
+        Swal.fire({
+            icon: "success",
+            title: "¡Configuración Completada!",
+            html: `
+                <div style="text-align: left;">
+                <p>✓ Administrador activado y notificado</p>
+                ${equipoCount > 0 ? `<p>✓ ${tecnicosNotificados} técnicos notificados con sus credenciales</p>` : ''}
+                <p>✓ Se han enviado las credenciales por correo electrónico</p>
+                </div>
+            `,
+            showConfirmButton: false,
+            timer: 5000
+        }).then(() => {
+            // Limpiar localStorage y redirigir
+            localStorage.removeItem('miEquipo');
+            localStorage.removeItem('listaTecnicos');
+            localStorage.removeItem('datosPaso1');
+            window.location.href = 'login.html';
+        });
+
+    } catch (error) {
+        console.error("❌ ERROR en handleFinalizarSetup:", error);
+
+        Swal.fire({
+            icon: "error",
+            title: "Error en la Configuración",
+            html: `
+                <div style="text-align: left;">
+                <p>No se pudo completar la configuración</p>
+                <p><strong>Error:</strong> ${error.message || "Error desconocido"}</p>
+                <p>Revisa la consola para más detalles.</p>
+                </div>
+            `,
+            confirmButtonText: "Reintentar"
+        });
+    }
 }

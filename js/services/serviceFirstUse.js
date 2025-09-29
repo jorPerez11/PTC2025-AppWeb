@@ -241,6 +241,45 @@ export async function asignarCategoriaYActivarTecnicoAPI(id, categoryId) {
     return JSON.parse(responseText);
 }
 
+/**
+ * Activa todos los técnicos pendientes de una compañía y les envía correos
+ * @param {number} companyId - ID de la compañía
+ * @returns {Promise<object>} - Respuesta del servidor
+ */
+export async function activatePendingTechniciansAPI(companyId) {
+    try {
+        console.log("Enviando solicitud para activar técnicos pendientes, companyId:", companyId);
+        
+        const response = await fetch(`http://localhost:8080/api/firstuse/activate-pending-technicians`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ companyId: companyId })
+        });
+
+        const responseText = await response.text();
+        console.log("Respuesta del servidor (texto):", responseText);
+
+        if (!response.ok) {
+            let errorMsg = `Error del servidor: ${response.status}`;
+            try {
+                const errorData = JSON.parse(responseText);
+                errorMsg = errorData.error || errorData.message || errorMsg;
+            } catch (e) {
+                errorMsg = responseText || errorMsg;
+            }
+            throw new Error(errorMsg);
+        }
+
+        const result = JSON.parse(responseText);
+        console.log("Técnicos activados exitosamente:", result);
+        return result;
+        
+    } catch (error) {
+        console.error("Error en activatePendingTechniciansAPI:", error);
+        throw error;
+    }
+}
+
 // Servicios para técnicos
 export async function obtenerTecnicosAPI() {
     const response = await fetch(API_URL);

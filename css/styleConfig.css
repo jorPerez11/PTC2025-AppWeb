@@ -1,8 +1,3 @@
-html,
-body {
-    overflow-x: hidden;
-}
-
 body {
     font-family: "Montserrat", sans-serif;
     background-color: #f8f9fa;
@@ -110,6 +105,60 @@ body {
     background-color: white;
     width: 25%;
     width: calc(100% - 30px);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejora el contraste y legibilidad */
+.dropdown-item:active {
+    background-color: #F48C06 !important;
+    color: #03071E !important;
+}
+
+/* Estilos para los botones de notificaciones y configuración */
+.botonNotificaciones,
+.botonConfig {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.botonNotificaciones:hover,
+.botonConfig:hover {
+    transform: scale(1.1) !important;
+}
+
+.botonNotificaciones:focus,
+.botonConfig:focus {
+    box-shadow: 0 0 0 2px rgba(244, 140, 6, 0.5) !important;
+}
+
+/* Asegurar que el z-index sea correcto */
+.dropdown {
+    position: relative !important;
+}
+
+.dropdown-menu {
+    z-index: 1000 !important;
+}
+
+/* Estilos para el icono de usuario en el dropdown de desktop */
+.btn.botonUser img {
+    transition: all 0.3s ease !important;
+    border-radius: 50% !important;
+}
+
+.btn.botonUser:hover img {
+    box-shadow: 0 0 0 2px #F48C06 !important;
 }
 
 .header {
