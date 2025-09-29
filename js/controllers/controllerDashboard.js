@@ -1,5 +1,11 @@
 import { getTicketCounts } from '../services/serviceDashboard.js';
 
+let ticketCounts = {
+    enEspera: 0,
+    enProceso: 0,
+    cerradas: 0
+};
+
 // Espera a que el DOM esté completamente cargado para inicializar todo
 document.addEventListener('DOMContentLoaded', function () {
     // 1. Inicialización de Tooltips de Bootstrap
@@ -8,13 +14,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 
-    // 2. Lógica para cargar los números de tickets
-    loadTicketCounts();
+    // 2. Lógica para cargar la data de graficos
+    initDashboardData();
 
     // 3. Lógica para el gráfico de Rendimiento
     const rendimientoValue = 93; // Valor de 0 a 100
     initRendimientoChart(rendimientoValue);
 });
+
+async function initDashboardData() {
+    // 1. Espera a que los datos se carguen y actualicen 'ticketCounts'
+    await loadTicketCounts(); 
+    
+    // 2. Ahora que los datos están cargados, inicializa los gráficos
+    initCharts();
+}
 
 $(document).ready(function () {
     // 1. Inicialización del daterangepicker
@@ -44,6 +58,15 @@ $(document).ready(function () {
     $('#open-daterange-picker').on('click', function () {
         daterangePickerInstance.show();
     });
+});
+
+
+function initCharts(){
+
+    const totalTickets = ticketCounts.enEspera + ticketCounts.enProceso + ticketCounts.cerradas;
+    const percEspera = totalTickets > 0 ? (ticketCounts.enEspera / totalTickets) * 100 : 0;
+    const percProceso = totalTickets > 0 ? (ticketCounts.enProceso / totalTickets) * 100 : 0;
+    const percCerradas = totalTickets > 0 ? (ticketCounts.cerradas / totalTickets) * 100 : 0;
 
     // 2. Lógica de los gráficos (sin cambios, según tu petición)
     var solicitudesOptions = {
@@ -55,7 +78,7 @@ $(document).ready(function () {
             background: 'transparent'
         },
         series: [{
-            data: [{ x: 'En Proceso', y: 20, fillColor: '#FF7753' }, { x: 'Cerradas', y: 32, fillColor: '#79DA66' }, { x: 'En Espera', y: 6, fillColor: '#DC2F02' }]
+            data: [{ x: 'En Proceso', y: ticketCounts.enProceso , fillColor: '#FF7753' }, { x: 'Cerradas', y: ticketCounts.cerradas, fillColor: '#79DA66' }, { x: 'En Espera', y: ticketCounts.enEspera, fillColor: '#DC2F02' }]
         }],
         xaxis: { labels: { style: { fontSize: '12px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 400, cssClass: 'apexcharts-xaxis-label' } } },
         yaxis: { labels: { style: { fontSize: '12px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 400, cssClass: 'apexcharts-yaxis-label' } } },
@@ -67,7 +90,7 @@ $(document).ready(function () {
     chart1.render();
 
     var productividadOptions = {
-        series: [36, 30, 34],
+        series: [Math.round(percEspera), Math.round(percProceso), Math.round(percCerradas)],
         chart: {
             type: 'donut',
             height: 0,
@@ -84,8 +107,7 @@ $(document).ready(function () {
     };
     var chart2 = new ApexCharts(document.querySelector("#chart2"), productividadOptions);
     chart2.render();
-});
-
+}
 
 /**
  * @name loadTicketCounts
@@ -95,6 +117,8 @@ $(document).ready(function () {
 async function loadTicketCounts() { // <-- Agrega la palabra clave 'async' aquí
     try {
         const counts = await getTicketCounts(); // <-- Agrega 'await' aquí para esperar la respuesta
+
+        ticketCounts = counts;
 
         if (document.getElementById('tickets-en-proceso')) {
             document.getElementById('tickets-en-proceso').textContent = counts.enProceso;

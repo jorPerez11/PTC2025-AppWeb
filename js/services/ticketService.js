@@ -1,27 +1,29 @@
-const API_URL = "http://localhost:8080/api";
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
 
-let tokenFijo = localStorage.getItem('authToken');
+const API_URL = "http://localhost:8080/api";
 
 // Define los encabezados comunes, incluyendo el token de autorización
 const commonHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${tokenFijo}`
 };
 
 export async function getTickets(page = 0, size = 10) {
+    const url = `${API_URL}/admin/GetTickets?page=${page}&size=${size}`;
+    
     try {
-        const response = await fetch(`${API_URL}/GetTickets?page=${page}&size=${size}`, {
-            method: 'GET',
-            headers: commonHeaders
-        });
+        // 🚨 Ejecuta fetchWithAuth
+        const response = await fetchWithAuth(url); 
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
+        
+        return response;
+        
     } catch (error) {
+        
+        // Si response existe, pero falló
         console.error("Error al obtener los tickets:", error);
         throw error;
     }
@@ -29,7 +31,7 @@ export async function getTickets(page = 0, size = 10) {
 
 export async function createTicket(data) {
     try {
-        const response = await fetch(`${API_URL}/PostTicket`, {
+        const response = await fetch(`${API_URL}/client/PostTicket`, {
             method: "POST",
             headers: commonHeaders,
             body: JSON.stringify(data)
@@ -47,34 +49,35 @@ export async function createTicket(data) {
     }
 }
 
-export async function updateTicket(data, id) {
+export async function updateTicket(payload, id) {
+    const url = `${API_URL}/client/UpdateTicket/${id}`;
+    
+    // **CRÍTICO:** Usamos 'payload' en lugar de 'data' para consistencia con tu ticketController
+    // El 'payload' es el objeto que contiene el nuevo estado del ticket.
+
     try {
-        const response = await fetch(`${API_URL}/UpdateTicket/${id}`, {
+        
+        const data = await fetchWithAuth(url, {
             method: "PATCH",
-            headers: commonHeaders,
-            body: JSON.stringify(data)
+            // fetchWithAuth se encarga de JSON.stringify(body) si sigue la convención
+            // Si no sigue la convención, se pasaría como 'body' normal:
+            body: JSON.stringify(payload) 
         });
         
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // Si fetchWithAuth es exitoso (status < 400) y devuelve datos, retorna esos datos.
+        // Si no devuelve contenido (ej. 204 No Content), data será {} o null
+        return data; 
 
-        if (response.status === 204 || response.status === 202 || response.headers.get('content-length') === '0') {
-        return {}; // Devuelve un objeto vacío y sal de la función.
-        }
-
-        
-        // Maneja la respuesta de la actualización si es necesario
-        return response.json();
     } catch (error) {
-        console.error("Error al actualizar el ticket:", error);
-        throw error;
+        // Este catch captura los errores limpios lanzados por fetchWithAuth.
+        console.error(`Error al actualizar el ticket ${id}:`, error.message);
+        throw error; // Re-lanza el error para que el ticketController lo maneje
     }
 }
 
 export async function deleteTicket(id) {
     try {
-        const response = await fetch(`${API_URL}/DeleteTicket/${id}`, {
+        const response = await fetch(`${API_URL}/client/DeleteTicket/${id}`, {
             method: "DELETE",
             headers: commonHeaders
         });
@@ -91,3 +94,4 @@ export async function deleteTicket(id) {
         throw error;
     }
 }
+

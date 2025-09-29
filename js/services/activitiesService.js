@@ -1,28 +1,40 @@
-const API_URL = "http://localhost:8080/api";
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
 
-let tokenFijo = localStorage.getItem('authToken');
+const API_URL = "http://localhost:8080/api";
 
 // Define los encabezados comunes, incluyendo el token de autorización
 const commonHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${tokenFijo}`
 };
 //s
 
-export async function getActivities(page = 0, size = 10) {
+export async function getActivities(page = 0, size = 10, searchTerm = '') {
     try {
-        const response = await fetch(`${API_URL}/GetActivities?page=${page}&size=${size}`, {
-            method: 'GET',
-            headers: commonHeaders
-        });
+        let url = `${API_URL}/GetActivities?page=${page}&size=${size}`;
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+        //  Añadir el término de búsqueda si existe
+        if (searchTerm.trim() !== '') {
+            // Asumimos que el parámetro de búsqueda en GetActivities es 'search'
+            url += `&search=${encodeURIComponent(searchTerm)}`; 
         }
+        
+        console.log("URL de Paginación y Búsqueda:", url); 
 
-        const data = await response.json();
-        return data;
+        const response = await fetchWithAuth(url);
+        return response;
     } catch (error) {
+        console.error("Error al obtener las actividades:", error);
+        throw error;
+    }
+}
+
+export async function searchActivity(page = 0, size = 10){
+    try{
+
+
+
+    }catch (error) {
         console.error("Error al obtener los tickets:", error);
         throw error;
     }
@@ -30,18 +42,16 @@ export async function getActivities(page = 0, size = 10) {
 
 export async function createActivity(data) {
     try {
-        const response = await fetch(`${API_URL}/PostActivity`, {
+        const response = await fetchWithAuth(`${API_URL}/PostActivity`, {
             method: "POST",
-            headers: commonHeaders,
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
 
-        // Si la creación es exitosa, podrías querer devolver algo o manejar la respuesta.
-        return response.json();
+        // Si la creación es exitosa, devuelve la respuesta.
+        return response;
     } catch (error) {
         console.error("Error al crear el ticket:", error);
         throw error;
@@ -49,24 +59,24 @@ export async function createActivity(data) {
 }
 
 export async function updateActivity(data, id) {
+
+    const url = `${API_URL}/UpdateActivity/${id}`;
+
     try {
-        const response = await fetch(`${API_URL}/UpdateActivity/${id}`, {
+        const response = await fetchWithAuth(url, {
             method: "PATCH",
-            headers: commonHeaders,
-            body: JSON.stringify(data)
+            // fetchWithAuth se encarga de JSON.stringify(body) si sigue la convención
+            // Si no sigue la convención, se pasaría como 'body' normal:
+            body: JSON.stringify(data) 
         });
         
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
-
-        if (response.status === 204 || response.status === 202 || response.headers.get('content-length') === '0') {
-        return {}; // Devuelve un objeto vacío y sal de la función.
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
 
         
         // Maneja la respuesta de la actualización si es necesario
-        return response.json();
+        return response;
     } catch (error) {
         console.error("Error al actualizar el ticket:", error);
         throw error;
@@ -75,18 +85,16 @@ export async function updateActivity(data, id) {
 
 export async function deleteActivity(id) {
     try {
-        const response = await fetch(`${API_URL}/DeleteActivity/${id}`, {
+        const response = await fetchWithAuth(`${API_URL}/DeleteActivity/${id}`, {
             method: "DELETE",
-            headers: commonHeaders
         });
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
 
         // Maneja la respuesta de la eliminación si es necesario
         // Por ejemplo, podrías devolver un estado de éxito
-        return { status: "success" };
+        return response;
     } catch (error) {
         console.error("Error al eliminar el ticket:", error);
         throw error;

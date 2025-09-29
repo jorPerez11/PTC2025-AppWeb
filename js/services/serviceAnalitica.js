@@ -1,3 +1,4 @@
+
 // 1. Importar la función `fetchWithAuth` que maneja el token internamente
 import { fetchWithAuth } from "../services/serviceLogin.js";
 
@@ -8,9 +9,10 @@ const commonHeaders = {
 };
 
 /**
- * Obtiene la cantidad de tickets por estado desde la API
- * @returns {Promise<Object>} Un objeto con el conteo de tickets
+ * Obtiene la cantidad de tickets por estado desde la API.
+ * @returns {Promise<Object>} Un objeto con el conteo de tickets.
  */
+
 export async function getTicketCounts() {
     try {
         // La función `fetchWithAuth` ya se encarga del token y la autenticación
@@ -31,6 +33,35 @@ export async function getTicketCounts() {
             enEspera: 0,
             enProceso: 0,
             cerradas: 0
+        };
+    }
+}
+
+export async function fetchNewUsersData() {
+    try {
+        const data = await fetchWithAuth('http://localhost:8080/api/users/counts-by-month'); 
+
+       
+        const categories = Object.keys(data);
+        const values = Object.values(data);
+
+
+        const monthNames = categories.map(key => {
+            const [year, month] = key.split('-');
+            const date = new Date(year, month - 1, 1);
+            return date.toLocaleString('es-ES', { month: 'short' });
+        });
+
+        return {
+            categories: monthNames,
+            values: values
+        };
+
+    } catch (error) {
+        console.error("Error al obtener los datos de usuarios:", error);
+        return {
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            values: [0, 0, 0, 0, 0, 0]
         };
     }
 }
