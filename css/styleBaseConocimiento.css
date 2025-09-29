@@ -273,6 +273,17 @@ body {
     box-shadow: none;
 }
 
+.description,
+.title,
+.keywords{
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limita el texto a 3 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Opcional: añade puntos suspensivos (...) */
+    white-space: normal;
+}
+
 .search-bar-container input {
     border: none;
     outline: none;
@@ -514,4 +525,26 @@ body {
     color: #0044ab;
     text-decoration: none;
     font-weight: 600;
+}
+
+/* Colores específicos por categoría */
+.category-equipo {
+    color: #007bff; /* Color de texto azul */
+    background-color: rgba(0, 123, 255, 0.067); /* Fondo azul semi-transparente */
+    padding: 3px 6px; /* Espacio alrededor del texto */
+    border-radius: 6px; /* Bordes ligeramente redondeados */
+}
+
+.category-sistema {
+    color: #9a00e7; /* Color de texto morado */
+    background-color: rgba(154, 0, 231, 0.064); /* Fondo morado semi-transparente */
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+.category-redes {
+    color: #dc3545; /* Color de texto rojo */
+    background-color: rgba(220, 53, 70, 0.1); /* Fondo rojo semi-transparente */
+    padding: 3px 6px;
+    border-radius: 6px;
 }
