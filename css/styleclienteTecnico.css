@@ -1,3 +1,49 @@
+/* Estilos específicos para la versión móvil - CORREGIDOS */
+@media (max-width: 1199.98px) {
+    .dropdown-menu {
+        background-color: #03071E !important; /* Mantener fondo oscuro */
+        border: 1px solid #F48C06 !important; /* Borde naranja */
+        border-radius: 8px !important;
+        box-shadow: 0 4px 15px rgba(244, 140, 6, 0.2) !important;
+        padding: 0.5rem 0 !important;
+        margin-top: 0.5rem !important;
+        margin-left: 1rem !important;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1.5rem !important;
+        border-left: none !important; /* Eliminar borde izquierdo */
+        transition: all 0.3s ease !important;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #F48C06 !important; /* Fondo naranja en hover */
+        color: #03071E !important; /* Texto oscuro en hover */
+        transform: translateX(5px) !important;
+        border-left: none !important;
+    }
+    
+    .dropdown-divider {
+        margin: 0.5rem 1.5rem !important;
+        width: calc(100% - 3rem) !important;
+    }
+
+    /* ELIMINAR SUBRAYADO de "Mi Perfil" en móvil */
+    .nav-item.dropdown .nav-link.dropdown-toggle::before {
+        display: none !important;
+    }
+
+    /* Asegurar que solo cambie el color de la fuente en "Mi Perfil" */
+    .nav-item.dropdown .nav-link.dropdown-toggle:hover::before {
+        width: 0 !important;
+    }
+
+    /* Solo color naranja en el texto, sin subrayado */
+    .nav-item.dropdown .nav-link.dropdown-toggle:hover {
+        color: #F48C06 !important;
+    }
+}
+
 body {
     background:
         url('../img/clientesAdminImg/Tcbackground.png') no-repeat center/cover,
@@ -79,22 +125,13 @@ h4 {
 }
 
 .separator {
-    width: 3.5px;
-    /* Ancho del "palito" */
-    height: 34px;
-    /* Altura del "palito" (aprox. la altura de los iconos) */
+    width: 2px;
+    height: 25px;
     background-color: rgba(255, 255, 255, 0.5);
-    /* Color blanco semi-transparente */
     margin: 0 10px;
 }
 
-.botonInicioSesion,
-.botonRegistro {
-    white-space: nowrap;
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
-
+/* Estilos de navegación y botones */
 .navbar-nav {
     padding-right: 30px;
 }
@@ -147,10 +184,6 @@ h4 {
     box-shadow: none;
 }
 
-.navbar-brand {
-    size: 100px;
-}
-
 .nav-link {
     color: white;
     display: inline-block;
@@ -184,6 +217,152 @@ h4 {
     background-color: white;
     width: 25%;
     width: calc(100% - 30px);
+}
+
+/* ========== ESTILOS NUEVOS PARA EL DROPDOWN ========== */
+
+/* Estilos para el dropdown del perfil de usuario */
+.dropdown-menu {
+    background-color: #03071E !important;
+    border: 1px solid #F48C06 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(244, 140, 6, 0.2) !important;
+    padding: 0.5rem 0 !important;
+    margin-top: 0.5rem !important;
+}
+
+.dropdown-item {
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 300 !important;
+    padding: 0.75rem 1.5rem !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: #F48C06 !important;
+    color: #03071E !important;
+    transform: translateX(5px) !important;
+}
+
+.dropdown-divider {
+    background-color: #F48C06 !important;
+    opacity: 0.3 !important;
+    margin: 0.5rem 0 !important;
+}
+
+/* Estilos para el botón del dropdown en desktop */
+.btn.botonUser.dropdown-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0.25rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn.botonUser.dropdown-toggle:hover {
+    transform: scale(1.1) !important;
+}
+
+.btn.botonUser.dropdown-toggle:focus {
+    box-shadow: 0 0 0 2px rgba(244, 140, 6, 0.5) !important;
+}
+
+.btn.botonUser.dropdown-toggle::after {
+    display: none !important;
+}
+
+/* Estilos para el enlace dropdown en móvil */
+.nav-link.dropdown-toggle {
+    color: white !important;
+    transition: all 0.3s ease !important;
+}
+
+.nav-link.dropdown-toggle:hover {
+    color: #F48C06 !important;
+}
+
+.nav-link.dropdown-toggle::after {
+    border-top-color: white !important;
+    transition: border-top-color 0.3s ease !important;
+}
+
+.nav-link.dropdown-toggle:hover::after {
+    border-top-color: #F48C06 !important;
+}
+
+/* Estilos para las imágenes dentro del dropdown */
+.dropdown-item img {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 10px !important;
+    filter: brightness(0) invert(1) !important;
+    transition: filter 0.3s ease !important;
+}
+
+.dropdown-item:hover img {
+    filter: brightness(0) invert(0) !important;
+}
+
+/* Estilos para el estado activo del dropdown */
+.dropdown-menu.show {
+    animation: dropdownFadeIn 0.3s ease !important;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejora el contraste y legibilidad */
+.dropdown-item:active {
+    background-color: #F48C06 !important;
+    color: #03071E !important;
+}
+
+/* Estilos para los botones de notificaciones y configuración */
+.botonNotificaciones,
+.botonConfig {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.botonNotificaciones:hover,
+.botonConfig:hover {
+    transform: scale(1.1) !important;
+}
+
+.botonNotificaciones:focus,
+.botonConfig:focus {
+    box-shadow: 0 0 0 2px rgba(244, 140, 6, 0.5) !important;
+}
+
+/* Asegurar que el z-index sea correcto */
+.dropdown {
+    position: relative !important;
+}
+
+.dropdown-menu {
+    z-index: 1000 !important;
+}
+
+/* Estilos para el icono de usuario en el dropdown de desktop */
+.btn.botonUser img {
+    transition: all 0.3s ease !important;
+    border-radius: 50% !important;
+}
+
+.btn.botonUser:hover img {
+    box-shadow: 0 0 0 2px #F48C06 !important;
 }
 
 .main-container {
