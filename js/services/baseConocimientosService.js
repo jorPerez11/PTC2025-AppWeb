@@ -7,6 +7,7 @@ const API_URL = "http://localhost:8080/api";
 const commonHeaders = {
     'Content-Type': 'application/json',
 };
+//DEPURACION PRUEBA
 
 export async function getSolutions(page = 0, size = 10, searchTerm = '', categoryFilter = 'Todos') {
     try {
