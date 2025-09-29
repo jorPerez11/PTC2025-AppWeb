@@ -74,7 +74,8 @@ const calendarIcons = {
 async function obtenerTickets() {
     try {
         const data = await getTickets(currentPage, currentSize);
-        const items = data.content || [];
+        // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
+        const items = data?.content || []; 
 
         // Actualizar variables de paginación con la respuesta de la API
         totalPages = data.totalPages;
@@ -85,40 +86,50 @@ async function obtenerTickets() {
         const completadoList = document.getElementById(estados['Completado']);
         
         // Los contadores de estados deben reiniciarse para cada nueva página
-        const conteoEstados = { 'En espera': 0, 'En progreso': 0, 'Completado': 0 };
+        // Agregamos un estado 'N/A' por si acaso falla el mapeo
+        const conteoEstados = { 'En espera': 0, 'En progreso': 0, 'Completado': 0, 'N/A': 0 };
 
         if (enEsperaList) enEsperaList.innerHTML = "";
         if (enProgresoList) enProgresoList.innerHTML = "";
         if (completadoList) completadoList.innerHTML = "";
 
         items.forEach((ticket) => {
-            const estado = ticket.status.displayName;
-            conteoEstados[estado]++;
+            // 🐛 FIX 1: Usar Optional Chaining (?.): 
+            // Esto evita el TypeError si ticket.status es null
+            const estado = ticket.status?.displayName || 'N/A';
+            
+            // Aseguramos que solo contamos estados válidos
+            if (conteoEstados.hasOwnProperty(estado)) {
+                conteoEstados[estado]++;
+            } else {
+                conteoEstados['N/A']++;
+            }
 
             const container = document.getElementById(estados[estado]);
             if (!container) {
-                console.warn(`Contenedor para estado "${estado}" no existe.`);
+                // Si el ticket tiene un estado que no está mapeado, lo ignoramos
+                console.warn(`Contenedor para estado "${estado}" no existe. Ticket ID: ${ticket.ticketId}`);
                 return;
             }
 
             const creationDate = ticket.creationDate
                 ? new Date(ticket.creationDate).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                })
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                  })
                 : 'N/A';
 
             const card = document.createElement("div");
             card.className = "ticket-card mb-3";
 
             card.innerHTML = `
-                <h6>${ticket.title}</h6>
+                <h6>${ticket.title || 'Sin Título'}</h6>
                 <p class="mb-1 datos">
                 <small>#${String(ticket.ticketId).padStart(4, '0')} · ${ticket.userName || 'N/A'}</small>
                 </p>
                 <div class="card-body">
-                    <p class="card-text">${ticket.description}</p>
+                    <p class="card-text">${ticket.description || 'Sin descripción'}</p>
                 </div>
                 <div class="ticket-fecha">
                     ${calendarIcons[estado] || ''}
@@ -130,8 +141,8 @@ async function obtenerTickets() {
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                             data-ticket-id="${ticket.ticketId}"
-                            data-ticket-status="${ticket.status.displayName}">
-                        <span>${ticket.status.displayName}</span>
+                            data-ticket-status="${estado}">
+                        <span>${estado}</span>
                     </button>
                     <ul class="dropdown-menu">
                         <li style="cursor: pointer"><a class="dropdown-item" data-new-status="En espera">En espera</a></li>
@@ -144,6 +155,7 @@ async function obtenerTickets() {
                 </div>
             `;
             
+            // ... (Resto de la lógica de listeners, permanece igual)
             card.querySelector('.dropdown-menu').addEventListener('click', (event) => {
                 const dropdownItem = event.target.closest('.dropdown-item');
                 if (dropdownItem) {
@@ -162,15 +174,28 @@ async function obtenerTickets() {
         });
 
         // Actualiza los contadores en el header de cada columna con el conteo de la página actual
-        document.querySelector('#en-espera-header-count').innerText = `(${conteoEstados['En espera']})`;
-        document.querySelector('#en-progreso-header-count').innerText = `(${conteoEstados['En progreso']})`;
-        document.querySelector('#completado-header-count').innerText = `(${conteoEstados['Completado']})`;
+        // 🐛 FIX 2: Aseguramos que solo actualizamos headers si existen en el HTML
+        const enEsperaHeader = document.querySelector('#en-espera-header-count');
+        if (enEsperaHeader) {
+            enEsperaHeader.innerText = `(${conteoEstados['En espera']})`;
+        }
+
+        const enProgresoHeader = document.querySelector('#en-progreso-header-count');
+        if (enProgresoHeader) {
+            enProgresoHeader.innerText = `(${conteoEstados['En progreso']})`;
+        }
+
+        const completadoHeader = document.querySelector('#completado-header-count');
+        if (completadoHeader) {
+            completadoHeader.innerText = `(${conteoEstados['Completado']})`;
+        }
 
         // Llama a la función para actualizar los controles de paginación
         actualizarPaginacion();
 
     } catch (err) {
-        console.error("Error al cargar los tickets:", err);
+        // Mantenemos el error, pero ahora estamos seguros que se lanzó en getTickets
+        console.error("Error FATAL al cargar los tickets, revisa el Service para ver por qué lanzó el error:", err);
     }
 }
 
