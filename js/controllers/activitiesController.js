@@ -21,24 +21,25 @@ const prevPageBtn = document.getElementById('prevPage');
 const nextPageBtn = document.getElementById('nextPage');
 const currentPageSpan = document.getElementById('currentPage');
 
-let currentPage = 1;
-let activitiesPerPage = 4;
+let currentPage = 0; 
+let currentSize = 4; 
+let totalPages = 0;
 
-let activitiesData = []; // Caché para almacenar los datos de las actividades
+let activitiesData = [];
 
-// 3. Función para cargar y renderizar las tarjetas de actividades.
-async function loadActivities(limit = null) {
+//  función para cargar y renderizar las tarjetas de actividades
+async function loadActivities(forceReload = false) { 
     try {
-        if(activitiesData.length === 0){
-         const response = await getActivities();
-        activitiesData = response.content || []; // Almacena los datos en la caché   
-        }
+        const searchTerm = searchInput.value.trim();
 
-        activitiesGrid.innerHTML = ''; // Limpia el contenedor antes de renderizar
+        // 🚨 CORRECCIÓN: Ahora llamamos a la API con currentPage, currentSize, y searchTerm
+        const response = await getActivities(currentPage, currentSize, searchTerm);
+        
+        activitiesData = response.content || [];
+        totalPages = response.totalPages || 0;
 
-        const startIndex = (currentPage - 1) * activitiesPerPage;
-        const endIndex = startIndex + activitiesPerPage;
-        const activitiesToRender = activitiesData.slice(startIndex, endIndex);
+        activitiesGrid.innerHTML = '';
+        const activitiesToRender = activitiesData;
         
         if (activitiesToRender.length > 0) {
             activitiesToRender.forEach(activity => {
@@ -57,52 +58,54 @@ async function loadActivities(limit = null) {
     }
 }
 
+
 function updatePaginationControls() {
-    const totalPages = Math.ceil(activitiesData.length / activitiesPerPage);
-    currentPageSpan.textContent = currentPage;
+    currentPageSpan.textContent = currentPage + 1; // muestra la página actual (base 1)
 
-    // Habilita/deshabilita el botón "Anterior"
-    if (currentPage === 1) {
-        prevPageBtn.classList.add('disabled');
-    } else {
-        prevPageBtn.classList.remove('disabled');
-    }
+    // habilita/deshabilita el boton "Anterior"
+    prevPageBtn.classList.toggle('disabled', currentPage === 0);
 
-    // Habilita/deshabilita el botón "Siguiente"
-    if (currentPage === totalPages || activitiesData.length === 0) {
-        nextPageBtn.classList.add('disabled');
-    } else {
-        nextPageBtn.classList.remove('disabled');
-    }
+    // habilita/deshabilita el boton "Siguiente"
+    nextPageBtn.classList.toggle('disabled', currentPage >= totalPages - 1 || totalPages === 0);
 };
+
+async function eliminarActividad(id) {
+    try {
+        await deleteActivity(id);
+        
+        Swal.fire('¡Eliminada!', 'La actividad ha sido eliminada con éxito.', 'success');
+        
+        await loadActivities(); 
+
+    } catch (error) {
+        console.error("Error al eliminar la actividad:", error);
+        Swal.fire('Error', 'Hubo un problema al intentar eliminar la actividad.', 'error');
+    }
+}
 
 
 function addLineBreaks(text, maxLength) {
-  if (text.length > maxLength) {
-    let breakPoint = text.substring(0, maxLength).lastIndexOf(" ");
-    if (breakPoint === -1) {
-      breakPoint = maxLength;
+    if (text.length > maxLength) {
+        let breakPoint = text.substring(0, maxLength).lastIndexOf(" ");
+        if (breakPoint === -1) {
+            breakPoint = maxLength;
+        }
+        return text.substring(0, breakPoint) + "<br>" + text.substring(breakPoint + 1);
     }
-    return text.substring(0, breakPoint) + "<br>" + text.substring(breakPoint + 1);
-  }
-  return text;
+    return text;
 }
 
-// 4. Función para generar el HTML de una tarjeta individual.
 function createActivityCard(activity) {
     const descriptionHtmlParts = [];
     const lines = activity.activityDescription.split('\n');
     let inList = false;
 
-    // Iteramos sobre cada línea de la descripción
     lines.forEach((line, index) => {
         let processedLine = line;
 
-        // Reemplaza negrita y subrayado
         processedLine = processedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         processedLine = processedLine.replace(/__(.*?)__/g, '<u>$1</u>');
 
-        // Verifica si la línea es un elemento de lista de checkboxes
         if (processedLine.match(/^\[( |x)\]\s/)) {
             if (!inList) {
                 descriptionHtmlParts.push('<ul class="list-unstyled mb-0">');
@@ -121,12 +124,10 @@ function createActivityCard(activity) {
                 descriptionHtmlParts.push('</ul>');
                 inList = false;
             }
-            // Si la línea no es un elemento de lista, se considera un párrafo
             descriptionHtmlParts.push(addLineBreaks(processedLine, 46));
         }
     });
 
-    // Cierra la etiqueta <ul> si aún está abierta
     if (inList) {
         descriptionHtmlParts.push('</ul>');
     }
@@ -153,51 +154,32 @@ function createActivityCard(activity) {
 }
 
 //Motor de busqueda 
-searchInput.addEventListener('keyup', (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    
-    // Obtiene todos los elementos que son tarjetas de actividad
-    const cards = document.querySelectorAll('.col-xl-3.col-lg-4.col-md-6.mb-4'); 
-
-    cards.forEach(card => {
-        // Busca el título y la descripción dentro de cada tarjeta
-        const titleElement = card.querySelector('.card-agendada-title');
-        const descriptionElement = card.querySelector('.activity-description');
-        
-        // Verifica si los elementos existen para evitar errores
-        const activityTitle = titleElement ? titleElement.textContent.toLowerCase() : '';
-        const activityDescription = descriptionElement ? descriptionElement.textContent.toLowerCase() : '';
-        
-        // Comprueba si el término de búsqueda está en el título o la descripción
-        if (activityTitle.includes(searchTerm) || activityDescription.includes(searchTerm)) {
-            card.style.display = 'block'; // Muestra la tarjeta
-        } else {
-            card.style.display = 'none'; // Oculta la tarjeta
-        }
-    });
+searchInput.addEventListener('input', (event) => {
+    currentPage = 0;
+    loadActivities();
 });
 
 ticketsPerPage.addEventListener('change', () => {
-    activitiesPerPage = parseInt(ticketsPerPage.value);
-    currentPage = 1;
+    // Actualiza currentSize
+    currentSize = parseInt(ticketsPerPage.value);
+    currentPage = 0;
 
     loadActivities();
 });
 
-// Manejador del botón "Anterior"
+// Manejador del botopn "Anterior"
 prevPageBtn.addEventListener('click', (event) => {
     event.preventDefault(); 
-    if (currentPage > 1) {
+    if (currentPage > 0) {
         currentPage--;
         loadActivities();
     }
 });
 
-// Manejador del botón "Siguiente"
+// Manejador del boton "Siguiente"
 nextPageBtn.addEventListener('click', (event) => {
     event.preventDefault();
-    const totalPages = Math.ceil(activitiesData.length / activitiesPerPage);
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages - 1) { 
         currentPage++;
         loadActivities();
     }
@@ -257,7 +239,6 @@ activitiesGrid.addEventListener('click', async (event) => {
         }
     }
     
-    // Si quieres, aquí puedes manejar también los eventos de los botones de editar y eliminar
     const clickedElement = event.target.closest('[data-action]');
     if (!clickedElement) return;
 
@@ -269,7 +250,22 @@ activitiesGrid.addEventListener('click', async (event) => {
         }
     } else if (clickedElement.matches('.delete-activity-btn')) {
         const activityId = parseInt(clickedElement.dataset.id);
-        // ... Lógica para eliminar la actividad
+        
+        // eliminacion de actividad
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres eliminar esta actividad? ¡No se puede revertir!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545', 
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarActividad(activityId);
+            }
+        });
     }
 });
 
@@ -278,7 +274,7 @@ activitiesGrid.addEventListener('click', async (event) => {
 
 
 
-// 6. Funciones del modal (Crear y Actualizar)
+// funciones de creacion y actualizacion
 const createActivityBtn = document.getElementById('createActivityBtn');
 createActivityBtn.addEventListener('click', () => {
     activityIdInput.value = '';
@@ -297,7 +293,7 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Nuevo: Manejador de eventos para la barra de herramientas de formato
+// manejador de eventos para la barra de herramientas de formato
 formatBar.addEventListener('click', (event) => {
     const action = event.target.closest('[data-action]').dataset.action;
     let start = descriptionInput.selectionStart;
@@ -332,7 +328,7 @@ formatBar.addEventListener('click', (event) => {
     descriptionInput.setSelectionRange(newCursorPos, newCursorPos);
 });
 
-// 7. Manejador de envío del formulario
+// Manejador de envío del formulario
 activityForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -359,21 +355,16 @@ activityForm.addEventListener('submit', async (event) => {
         if (id) {
             await updateActivity(data, id);
             Swal.fire('¡Éxito!', 'La actividad ha sido actualizada.', 'success');
-
-            const activityToUpdate = activitiesData.find(a => a.id === parseInt(id));
-            if (activityToUpdate) {
-                activityToUpdate.activityTitle = title;
-                activityToUpdate.activityDescription = description;
-            }
         } else {
             await createActivity(data);
             Swal.fire('¡Éxito!', 'La actividad ha sido creada.', 'success');
+            currentPage = 0;
         }
         
         const modalInstance = bootstrap.Modal.getInstance(createActivityModal);
         modalInstance.hide();
         activityForm.reset();
-        loadActivities();
+        await loadActivities(true);
         
     } catch (error) {
         console.error("Error al procesar la actividad:", error);
@@ -389,5 +380,5 @@ activityForm.addEventListener('submit', async (event) => {
     }
 });
 
-// 8. Inicia la carga de actividades al cargar la página
+//  carga de actividades al cargar la página
 document.addEventListener('DOMContentLoaded', loadActivities);

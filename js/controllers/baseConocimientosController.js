@@ -27,22 +27,24 @@ const currentPageSpan = document.getElementById('currentPage');
 // 1. Función para cargar datos y renderizar
 async function obtenerSoluciones() {
     try {
-        const data = await getSolutions(currentPage, currentSize);
+        const searchTerm = searchInput.value.trim();
+
+        const data = await getSolutions(currentPage, currentSize, searchTerm, selectedCategoryFilter);
         solutions = data.content;
 
-        const totalSolutions = data.totalElements;
-        const totalPages = Math.ceil(totalSolutions / currentSize);
+        totalPages = data.totalPages
         
         renderizarSoluciones();
 
-        updatePaginationControls(totalPages);
+        updatePaginationControls();
     } catch (error) {
         console.error("Error al obtener las soluciones:", error);
+        contenedorArticulos.innerHTML = '<p class="text-center text-danger">Error al cargar las soluciones.</p>';
     }
 }
 
-function updatePaginationControls(total) {
-    totalPages = total;
+function updatePaginationControls() {
+
     currentPageSpan.textContent = currentPage + 1;
 
     // Deshabilita el botón "Anterior" en la primera página
@@ -86,17 +88,7 @@ ticketsPerPageSelect.addEventListener('change', (event) => {
 function renderizarSoluciones() {
     
 
-    const searchTerm = searchInput.value.toLowerCase();
-    const resultadosFiltrados = solutions.filter(sol => {
-        const titleMatch = sol.solutionTitle.toLowerCase().includes(searchTerm);
-        const descriptionMatch = sol.descriptionS.toLowerCase().includes(searchTerm);
-        const keywordsMatch = sol.keyWords.toLowerCase().includes(searchTerm);
-        
-        // Asegúrate de que la categoría también esté en el filtro
-        const categoryMatch = (selectedCategoryFilter === 'Todos') || (sol.category.displayName === selectedCategoryFilter);
-
-        return (titleMatch || descriptionMatch || keywordsMatch) && categoryMatch;
-    });
+    const resultadosFiltrados = solutions; 
 
     contenedorArticulos.innerHTML = "";
     if (resultadosFiltrados.length === 0) {
@@ -183,14 +175,16 @@ contenedorArticulos.addEventListener('click', (event) => {
 });
 
 // 4. Listeners para los filtros (llaman a renderizarSoluciones)
-searchInput.addEventListener('keyup', () => {
-    renderizarSoluciones();
+searchInput.addEventListener('input', () => {
+    currentPage = 0; // Reinicia la paginación con cada búsqueda
+    obtenerSoluciones();
 });
 
 categoryDropdownItems.forEach(item => {
-    item.addEventListener('click', function (event) {
+     item.addEventListener('click', function (event) {
         event.preventDefault();
-        selectedCategoryFilter = this.getAttribute('data-value');
+
+        selectedCategoryFilter = this.getAttribute('data-value'); 
         
         const newText = this.querySelector('span').textContent;
         const newSVG = this.querySelector('svg').outerHTML;
@@ -200,9 +194,7 @@ categoryDropdownItems.forEach(item => {
         categoryDropdownItems.forEach(el => el.classList.remove('active'));
         this.classList.add('active');
 
-        currentPage = 0;
-        currentPageSpan.textContent = currentPage + 1;
-
+        currentPage = 0; // Reinicia la paginación al cambiar el filtro
         obtenerSoluciones();
     });
 });

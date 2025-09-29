@@ -1,46 +1,28 @@
-// 1. Obtener el token de autenticación desde el localStorage
-const token = localStorage.getItem('authToken');
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
+
+const API_URL = 'http://localhost:8080/api';
 
 const commonHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${ token }`
-    };
+};
 
 /**
- * Obtiene la cantidad de tickets por estado desde la API.
- * @returns {Promise<Object>} Un objeto con el conteo de tickets.
+ * Obtiene la cantidad de tickets por estado desde la API
+ * @returns {Promise<Object>} Un objeto con el conteo de tickets
  */
-
 export async function getTicketCounts() {
     try {
-
-        // 2. Si no hay token, no se puede hacer la solicitud.
-        if (!token) {
-            console.error("No se encontró un token de autenticación. La solicitud no se puede realizar.");
-            return {
-                enEspera: 0,
-                enProceso: 0,
-                cerradas: 0
-            };
-        }
-
-        const response = await fetch('http://localhost:8080/api/GetTicketCounts', {
-            method: 'GET',
-            headers: commonHeaders
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos de la API');
-        }
-
-        const counts = await response.json();
+        // La función `fetchWithAuth` ya se encarga del token y la autenticación
+        const response = await fetchWithAuth(`${API_URL}/admin/GetTicketCounts`);
 
         // Mapea los nombres de estado de la base de datos a los IDs del HTML
         const mappedCounts = {
-            enEspera: counts['En espera'] || 0,
-            enProceso: counts['En Progreso'] || 0,
-            cerradas: counts['Completado'] || 0
+            enEspera: response['En espera'] || 0,
+            enProceso: response['En Progreso'] || 0,
+            cerradas: response['Completado'] || 0
         };
+
 
         return mappedCounts;
     } catch (error) {

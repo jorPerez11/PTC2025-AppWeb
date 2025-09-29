@@ -1,5 +1,5 @@
 // Importamos la función de login desde nuestro servicio.
-import { login } from "../services/serviceLogin.js";
+import { login, me } from "../services/serviceLogin.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // --- Referencias a elementos del DOM ---
@@ -130,24 +130,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const userData = await me();
+
             // 2. Si la contraseña es válida, guarda el token de larga duración
-            localStorage.setItem('authToken', loginResponse.token);
-            localStorage.setItem('username', loginResponse.username);
-            localStorage.setItem('rolId', loginResponse.rolId);
+            localStorage.setItem('user_username', userData.username);
+            localStorage.setItem('user_rol', userData.rol);
+            localStorage.setItem('userId', userData.userId);
 
-            console.log("Inicio de sesión exitoso. Rol ID:", loginResponse.rolId);
-
-            const rolIdNumber = parseInt(loginResponse.rolId); // Convierte a número
+            console.log("Inicio de sesión exitoso. Rol:", userData.rol);
 
             // 3. Redirección basada en el rol
-            switch (rolIdNumber) {
-                case 3: // Administrador
+            switch (userData.rol) {
+                case "ADMINISTRADOR": // Administrador
                     window.location.href = 'PlataformaWebInicio/PW_Inicio.html';
                     break;
-                case 2: // Técnico
+                case "TECNICO": // Técnico
                     window.location.href = "PlataformaWebInicio/PW_Inicio.html";
                     break;
-                case 1: // Cliente
+                case "CLIENTE": // Cliente
                     window.location.href = "index.html";
                     break;
                 default:

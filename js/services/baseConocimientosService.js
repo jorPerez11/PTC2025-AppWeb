@@ -1,26 +1,33 @@
-const API_URL = "http://localhost:8080/api";
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
 
-let tokenFijo = localStorage.getItem('authToken');
+const API_URL = "http://localhost:8080/api";
 
 // Define los encabezados comunes, incluyendo el token de autorización
 const commonHeaders = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${tokenFijo}`
 };
 
-export async function getSolutions(page = 0, size = 10) {
+export async function getSolutions(page = 0, size = 10, searchTerm = '', categoryFilter = 'Todos') {
     try {
-        const response = await fetch(`${API_URL}/GetSolutions?page=${page}&size=${size}`, {
-            method: 'GET',
-            headers: commonHeaders
-        });
+        // 1. Iniciar la URL con paginación
+        let url = `${API_URL}/GetSolutionsWeb?page=${page}&size=${size}`;
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+        // 2. Añadir el término de búsqueda si existe (usando 'search' como parámetro)
+        if (searchTerm.trim() !== '') {
+            url += `&search=${encodeURIComponent(searchTerm)}`; 
         }
 
-        const data = await response.json();
-        return data;
+        // 3. Añadir el filtro de categoría si no es 'Todos'
+        // Asumiendo que la API espera 'categoryId' o 'category' como parámetro para filtrar por ID
+        if (categoryFilter !== 'Todos') {
+            url += `&category=${categoryFilter}`; 
+        }
+        
+        console.log("URL de Búsqueda y Filtro de Soluciones:", url); 
+
+        const response = await fetchWithAuth(url);
+        return response;
     } catch (error) {
         console.error("Error al obtener las soluciones:", error);
         throw error;
@@ -29,18 +36,15 @@ export async function getSolutions(page = 0, size = 10) {
 
 export async function createSolution(data) {
     try {
-        const response = await fetch(`${API_URL}/PostSolution`, {
+        const response = await fetchWithAuth(`${API_URL}/PostSolution`, {
             method: "POST",
-            headers: commonHeaders,
-            body: JSON.stringify(data)
+            body: JSON.stringify(data) 
         });
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
 
-        // Si la creación es exitosa, podrías querer devolver algo o manejar la respuesta.
-        return response.json();
+        return response;
     } catch (error) {
         console.error("Error al crear la solución:", error);
         throw error;
@@ -48,24 +52,25 @@ export async function createSolution(data) {
 }
 
 export async function updateSolution(solutionId, data) {
+
+    const url = `${API_URL}/UpdateSolution/${solutionId}`;
+
     try {
-        const response = await fetch(`${API_URL}/UpdateSolution/${solutionId}`, {
+
+        const response = await fetchWithAuth(url, {
             method: "PATCH",
-            headers: commonHeaders,
-            body: JSON.stringify(data)
+            // fetchWithAuth se encarga de JSON.stringify(body) si sigue la convención
+            // Si no sigue la convención, se pasaría como 'body' normal:
+            body: JSON.stringify(data) 
         });
         
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
 
-        if (response.status === 204 || response.status === 202 || response.headers.get('content-length') === '0') {
-        return {}; // Devuelve un objeto vacío y sal de la función.
-        }
 
-        
         // Maneja la respuesta de la actualización si es necesario
-        return response.json();
+        return response;
     } catch (error) {
         console.error("Error al actualizar la solución:", error);
         throw error;
@@ -74,18 +79,17 @@ export async function updateSolution(solutionId, data) {
 
 export async function deleteSolution(id) {
     try {
-        const response = await fetch(`${API_URL}/DeleteSolution/${id}`, {
-            method: "DELETE",
-            headers: commonHeaders
+        const response = await fetchWithAuth(`${API_URL}/DeleteSolution/${id}`, {
+            method: "DELETE"
         });
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
 
         // Maneja la respuesta de la eliminación si es necesario
         // Por ejemplo, podrías devolver un estado de éxito
-        return { status: "success" };
+        return response;
     } catch (error) {
         console.error("Error al eliminar la solución:", error);
         throw error;
