@@ -1,6 +1,9 @@
 // La URL base la API, apuntando al controlador de usuarios.
 const API_URL = 'http://localhost:8080/api/users';
 
+// URL para endpoints de compañías (nueva constante)
+const COMPANY_API_URL = 'http://localhost:8080/api';
+
 /**
  * Envía las credenciales al backend para su validación.
  * @param {object} credentials - Un objeto con 'username' y 'password'.
@@ -26,20 +29,18 @@ export async function login(credentials) {
  */
 export async function checkCompanyExistence() {
     try {
-        const response = await fetch(`${API_URL}/check-company-existence`, {
+        const response = await fetch(`${COMPANY_API_URL}/check-company-existence`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
         
         if (!response.ok) {
             console.error("Error del servidor al verificar la existencia de compañías:", response.status, await response.text());
-            return false; // Devuelve false en caso de error HTTP
+            return false;
         }
         
-        // Decodificamos el JSON y devolvemos el valor booleano
         return await response.json();
     } catch (error) {
-        // En caso de fallo en la red (ej. API no disponible)
         console.error("Fallo de red al verificar la existencia de compañías:", error);
         return false;
     }

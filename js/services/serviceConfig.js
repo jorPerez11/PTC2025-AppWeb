@@ -23,8 +23,8 @@ export async function getUserId() {
         });
 
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || `Error al obtener el ID: ${res.status} ${res.statusText}`);
+            const errorText = await res.text();
+            throw new Error(`Error ${res.status}: ${errorText}`);
         }
 
         const userData = await res.json();
@@ -43,22 +43,33 @@ export async function getUser(userId) {
         });
 
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || `Error al cargar el usuario: ${res.status} ${res.statusText}`);
+            const errorText = await res.text();
+            throw new Error(`Error ${res.status}: ${errorText}`);
         }
-        return await res.json();
+
+        const userData = await res.json();
+
+        return userData;
     } catch (err) {
         console.error('Error en getUser:', err);
         throw err;
     }
 }
 
-/**
- * Actualiza los datos del usuario en la API.
- */
 export async function updateUser(userId, formData) {
     try {
         const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            throw new Error('No hay token de autenticación');
+        }
+        
+        // Debug mejorado
+        for (let pair of formData.entries()) {
+            if (pair[0] === 'profilePicture') {
+            } else {
+            }
+        }
+
         const response = await fetch(`${API_URL}/users/${userId}/profile`, {
             method: 'POST',
             headers: {
@@ -66,12 +77,22 @@ export async function updateUser(userId, formData) {
             },
             body: formData
         });
-
+        
         if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${await response.text()}`);
+            let errorMessage = `Error ${response.status}: `;
+            try {
+                const errorData = await response.json();
+                errorMessage += errorData.error || 'Error desconocido';
+            } catch {
+                const errorText = await response.text();
+                errorMessage += errorText || 'Error sin mensaje';
+            }
+            throw new Error(errorMessage);
         }
 
-        return await response.json();
+        const result = await response.json();
+        return result;
+
     } catch (error) {
         console.error('Error en updateUser:', error);
         throw error;
