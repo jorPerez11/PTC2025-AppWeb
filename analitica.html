@@ -18,102 +18,11 @@
     <!-- Bootstrap JS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="css/styleAnalitica.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
-    <div class="container">
-        <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
-            <div class="container-fluid justify-content-between">
-                <a href="/PTC2025-AppWeb/PlataformaWebInicio/PW_Inicio.html" class="navbar-brand mb-0 h1 mx-auto">
-                    <img src="img/H2C_LOGO_WHITE.png" alt="H2C - Help Desk" width="60px" height="60px">
-                    H2C
-                </a>
-                <!--Botón hamburguesa para pantallas sm y md-->
-                <button type="button" data-bs-toggle="collapse" data-bs-target="#navbarContenido" class="navbar-toggler"
-                    aria-controls="navbarContenido" aria-expanded="false" aria-label="Activar Navegación">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarContenido">
-                    <div class="navbar-content ms-4">
-                        <ul class="navbar-nav me-auto ms-2 ">
-                            <li class="nav-item active mb-1 me-3 ">
-                                <a href="PlataformaWebInicio/PW_Inicio.html" class="nav-link">
-                                    Inicio
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="tickets.html" class="nav-link">
-                                    Tickets
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="clientesAdmin.html" class="nav-link">
-                                    Clientes
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="analitica.html" class="nav-link">
-                                    Analítica
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="baseConocimiento.html" class="nav-link">
-                                    Base de conocimientos
-                                </a>
-                            </li>
-                            <li class="nav-item active me-3">
-                                <a href="activities.html" class="nav-link">
-                                    Actividades
-                                </a>
-                            </li>
-
-                            <div class="d-sm-block d-xl-none">
-                                <hr class="nav-separator mt-2 mb-2">
-                                <li class="nav-item active me-3">
-                                    <img src="img/notificationIcon.png" alt="">
-                                    <a href="navbarNotificaciones.html" class="nav-link">
-                                        Notificaciones
-                                    </a>
-                                </li>
-                                <li class="nav-item active me-3">
-                                    <img src="img/configIcon.png" alt="">
-                                    <a href="navbarConfig.html" class="nav-link">
-                                        Configuración
-                                    </a>
-                                </li>
-                                <li class="nav-item active me-3">
-                                    <img src="img/userIcon.png" style="width: 2rem; margin-right: 4px;" alt="">
-                                    <a href="navbarConfig.html" class="nav-link">
-                                        Mi Perfil
-                                    </a>
-                                </li>
-                            </div>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="d-none align-items-center gap-2 d-none d-xl-flex">
-                    <a href="navbarNotificaciones.html">
-                        <button type="button" class="btn botonNotificaciones mx-2">
-                            <img src="img/notificationIcon.png" alt="">
-                        </button>
-                    </a>
-                    <a href="navbarConfig.html">
-                        <button type="button" class="btn botonConfig me-2">
-                            <img src="img/configIcon.png" alt="">
-                        </button>
-                    </a>
-                    <div class="separator"></div>
-                    <a href="navbarConfig.html">
-                        <button type="button" class="btn botonUser me-2">
-                            <img src="img/userIcon.png" alt="">
-                        </button>
-                    </a>
-
-                </div>
-            </div>
-        </nav>
-    </div>
+    <!-- EL NAVBAR SE INYECTA AUTOMÁTICAMENTE AQUÍ -->
 
     <section class="hero-section position-relative">
         <section class="analytics-banner text-white py-5">
@@ -139,14 +48,17 @@
                     <div class="card shadow-lg">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
-                                <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="37" height="37" viewBox="0 0 37 37" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_187_117)">
-                                    <path d="M24.013 19.4957L20.1667 17.2755V9.16667C20.1667 8.68044 19.9735 8.21412 19.6297 7.8703C19.2859 7.52649 18.8196 7.33333 18.3333 7.33333C17.8471 7.33333 17.3808 7.52649 17.037 7.8703C16.6932 8.21412 16.5 8.68044 16.5 9.16667V18.3333C16.5 18.6551 16.5847 18.9713 16.7456 19.25C16.9065 19.5287 17.138 19.7601 17.4167 19.921L22.1797 22.671C22.3883 22.7933 22.619 22.8731 22.8585 22.9058C23.0981 22.9386 23.3417 22.9236 23.5755 22.8618C23.8092 22.8 24.0284 22.6926 24.2205 22.5458C24.4126 22.3989 24.5737 22.2155 24.6946 22.0061C24.8155 21.7967 24.8937 21.5655 24.9249 21.3257C24.9561 21.086 24.9395 20.8424 24.8762 20.6091C24.8128 20.3757 24.7039 20.1572 24.5558 19.9661C24.4077 19.7751 24.2232 19.6152 24.013 19.4957ZM18.3333 0C14.7074 0 11.1628 1.07523 8.14789 3.08972C5.13299 5.10422 2.78316 7.96749 1.39555 11.3175C0.00794354 14.6674 -0.355118 18.3537 0.352278 21.91C1.05967 25.4663 2.80575 28.733 5.36972 31.297C7.93368 33.8609 11.2004 35.607 14.7567 36.3144C18.313 37.0218 21.9992 36.6587 25.3492 35.2711C28.6992 33.8835 31.5625 31.5337 33.5769 28.5188C35.5914 25.5039 36.6667 21.9593 36.6667 18.3333C36.6618 13.4725 34.7287 8.81218 31.2916 5.37507C27.8545 1.93795 23.1942 0.00485354 18.3333 0ZM18.3333 33C15.4325 33 12.5969 32.1398 10.185 30.5282C7.77306 28.9166 5.89319 26.626 4.78311 23.946C3.67302 21.266 3.38257 18.3171 3.94849 15.472C4.51441 12.627 5.91127 10.0136 7.96244 7.96243C10.0136 5.91126 12.627 4.5144 15.472 3.94848C18.3171 3.38257 21.266 3.67302 23.946 4.7831C26.626 5.89319 28.9166 7.77305 30.5282 10.185C32.1398 12.5969 33 15.4325 33 18.3333C32.9952 22.2217 31.4484 25.9494 28.6989 28.6989C25.9494 31.4484 22.2217 32.9951 18.3333 33Z" fill="#DC2F02"/>
+                                        <path
+                                            d="M24.013 19.4957L20.1667 17.2755V9.16667C20.1667 8.68044 19.9735 8.21412 19.6297 7.8703C19.2859 7.52649 18.8196 7.33333 18.3333 7.33333C17.8471 7.33333 17.3808 7.52649 17.037 7.8703C16.6932 8.21412 16.5 8.68044 16.5 9.16667V18.3333C16.5 18.6551 16.5847 18.9713 16.7456 19.25C16.9065 19.5287 17.138 19.7601 17.4167 19.921L22.1797 22.671C22.3883 22.7933 22.619 22.8731 22.8585 22.9058C23.0981 22.9386 23.3417 22.9236 23.5755 22.8618C23.8092 22.8 24.0284 22.6926 24.2205 22.5458C24.4126 22.3989 24.5737 22.2155 24.6946 22.0061C24.8155 21.7967 24.8937 21.5655 24.9249 21.3257C24.9561 21.086 24.9395 20.8424 24.8762 20.6091C24.8128 20.3757 24.7039 20.1572 24.5558 19.9661C24.4077 19.7751 24.2232 19.6152 24.013 19.4957ZM18.3333 0C14.7074 0 11.1628 1.07523 8.14789 3.08972C5.13299 5.10422 2.78316 7.96749 1.39555 11.3175C0.00794354 14.6674 -0.355118 18.3537 0.352278 21.91C1.05967 25.4663 2.80575 28.733 5.36972 31.297C7.93368 33.8609 11.2004 35.607 14.7567 36.3144C18.313 37.0218 21.9992 36.6587 25.3492 35.2711C28.6992 33.8835 31.5625 31.5337 33.5769 28.5188C35.5914 25.5039 36.6667 21.9593 36.6667 18.3333C36.6618 13.4725 34.7287 8.81218 31.2916 5.37507C27.8545 1.93795 23.1942 0.00485354 18.3333 0ZM18.3333 33C15.4325 33 12.5969 32.1398 10.185 30.5282C7.77306 28.9166 5.89319 26.626 4.78311 23.946C3.67302 21.266 3.38257 18.3171 3.94849 15.472C4.51441 12.627 5.91127 10.0136 7.96244 7.96243C10.0136 5.91126 12.627 4.5144 15.472 3.94848C18.3171 3.38257 21.266 3.67302 23.946 4.7831C26.626 5.89319 28.9166 7.77305 30.5282 10.185C32.1398 12.5969 33 15.4325 33 18.3333C32.9952 22.2217 31.4484 25.9494 28.6989 28.6989C25.9494 31.4484 22.2217 32.9951 18.3333 33Z"
+                                            fill="#DC2F02" />
                                     </g>
                                     <defs>
-                                    <clipPath id="clip0_187_117">
-                                    <rect width="36.6667" height="36.6667" fill="white"/>
-                                    </clipPath>
+                                        <clipPath id="clip0_187_117">
+                                            <rect width="36.6667" height="36.6667" fill="white" />
+                                        </clipPath>
                                     </defs>
                                 </svg>
 
@@ -212,8 +124,8 @@
                         </div>
                     </div>
                 </div>
-                
-                
+
+
 
 
                 <div class="container">
@@ -297,6 +209,13 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Incluye SweetAlert2 desde CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Navbar -->
+    <script type="module" src="js/navbarLoader.js" defer></script>
 
     <!-- Mi JS-->
     <script type="module" src="js/controllers/controllerAnalitica.js"></script>

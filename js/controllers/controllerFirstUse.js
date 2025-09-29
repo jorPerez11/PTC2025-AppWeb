@@ -8,7 +8,7 @@ import {
     guardarPaso1EnAPI
 } from '../services/serviceFirstUse.js';
 
-import { deleteRecordsFromAPI, updateDataInAPI } from '../services/serviceFirstUse.js';
+import { deleteRecordsFromAPI, updateDataInAPI, activatePendingTechniciansAPI } from '../services/serviceFirstUse.js';
 
 import { finalizarAdminSetupAPI } from '../services/serviceFirstUse.js';
 
@@ -19,6 +19,7 @@ import {
     guardarDatosPaso4
 } from '../utils/storageHelperFirstUse.js';
 
+import { handleFinalizarSetup } from './controllerPaso4.js';
 import { initPaso2, restaurarDatosPaso2 } from './controllerPaso2.js';
 import { initPaso3, restaurarDatosPaso3 } from './controllerPaso3.js';
 import { restaurarDatosPaso4 } from './controllerPaso4.js';
@@ -26,7 +27,7 @@ import { restaurarDatosPaso4 } from './controllerPaso4.js';
 // Variable global
 export let pasoActualGlobal = 1;
 export let companyId = null;
-export let adminId = null;
+export let adminId = localStorage.getItem('adminId');
 
 // Funciones principales
 export function actualizarIndicadorPaso() {
@@ -285,24 +286,90 @@ export async function siguientePaso() {
 
             try {
                 const adminId = localStorage.getItem('adminId');
+                const companyId = Number(localStorage.getItem('companyId'));
+
+                console.log("Verificando datos antes de finalizar:");
+                console.log("- Admin ID:", adminId);
+                console.log("- Company ID:", companyId);
+
                 if (!adminId) {
                     throw new Error("El ID del administrador no se encontró. Por favor, vuelva a iniciar el proceso.");
                 }
 
-                const resultado = await finalizarAdminSetupAPI(adminId);
-                console.log("Configuración finalizada exitosamente:", resultado);
+                if (!companyId || companyId === 0) {
+                    throw new Error("El ID de la compañía no se encontró. Por favor, vuelva a iniciar el proceso.");
+                }
+
+                // EJECUTAR AMBAS OPERACIONES CON VERIFICACIÓN
+                console.log("Iniciando proceso de finalización...");
+
+                // 1. Enviar credenciales a técnicos (si hay equipo)
+                const equipoGuardado = JSON.parse(localStorage.getItem("miEquipo") || "[]");
+                let techniciansResult = null;
+
+                if (equipoGuardado.length > 0) {
+                    console.log("👥 Enviando credenciales a técnicos...");
+                    techniciansResult = await activatePendingTechniciansAPI(companyId);
+                    console.log("Resultado envío de credenciales:", techniciansResult);
+
+                    // VALIDACIÓN MODIFICADA: No fallar si activatedCount es 0
+                    if (!techniciansResult) {
+                        throw new Error("No se recibió respuesta del servidor al enviar credenciales.");
+                    }
+
+                    // Solo fallamos si hay un error explícito en la respuesta
+                    if (techniciansResult.error) {
+                        throw new Error(techniciansResult.error);
+                    }
+
+                    // Si activatedCount es 0, es porque los técnicos ya estaban activos (lo cual es normal)
+                    if (techniciansResult.activatedCount === 0) {
+                        console.log("ℹ️ Los técnicos ya estaban activos, pero se enviaron las credenciales");
+                    }
+                } else {
+                    console.log("No hay técnicos para notificar");
+                }
+
+                // 2. Finalizar configuración del admin
+                console.log("👨‍💼 Finalizando configuración del admin...");
+                const adminResult = await finalizarAdminSetupAPI(adminId);
+                console.log("Resultado configuración admin:", adminResult);
+
+                if (!adminResult) {
+                    throw new Error("No se pudo finalizar la configuración del administrador.");
+                }
+
+                // 3. Verificar que AMBAS operaciones fueron exitosas
+                // MODIFICACIÓN: techniciansResult puede tener activatedCount = 0 y seguir siendo exitoso
+                const ambasExitosas = adminResult && (equipoGuardado.length === 0 || techniciansResult);
+
+                if (!ambasExitosas) {
+                    throw new Error("No se completaron todas las operaciones requeridas.");
+                }
+
+                console.log("🎉 ¡Todas las operaciones completadas exitosamente!");
 
                 // Restaura el cursor a su estado normal en caso de éxito
                 document.body.style.cursor = 'default';
+
+                // Mostrar mensaje de éxito según si hay técnicos o no
+                const equipoCount = equipoGuardado.length;
+                const tecnicosNotificados = techniciansResult?.activatedCount || equipoCount;
+
+                const mensajeExito = equipoCount > 0
+                    ? `<p>✓ ${tecnicosNotificados} técnicos notificados con sus credenciales</p>`
+                    : '';
 
                 Swal.fire({
                     icon: 'success',
                     title: '¡Configuración completa!',
                     html: `
-                        <p>La configuración de tu equipo ha finalizado.</p>
-                        <p>Las credenciales de acceso han sido enviadas al correo electrónico del administrador.</p>
-                        <p class="mt-3">Por favor, revisa tu bandeja de entrada y utiliza la contraseña temporal para iniciar sesión.</p>
-                     `,
+                <div style="text-align: left;">
+                    <p>✓ Administrador activado y notificado</p>
+                    ${mensajeExito}
+                    <p>✓ Se han enviado las credenciales por correo electrónico</p>
+                </div>
+            `,
                     confirmButtonText: 'Ir a Iniciar Sesión',
                     confirmButtonColor: '#28a745'
                 }).then(() => {
@@ -314,12 +381,19 @@ export async function siguientePaso() {
                 // Restaura el cursor a su estado normal en caso de error
                 document.body.style.cursor = 'default';
 
+                console.error("❌ Error en el proceso de finalización:", error);
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de finalización',
-                    text: error.message
+                    html: `
+                <div style="text-align: left;">
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Por favor, verifica que todos los datos estén correctos y vuelve a intentarlo.</p>
+                </div>
+            `,
+                    confirmButtonText: 'Reintentar'
                 });
-                console.error("Error al finalizar la configuración:", error);
             }
         });
         return;

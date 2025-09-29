@@ -1,110 +1,62 @@
 body {
     font-family: "Montserrat", sans-serif;
     background-color: #f8f9fa;
-    /* Fondo más claro para el resto de la página */
     margin: 0;
-    /* Asegura que no haya márgenes por defecto */
     padding: 0;
 }
 
-.navbar {
-    background-color: #03071E;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.separator {
-    width: 2px;
-    height: 25px;
-    background-color: rgba(255, 255, 255, 0.5);
-    margin: 0 10px;
+/* Mejora el contraste y legibilidad */
+.dropdown-item:active {
+    background-color: #F48C06 !important;
+    color: #03071E !important;
 }
 
-/* Estilos de navegación y botones */
-.navbar-nav {
-    padding-right: 30px;
+/* Estilos para los botones de notificaciones y configuración */
+.botonNotificaciones,
+.botonConfig {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
 }
 
-.nav-item {
-    font-size: 18px;
-    font-weight: 300;
-    white-space: nowrap;
+.botonNotificaciones:hover,
+.botonConfig:hover {
+    transform: scale(1.1) !important;
 }
 
-.navbar-toggler {
-    border: none;
+.botonNotificaciones:focus,
+.botonConfig:focus {
+    box-shadow: 0 0 0 2px rgba(244, 140, 6, 0.5) !important;
 }
 
-.navbar-toggler:focus {
-    box-shadow: none;
+/* Asegurar que el z-index sea correcto */
+.dropdown {
+    position: relative !important;
 }
 
-.navbar-toggler-icon:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
+.dropdown-menu {
+    z-index: 1000 !important;
 }
 
-.botonRegistro {
-    background-color: #F48C06;
-    color: white;
-    width: auto;
-    height: auto;
-    font-size: 18px;
+/* Estilos para el icono de usuario en el dropdown de desktop */
+.btn.botonUser img {
+    transition: all 0.3s ease !important;
+    border-radius: 50% !important;
 }
 
-.botonRegistro:hover {
-    background-color: #a45d00;
-    color: white;
-}
-
-.botonRegistro:focus {
-    background-color: #a45d00;
-    color: white;
-}
-
-.botonInicioSesion {
-    width: auto;
-    height: auto;
-    font-size: 18px;
-}
-
-.botonInicioSesion:focus {
-    box-shadow: none;
-}
-
-.nav-link {
-    color: white;
-    display: inline-block;
-    text-decoration: none;
-    position: relative;
-}
-
-.nav-link:hover {
-    color: #F48C06;
-    position: relative;
-}
-
-.nav-link::before {
-    content: '';
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: #F48C06;
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::before {
-    width: 100%;
-}
-
-.nav-separator {
-    border: 0;
-    height: 1px;
-    background-color: white;
-    width: 25%;
-    width: calc(100% - 30px);
+.btn.botonUser:hover img {
+    box-shadow: 0 0 0 2px #F48C06 !important;
 }
 
 .header {

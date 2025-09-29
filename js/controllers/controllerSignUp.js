@@ -1,7 +1,28 @@
 // Importamos la función de registro desde nuestro servicio.
-import { register } from "../services/serviceSignUp.js";
+import { register, checkCompanyExistence } from "../services/serviceSignUp.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+    // --- VERIFICACIÓN INMEDIATA AL CARGAR LA PÁGINA ---
+    // Mostrar cursor de carga inmediatamente
+    document.body.style.cursor = 'wait';
+    try {
+        const companyExists = await checkCompanyExistence();
+        if (!companyExists) {
+            // Si no hay compañías, redirigir inmediatamente al primer uso
+            console.log("No hay compañías existentes, redirigiendo al primer uso...");
+            window.location.href = "primerUso.html";
+            return; // Importante: salir de la función para no cargar el formulario
+        }
+    } catch (error) {
+        // Restaurar cursor normal en caso de error
+        document.body.style.cursor = 'default';
+        console.error("Error al verificar existencia de compañías:", error);
+        // En caso de error, mostramos el formulario normal pero con un mensaje de advertencia
+        showGlobalMessage("Error al verificar el estado del sistema. Puede continuar con el registro.", 'error');
+    }
+
+    // --- SOLO SI HAY COMPAÑÍAS EXISTENTES, CARGAMOS EL FORMULARIO DE REGISTRO NORMAL ---
+
     // --- Referencias a elementos del DOM ---
     const registerForm = document.getElementById("registerForm");
     const fullNameInput = document.getElementById("inputFullName");
@@ -53,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showGlobalMessage("El nombre de usuario solo puede contener letras, números y guiones bajos.", 'error');
             return;
         }
-        
+
         // 4. Validación de formato de email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(userData.email)) {
@@ -66,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showGlobalMessage("Por favor, ingresa un número de teléfono válido.", 'error');
             return;
         }
-        
+
         // 6. Validación de la cantidad de caracteres (min y max)
         if (userData.name.length < 5 || userData.name.length > 100) {
             showGlobalMessage("El nombre completo debe tener entre 5 y 100 caracteres.", 'error');
