@@ -19,6 +19,28 @@ body {
     margin: 0 10px;
 }
 
+/* Estilos para el enlace dropdown (Mi Perfil) */
+
+/* 1. Regla para eliminar el subrayado (::before) en cualquier estado */
+.nav-link.dropdown-toggle::before,
+.nav-link.dropdown-toggle:hover::before {
+    display: none !important;
+    width: 0 !important;
+    content: none !important;
+}
+
+/* 2. Regla para mantener el color naranja cuando el dropdown está abierto (estado 'show') */
+/* Bootstrap añade la clase 'show' al elemento al que se hace clic */
+.nav-link.dropdown-toggle.show {
+    color: #F48C06 !important;
+}
+
+/* 3. Regla para asegurar el color naranja al hacer hover */
+/* Esto ya existía, pero lo mantenemos para especificidad */
+.nav-link.dropdown-toggle:hover {
+    color: #F48C06 !important;
+}
+
 /* Estilos de navegación y botones */
 .navbar-nav {
     padding-right: 30px;
