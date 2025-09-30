@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 export async function login({username, password}) {
     const response = await fetch(`${API_URL}/users/login`, {

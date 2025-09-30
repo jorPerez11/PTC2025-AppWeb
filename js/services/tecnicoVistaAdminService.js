@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 let tokenFijo = localStorage.getItem('authToken');
 // Define los encabezados comunes, incluyendo el token de autorización
