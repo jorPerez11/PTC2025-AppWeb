@@ -1,12 +1,12 @@
 // Constantes de API
-const API_URL2 = "http://localhost:8080/api/firstuse/categorias";
-const API_URL = "http://localhost:8080/api/firstuse/tecnicoData";
+const API_URL2 = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/categorias";
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/tecnicoData";
 const IMG_API_URL = "https://api.imgbb.com/1/upload?key=2c2a83d4ddbff10c8af95b3159d53646";
-const API_TECNICOS_PENDIENTES = "http://localhost:8080/api/firstuse/tecnicos-pendientes";
-const API_ASIGNAR_CATEGORIA = "http://localhost:8080/api/firstuse/tecnicos";
-const API_COMPANY_URL = 'http://localhost:8080/api';
-const API_REGISTER_ADMIN = 'http://localhost:8080/api/firstuse/register-admin';
-const API_USERS_URL = 'http://localhost:8080/api/users';
+const API_TECNICOS_PENDIENTES = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/tecnicos-pendientes";
+const API_ASIGNAR_CATEGORIA = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/tecnicos";
+const API_COMPANY_URL = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api';
+const API_REGISTER_ADMIN = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/register-admin';
+const API_USERS_URL = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/users';
 
 // Función para el registro inicial (POST)
 export async function guardarPaso1EnAPI(companyData, adminData) {

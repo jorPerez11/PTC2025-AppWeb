@@ -7,7 +7,7 @@ const API_Clients = 'https://retoolapi.dev/KaRBTk/clienteData';
 import { fetchWithAuth } from "../services/serviceLogin.js";
 
 // URL de la API real de Spring Boot
-const API_Tickets = 'http://localhost:8080/api/tickets';
+const API_Tickets = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/tickets';
 
 // Se obtiene el token de autenticación
 let tokenFijo = localStorage.getItem('authToken');
