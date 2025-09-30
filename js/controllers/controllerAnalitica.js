@@ -14,15 +14,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// FUNCIÓN PARA CALCULAR EL PROGRESO ANUAL EN PORCENTAJE
+    function calculateYearProgress() {
+        const now = new Date();
+        const startOfYear = new Date(now.getFullYear(), 0, 1); // 1 de enero
+        const endOfYear = new Date(now.getFullYear() + 1, 0, 1); // 1 de enero del siguiente año
+
+        const totalDuration = endOfYear - startOfYear;
+        const elapsedDuration = now - startOfYear;
+        const progressPercentage = (elapsedDuration / totalDuration) * 100;
+
+        // se usa math.round() para obtener el redondeado del numero
+        return Math.min(100, Math.round(progressPercentage));
+    }
+
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- VALORES CONFIGURABLES ---
-    const rendimientoValue = 75; // Valor de 0 a 100
-    const progresoValue = 35; // Valor de 0 a 100
+    // Carga los conteos de tickets primero para calcular el rendimiento
+    const ticketCounts = await getTicketCounts();
+
+    const rendimientoValue = calculatePerformanceValue(ticketCounts); // Valor calculado de la efectividad
+    const progresoValue = calculateYearProgress(); // Valor de progreso anual
+    const rendimientoRating = getPerformanceRating(rendimientoValue);
 
     
 
-    // --- FUNCIÓN PARA ANIMAR NÚMEROS ---
+    // FUNCIÓN PARA ANIMAR NÚMEROS 
+
     function animateValue(element, start, end, duration) {
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -34,12 +52,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.requestAnimationFrame(step);
     }
 
-    // --- 1. LÓGICA PARA GRÁFICO DE RENDIMIENTO (PERSONALIZADO) ---
-    function initRendimientoChart(value) {
+    //  LÓGICA PARA GRÁFICO DE RENDIMIENTO (PERSONALIZADO) 
+
+    function initRendimientoChart(value, rating) {
         const needle = document.getElementById('gaugeNeedle');
         const starsContainer = document.getElementById('rendimientoStars');
+        const rendimientoLabel = document.getElementById('rendimientoPercentage');
+        
+        // MOSTRAR LA CALIFICACIÓN DE TEXTO
+        const ratingElement = document.getElementById('rendimientoLabel'); 
+        if (ratingElement) {
+             ratingElement.textContent = rating; // Actualiza el texto (Excelente, Bueno, etc.)
+        }
+
+        if (rendimientoLabel) {
+            animateValue(rendimientoLabel, 0, value, 1500);
+        }
+
+        // Rotación de la aguja y estrellas
         const rotation = (value / 100) * 180 - 90;
-        const starCount = Math.max(1, Math.ceil(value / 20));
+        // La cuenta de estrellas también se ajusta correctamente con valor = 0
+        const starCount = Math.max(0, Math.ceil(value / 20)); 
 
         let starsHTML = '';
         for (let i = 0; i < 5; i++) {
@@ -47,15 +80,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         starsContainer.innerHTML = starsHTML;
 
-        setTimeout(() => { needle.style.transform = `rotate(${rotation}deg)`; }, 100);
+        setTimeout(() => { 
+            needle.style.transform = `rotate(${rotation}deg)`; 
+        }, 100);
     }
 
-    // --- 2. LÓGICA PARA GRÁFICO DE NUEVOS USUARIOS (APEXCHARTS) ---
+    // LÓGICA PARA GRÁFICO DE NUEVOS USUARIOS (APEXCHARTS) 
 
-    /**
- * Inicializa o actualiza el gráfico de nuevos usuarios con usuarios registrados en cada mes
- * @param {object} chartData - Un objeto con las propiedades `categories` y `values`.
- */
    function initNuevosUsuariosChart(chartData) {
         var options = {
             series: [{
@@ -108,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         chart.render();
     }
 
-    // --- 3. LÓGICA PARA GRÁFICO DE PROGRESO (PERSONALIZADO) ---
+    // LÓGICA PARA GRÁFICO DE PROGRESO (PERSONALIZADO) 
     function initProgresoChart(value) {
         const circle = document.getElementById('donutFill');
         const percentageLabel = document.getElementById('donutPercentage');
@@ -126,17 +157,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const newUsersData = await fetchNewUsersData();
 
-    // --- INICIALIZAR TODO ---
-    initRendimientoChart(rendimientoValue);
-    initNuevosUsuariosChart(newUsersData); // <- Se llama a la nueva función de ApexCharts
+    // INICIALIZAR TODO 
+    initRendimientoChart(rendimientoValue, rendimientoRating);
+    initNuevosUsuariosChart(newUsersData); 
     initProgresoChart(progresoValue);
     loadTicketCounts();
 
 
-    /**
- * @name loadTicketCounts
- * @description Obtiene los datos del servicio y actualiza los elementos HTML con los conteos de tickets.
- */
 async function loadTicketCounts() {
     try {
         const counts = await getTicketCounts(); // Espera a que la respuesta de la API llegue
@@ -168,6 +195,31 @@ async function loadTicketCounts() {
     }
 }
 
+
+function calculatePerformanceValue(counts) {
+    const closed = counts.cerradas || 0;
+    const inProgress = counts.enProceso || 0;
+    const pending = counts.enEspera || 0;
+    
+    const totalTickets = closed + inProgress + pending;
+
+    if (totalTickets === 0) {
+        // CORRECCIÓN: Si no hay tickets, el rendimiento es 0% (datos insuficientes)
+        return 0; 
+    }
+
+    const performance = (closed / totalTickets) * 100;
+    
+    return Math.round(performance);
+}
+
+function getPerformanceRating(value) {
+    if (value >= 90) return 'Excelente';
+    if (value >= 70) return 'Notable';
+    if (value >= 50) return 'Bueno';
+    if (value >= 25) return 'Aceptable';
+    return 'Deficiente';
+}
 
 
 });
