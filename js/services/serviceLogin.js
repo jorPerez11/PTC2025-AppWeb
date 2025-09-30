@@ -1,11 +1,10 @@
 const API_URL = "http://localhost:8080/api";
 
-
 export async function login({username, password}) {
-    const response = await fetch(`${API_URL}/users/login` , {
+    const response = await fetch(`${API_URL}/users/login`, {
         method: 'POST',
-        headers: {'Content-Type' : 'application/json'},
-        credentials: 'include',     
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
         body: JSON.stringify({username, password}),
     });
 
@@ -13,7 +12,12 @@ export async function login({username, password}) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error en el login');
     }
-    return true; //Solo retornamos éxito, no mandamos nada de datos
+    
+    // Retornamos la respuesta completa para poder verificar headers si es necesario
+    return {
+        success: true,
+        status: response.status
+    };
 }
 
 export async function me() {
@@ -23,20 +27,38 @@ export async function me() {
     });
 
     if(response.ok){
-        return await response.json(); // aqui viene el username, rol, userId y passwordExpired
+        return await response.json();
     } else{
         throw new Error('No autenticado');
     }
 }
 
+export async function changePassword(username, currentPassword, newPassword) {
+    const response = await fetch(`${API_URL}/users/change-password`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        credentials: 'include',
+        body: JSON.stringify({
+            username: username,
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        })
+    });
+
+    if(!response.ok){
+        const errorData = await response.text();
+        throw new Error(errorData || 'Error al cambiar la contraseña');
+    }
+    return await response.json();
+}
+
 export async function logout() {
     try{
-        const response = await fetch(`${API_URL}/users/logout`, {
+        const response = await fetch(`${API_URL}/users/logoutWeb`, {
             method: 'POST',
             credentials: 'include',
         });
         return response.ok;
-
     } catch{
         return false;
     }
@@ -139,7 +161,7 @@ export async function getUserId() {
  }
 
  function RedirectedToLogin(){
-    if(window.location.pathname.includes('inicioSesion.html')){
+    if(window.location.pathname.includes('login.html')){
         return false;
     }
 

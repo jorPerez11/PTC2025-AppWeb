@@ -242,7 +242,7 @@ export class AuthManager {
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#F48C06',
-                cancelButtonColor: '#6c757d',
+                cancelButtonColor: '#03071E',
                 confirmButtonText: 'Sí, cerrar sesión',
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
