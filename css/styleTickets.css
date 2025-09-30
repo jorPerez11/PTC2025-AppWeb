@@ -76,6 +76,17 @@ h4 {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Mejora el contraste y legibilidad */
 .dropdown-item:active {
     background-color: #F48C06 !important;
@@ -120,22 +131,50 @@ h4 {
 }
 
 .separator {
-    width: 3.5px;
-    /* Ancho del "palito" */
-    height: 34px;
-    /* Altura del "palito" (aprox. la altura de los iconos) */
+    width: 2px;
+    height: 25px;
     background-color: rgba(255, 255, 255, 0.5);
-    /* Color blanco semi-transparente */
     margin: 0 10px;
 }
 
-.botonInicioSesion,
-.botonRegistro {
-    white-space: nowrap;
-    padding-left: 1rem;
-    padding-right: 1rem;
+.more-options {
+    position: absolute;
+    bottom: 10px;    /* 10px desde el borde inferior de la tarjeta */
+    right: 10px;     /* 10px desde el borde derecho de la tarjeta */
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff; /* Un color de fondo claro */
+    display: flex; /* Usado para centrar el ícono */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; /* Asegura que esté por encima de otros elementos */
 }
 
+.more-options i {
+    color: #303030; /* Color del ícono */
+}
+
+.iconDots{
+    color: #1c1c1c; /* Color del ícono */
+
+}
+
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Estilos de navegación y botones */
 .navbar-nav {
     padding-right: 30px;
 }
@@ -186,6 +225,63 @@ h4 {
 
 .botonInicioSesion:focus {
     box-shadow: none;
+}
+
+.nav-link {
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #F48C06;
+    position: relative;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #F48C06;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::before {
+    width: 100%;
+}
+
+/* Estilos para el enlace dropdown (Mi Perfil) */
+
+/* 1. Regla para eliminar el subrayado (::before) en cualquier estado */
+.nav-link.dropdown-toggle::before,
+.nav-link.dropdown-toggle:hover::before {
+    display: none !important;
+    width: 0 !important;
+    content: none !important;
+}
+
+/* 2. Regla para mantener el color naranja cuando el dropdown está abierto (estado 'show') */
+/* Bootstrap añade la clase 'show' al elemento al que se hace clic */
+.nav-link.dropdown-toggle.show {
+    color: #F48C06 !important;
+}
+
+/* 3. Regla para asegurar el color naranja al hacer hover */
+/* Esto ya existía, pero lo mantenemos para especificidad */
+.nav-link.dropdown-toggle:hover {
+    color: #F48C06 !important;
+}
+
+.nav-separator {
+    border: 0;
+    height: 1px;
+    background-color: white;
+    width: 25%;
+    width: calc(100% - 30px);
 }
 
 
