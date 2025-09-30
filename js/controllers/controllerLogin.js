@@ -1,5 +1,5 @@
 // Importamos la función de login desde nuestro servicio.
-import { login, me } from "../services/serviceLogin.js";
+import { login, me, changePassword } from "../services/serviceLogin.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // --- Referencias a elementos del DOM ---
@@ -8,9 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordInput = document.getElementById("inputPassword");
     const loginButton = document.getElementById("btnLogin");
 
+    let currentUsername = '';
+    let currentPassword = '';
+
     // Función para manejar el modal de cambio de contraseña
     function showChangePasswordModal() {
-        // ... (Tu código actual del modal, no es necesario cambiarlo) ...
         Swal.fire({
             title: '¡Contraseña Expirada!',
             html: `
@@ -30,11 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 title: 'custom-title',
                 confirmButton: 'custom-confirm-button',
                 htmlContainer: 'custom-html-container',
-                input: 'custom-input'            // si quieres class extra en inputs
+                input: 'custom-input'
             },
             preConfirm: () => {
                 const newPassword = document.getElementById('newPasswordInput').value;
                 const confirmPassword = document.getElementById('confirmPasswordInput').value;
+                
                 // Validación de longitud mínima para la nueva contraseña en el modal
                 if (newPassword.length < 12) {
                     Swal.showValidationMessage('La nueva contraseña debe tener al menos 12 caracteres.');
@@ -50,42 +53,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const username = sessionStorage.getItem('usernameForPasswordChange');
-                const tempAuthToken = sessionStorage.getItem('tempAuthToken');
-
-                if (!username || !tempAuthToken) {
-                    Swal.fire('Error', 'No se encontró la información de la sesión. Por favor, vuelve a iniciar sesión.', 'error');
-                    return;
-                }
-
                 try {
-                    const response = await fetch('http://localhost:8080/api/users/change-password', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${tempAuthToken}`
-                        },
-                        body: JSON.stringify({
-                            username: username,
-                            currentPassword: passwordInput.value.trim(),
-                            newPassword: result.value.newPassword
-                        })
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.text();
-                        throw new Error(errorData || 'Error al cambiar la contraseña.');
-                    }
-
-                    // Después de un cambio exitoso, muestra un mensaje y redirige al login
+                    // Usamos las variables currentUsername y currentPassword que guardamos anteriormente
+                    await changePassword(currentUsername, currentPassword, result.value.newPassword);
+                    
                     Swal.fire('¡Éxito!', 'Tu contraseña ha sido cambiada. Por favor, inicia sesión con la nueva contraseña.', 'success').then(() => {
                         window.location.href = "login.html";
                     });
 
                 } catch (error) {
-                    Swal.fire('Error', 'Error al cambiar la contraseña. ' + error.message, 'error').then(() => {
-                        window.location.href = "login.html";
-                    });
+                    Swal.fire('Error', 'Error al cambiar la contraseña. ' + error.message, 'error');
                 }
             }
         });
@@ -121,39 +98,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             loginButton.disabled = true;
-            const loginResponse = await login(credentials);
+            
+            // 1. Hacer login (esto establece la cookie)
+            await login(credentials);
 
-            if (loginResponse.passwordExpired) {
-                sessionStorage.setItem('tempAuthToken', loginResponse.token);
-                sessionStorage.setItem('usernameForPasswordChange', loginResponse.username);
+            // 2. Obtener datos del usuario
+            const userData = await me();
+
+            // 3. Verificar si la contraseña está expirada
+            if (userData.passwordExpired) {
+                currentUsername = userData.username;
+                currentPassword = credentials.password;
                 showChangePasswordModal();
                 return;
             }
 
-            const userData = await me();
-
-            // 2. Si la contraseña es válida, guarda el token de larga duración
+            // 4. Si la contraseña es válida, guarda los datos en localStorage
             localStorage.setItem('user_username', userData.username);
             localStorage.setItem('user_rol', userData.rol);
             localStorage.setItem('userId', userData.userId);
 
             console.log("Inicio de sesión exitoso. Rol:", userData.rol);
 
-            // 3. Redirección basada en el rol
-            switch (userData.rol) {
-                case "ADMINISTRADOR": // Administrador
-                    window.location.href = 'PlataformaWebInicio/PW_Inicio.html';
-                    break;
-                case "TECNICO": // Técnico
-                    window.location.href = "PlataformaWebInicio/PW_Inicio.html";
-                    break;
-                case "CLIENTE": // Cliente
-                    window.location.href = "index.html";
-                    break;
-                default:
-                    window.location.href = "index.html";
-                    break;
-            }
+            // 5. Redirección basada en el rol
+            redirectBasedOnRole(userData.rol);
 
         } catch (error) {
             showGlobalMessage("Usuario o contraseña incorrectos.", 'error');
@@ -163,7 +131,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ... (Tu función showGlobalMessage) ...
+    // Función para redirección basada en rol
+    function redirectBasedOnRole(rol) {
+        switch (rol.toUpperCase()) {
+            case "ADMINISTRADOR":
+                window.location.href = 'PlataformaWebInicio/PW_Inicio.html';
+                break;
+            case "TECNICO":
+                window.location.href = "PlataformaWebInicio/PW_Inicio.html";
+                break;
+            case "CLIENTE":
+                window.location.href = "index.html";
+                break;
+            default:
+                window.location.href = "index.html";
+                break;
+        }
+    }
+
+    // Función para mostrar mensajes globales
     function showGlobalMessage(message, type) {
         let iconType;
         let titleText;

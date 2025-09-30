@@ -1,6 +1,7 @@
 export class NavbarComponent {
     constructor() {
         this.basePath = this.getBasePath();
+        this.userRole = this.getUserRole();
     }
 
     // Método para determinar la ruta base automáticamente
@@ -15,9 +16,51 @@ export class NavbarComponent {
         }
     }
 
+    // Método para obtener el rol del usuario desde localStorage
+    getUserRole() {
+        try {
+            // Intentar obtener el rol desde localStorage
+            const userData = localStorage.getItem('user_rol') || 
+                            localStorage.getItem('userRole') || 
+                            localStorage.getItem('currentUser');
+            
+            if (userData) {
+                // Si es un string JSON, parsearlo
+                if (typeof userData === 'string' && userData.startsWith('{')) {
+                    const user = JSON.parse(userData);
+                    return user.rol?.displayName?.toLowerCase() || 
+                           user.role?.toLowerCase() || 
+                           user.user_rol?.toLowerCase();
+                }
+                // Si es directamente el rol
+                return userData.toLowerCase();
+            }
+            
+            console.warn('⚠️ No se encontró información de rol en localStorage');
+            return 'admin'; // Valor por defecto
+        } catch (error) {
+            console.error('❌ Error obteniendo el rol del usuario:', error);
+            return 'admin'; // Valor por defecto en caso de error
+        }
+    }
+
+    // Método para determinar la ruta de clientes según el rol
+    getClientesRoute() {
+        const base = this.basePath;
+        
+        if (this.userRole.includes('tecnico') || this.userRole.includes('technician')) {
+            console.log('🎯 Rol detectado: Técnico -> clientesTecnico.html');
+            return `${base}clientesTecnico.html`;
+        } else {
+            console.log('🎯 Rol detectado: Admin -> clientesAdmin.html');
+            return `${base}clientesAdmin.html`;
+        }
+    }
+
     // Generar el HTML del navbar con rutas dinámicas
     render() {
         const base = this.basePath;
+        const clientesRoute = this.getClientesRoute();
 
         return `
         <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
@@ -43,7 +86,7 @@ export class NavbarComponent {
                                 <a href="${base}tickets.html" class="nav-link">Tickets</a>
                             </li>
                             <li class="nav-item active me-3">
-                                <a href="${base}clientesAdmin.html" class="nav-link">Clientes</a>
+                                <a href="${clientesRoute}" class="nav-link">Clientes</a>
                             </li>
                             <li class="nav-item active me-3">
                                 <a href="${base}analitica.html" class="nav-link">Analítica</a>
@@ -131,5 +174,7 @@ export class NavbarComponent {
         document.body.insertBefore(navbarContainer.firstElementChild, document.body.firstChild);
 
         console.log('✅ Navbar component inyectado correctamente');
+        console.log('👤 Rol detectado:', this.userRole);
+        console.log('📍 Ruta de clientes:', this.getClientesRoute());
     }
 }
