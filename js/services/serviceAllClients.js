@@ -1,5 +1,8 @@
 // service/serviceAllClients.js
 
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
+
 // Usaremos las URLs de tu API de Spring Boot
 const API_CLIENTS = 'http://localhost:8080/api/clients'; 
 const API_TICKETS = 'http://localhost:8080/api/tickets';
@@ -24,31 +27,31 @@ const commonHeaders = {
  */
 async function fetchAllClients(page = 0, size = 10, status = 'all', period = 'all', searchTerm = '') {
     try {
-        const url = new URL(`${API_CLIENTS}/getAllClients`);
-        url.searchParams.append('page', page);
-        url.searchParams.append('size', size);
+        // 1. Construir la URL con los parámetros de búsqueda.
+        // Se construye solo la parte del path y los parámetros.
+        let urlPath = `${API_CLIENTS}/getAllClients?page=${page}&size=${size}`;
 
         // Agrega los parámetros de filtro si no son 'all' o vacíos
         if (status !== 'all') {
-            url.searchParams.append('status', status);
+            urlPath += `&status=${status}`;
         }
         if (period !== 'all') {
-            url.searchParams.append('period', period);
+            urlPath += `&period=${period}`;
         }
         if (searchTerm !== '') {
-            url.searchParams.append('search', searchTerm);
+            urlPath += `&search=${encodeURIComponent(searchTerm)}`; // Es buena práctica codificar el término de búsqueda
         }
 
-        const response = await fetch(url.toString(), {
-            method: 'GET',
-            headers: commonHeaders
+        // 2. Usar fetchWithAuth.
+        // Como es un GET por defecto y no lleva body, no necesitamos pasar un segundo argumento
+        const data = await fetchWithAuth(urlPath, {
+             method: 'GET',
         });
 
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        return await response.json();
+        // fetchWithAuth ya maneja la verificación de 'response.ok' y el parseo a JSON.
+        return data; 
     } catch (error) {
+        // fetchWithAuth ya lanza un error más específico, aquí solo manejamos la contingencia.
         console.error('Error al obtener la lista de clientes paginada:', error);
         return { content: [], totalElements: 0, totalPages: 0 };
     }
@@ -61,17 +64,22 @@ async function fetchAllClients(page = 0, size = 10, status = 'all', period = 'al
  */
 async function fetchTicketDetails(ticketId) {
     try {
-        const response = await fetch(`${API_TICKETS}/${ticketId}`, {
-            method: 'GET',
-            headers: commonHeaders
-        });
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        return await response.json();
+        // 1. Construir la URL completa para los detalles del ticket.
+        const url = `${API_TICKETS}/${ticketId}`;
+
+        // 2. Usar fetchWithAuth para manejar la petición con autenticación.
+        // fetchWithAuth asume 'GET' y 'application/json' por defecto.
+        // No es necesario pasar 'method: 'GET'' ni 'headers: commonHeaders'.
+        const data = await fetchWithAuth(url);
+
+        // fetchWithAuth ya verificó que la respuesta sea exitosa (response.ok) 
+        // y parseó el JSON, o lanzó un Error si hubo un problema.
+        return data;
+        
     } catch (error) {
+        // Manejar el error, que ya fue lanzado y loggeado por fetchWithAuth.
         console.error(`Error al obtener los detalles del ticket ${ticketId}:`, error);
-        return null;
+        return null; // Devolver 'null' como valor de contingencia
     }
 }
 
