@@ -167,3 +167,4 @@ export async function getUserId() {
 
     return window.location.pathname.endsWith('.html') || !window.location.pathname.includes ('.');
  }
+ 
