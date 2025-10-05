@@ -53,10 +53,6 @@ export async function updateUserTech(data, id) {
         console.log("Respuesta obtenida:", response); 
         console.log("Status:", response.status); // Verifica si esto es 200
 
-        if (response.status === 204 || response.status === 202 || response.headers.get('content-length') === '0') {
-        return {}; // Devuelve un objeto vacío y sal de la función.
-        }
-
         
         // Maneja la respuesta de la actualización si es necesario
         return response;
