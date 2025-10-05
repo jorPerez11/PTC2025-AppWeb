@@ -16,26 +16,7 @@ export async function getUserTech(page = 0, size = 10, term = '', category = 'al
         console.log("Respuesta obtenida:", response); 
         console.log("Status:", response.status); // Verifica si esto es 200
 
-        // 2. Obtener el texto de la respuesta (seguro contra errores de parseo)
-        const responseText = await response.text(); 
-        
-        // Si la respuesta está vacía o es 'null'
-        if (!responseText) {
-            // Devolver un objeto de paginación vacío
-            return { content: [], totalElements: 0, totalPages: 0 };
-        }
-
-        // 3. Intentar parsear el JSON
-        try {
-            const data = JSON.parse(responseText);
-            return data;
-        } catch (jsonError) {
-            // Si el JSON es inválido, logueamos el error.
-            console.error("Error de Parsing JSON:", jsonError, "Texto:", responseText);
-            
-            // Y devolvemos un objeto de paginación vacío para evitar que el controlador falle.
-            return { content: [], totalElements: 0, totalPages: 0 }; 
-        }
+        return response;
         
     } catch (error) {
        console.error("Error al obtener los técnicos (Conexión/Red):", error);
