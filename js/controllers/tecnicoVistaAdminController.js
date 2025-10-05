@@ -136,8 +136,8 @@ function renderFilterBar() {
 
       <div class="d-flex flex-wrap gap-3 filter-row">
         <div class="filter-select-wrapper">
-          <i class="bi bi-calendar-event filter-icon"></i>
           <select id="periodFilter" class="form-select styled-select">
+          <i class="bi bi-calendar-event filter-icon"></i>
             <option value="all">Todo el tiempo</option>
             <option value="today">Hoy</option>
             <option value="week">Esta semana</option>
@@ -147,8 +147,8 @@ function renderFilterBar() {
         
 
         <div class="filter-select-wrapper">
-          <i class="bi bi-list-check filter-icon"></i>
            <select id="statusFilter" class="form-select styled-select">
+           <i class="bi bi-list-check filter-icon"></i>
             <option value="all">Todas las categorías</option>
 _  
             // Usa el objeto categoriasApi para generar las opciones dinámicamente

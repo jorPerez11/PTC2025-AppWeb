@@ -105,6 +105,11 @@ body {
     font-size: 18px;
 }
 
+.header h2 {
+    margin-top: 50px;
+    font-weight: 600;
+}
+
 .botonInicioSesion:focus {
     box-shadow: none;
 }
