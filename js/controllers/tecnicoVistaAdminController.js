@@ -7,7 +7,7 @@ import{
 
 let currentPage = 0;
 let currentSize = 10;
-
+let totalPages = 0;
 
 
 let totalElements = 0;
@@ -29,6 +29,7 @@ async function cargarPaginaTecnicos(page){
     const categoryFilter = document.getElementById('statusFilter').value;
 
     try {
+      currentPage = page
     // Almacenaremos los usuarios originales para no tener que pedirlos a la API de nuevo
     const data = await getUserTech(page, currentSize, term, categoryFilter, 'all');
     const usuarios = data.content || data;
@@ -37,13 +38,14 @@ async function cargarPaginaTecnicos(page){
     usuariosFiltradosPorBackend = usuarios; 
 
     //Actualiza las variables globales con datos de la API
-    currentPage = data.number //Numero de pagina
-    totalElements = data.totalElements; //Total de elementos encontrados
+    currentPage = data.number ?? page;//Numero de pagina
+    totalElements = data.totalElements || 0; //Total de elementos encontrados
 
     aplicarFiltroLocal();
 
-    document.querySelector('.btn-add-user').addEventListener('click', abrirFormularioCreacion);
+    updatePaginationControls(); 
 
+    document.querySelector('.btn-add-user').addEventListener('click', abrirFormularioCreacion);
 
     
     }catch(error){
@@ -52,10 +54,69 @@ async function cargarPaginaTecnicos(page){
     }
 }
 
+ //FUNCION PARA PAGINACION DE DATOS
+
+ function updatePaginationControls() {
+    const prevButton = document.getElementById('prevPage');
+    const currentPageLink = document.getElementById('currentPage');
+    const nextButton = document.getElementById('nextPage');
+    
+    // Si no se encuentran los elementos, salimos
+    if (!prevButton || !currentPageLink || !nextButton) {
+        console.error("Elementos de paginación no encontrados.");
+        return;
+    }
+
+    // 2. Actualizar el número de página actual (mostramos 1-based, por eso +1)
+    currentPageLink.textContent = currentPage + 1;
+    
+    // Usamos Math.ceil para asegurar que si hay un resto, cuenta como otra página
+    totalPages = Math.ceil(totalElements / currentSize); 
+    
+    // 4. Habilitar/Deshabilitar el botón Anterior
+    if (currentPage === 0) {
+        prevButton.classList.add('disabled');
+    } else {
+        prevButton.classList.remove('disabled');
+    }
+
+    // 5. Habilitar/Deshabilitar el botón Siguiente
+    if (currentPage >= totalPages - 1 || totalPages === 0) {
+        nextButton.classList.add('disabled');
+    } else {
+        nextButton.classList.remove('disabled');
+    }
+    
+    // 6. Remover y reasignar los Event Listeners para evitar duplicados
+    prevButton.removeEventListener('click', handlePaginationClick);
+    nextButton.removeEventListener('click', handlePaginationClick);
+    
+    prevButton.addEventListener('click', handlePaginationClick);
+    nextButton.addEventListener('click', handlePaginationClick);
+}
+
+
+//MANEJO DE CLICS EN BOTONES DE SIGUEINTE / ANTERIOR
+function handlePaginationClick(event) {
+    event.preventDefault();
+
+    const targetId = event.currentTarget.id;
+    let newPage = currentPage;
+
+    if (targetId === 'prevPage' && currentPage > 0) {
+        newPage = currentPage - 1;
+    } else if (targetId === 'nextPage' && currentPage < totalPages - 1) {
+        newPage = currentPage + 1;
+    } else {
+        return; // No hacer nada si está deshabilitado
+    }
+    
+    cargarPaginaTecnicos(newPage);
+}
+
+
 //FUNCION PARA INICIALIZAR INTERFAZ / LLAMADO DE CARGA INICIAL
 async function initTecnicos() {
-
-
     try{
         //Inicializacion de UI y eventos
         renderFilterBar();
@@ -94,9 +155,6 @@ async function initTecnicos() {
 
       currentPage = 0;
 
-    // Llama a tu función de carga de datos, pasando el nuevo tamaño
-    // Asumimos que tienes una variable global para el número de página actual (ej. currentPage = 0)
-    // y una función para recargar la tabla (ej. cargarPaginaTecnicos).
       cargarPaginaTecnicos(currentPage, currentSize); 
 
     });
@@ -127,6 +185,9 @@ function renderFilterBar() {
             <input type="text" id="busquedaUsuario" class="form-control search-input" placeholder="Buscar Usuario / Email / ID">
             <button class="btn btn-outline-danger d-none" id="btnBuscar"></button>
           </div>
+          <button class="btn btn-add-user d-flex align-items-center justify-content-center mt-4 mb-4 me-3">
+            <i class="bi bi-plus-lg me-2"></i> Agregar técnico
+          </button>
         </div>
 
         
@@ -161,7 +222,7 @@ _
         <div class="d-flex align-items-center filter-select-quantity">
           <label for="ticketsPerPage" class="form-label me-2 ">Filtrar por cantidad:</label>
           <select id="ticketsPerPage" class="form-select" style="width: auto;">
-            <option value="2">2</option>
+            <option value="10">10</option>
             <option value="25">25</option>
             <option value="50">50</option>
           </select>
@@ -621,7 +682,6 @@ async function handleFormSubmit(event) {
 async function abrirFormularioEdicion(userId) {
     // 1. Limpiar el formulario (reutilizando la función que llena las categorías)
     await abrirFormularioCreacion(); // Esto limpia y carga el select de categorías
-    await cargarCategoriasEnFormulario();
 
     const res = await getUserTech(0, 1, String(userId), 'all', 'all'); 
     console.log("ID del usuario para la búsqueda:", res);
