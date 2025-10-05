@@ -45,7 +45,7 @@ export async function createUserTech(data) {
 
 export async function updateUserTech(data, id) {
     try {
-        const response = await fetchWithAuth(`${API_URL}/UpdateUser/${id}`, {
+        const response = await fetchWithAuth(`${API_URL}/users/${id}`, {
             method: "PATCH",
             body: JSON.stringify(data)
         });

@@ -62,6 +62,14 @@ export class NavbarComponent {
         const base = this.basePath;
         const clientesRoute = this.getClientesRoute();
 
+        // Lógica condicional para el enlace de Técnicos (solo Admin)
+        const esAdmin = this.userRole.includes('admin');
+        const tecnicosLink = esAdmin ? `
+            <li class="nav-item active me-3">
+                <a href="${base}tecnicoVistaAdmin.html" class="nav-link">Técnicos</a>
+            </li>
+        ` : '';
+
         return `
         <nav class="navbar fixed-top navbar-expand-xl navbar-dark" id="navbar">
             <div class="container-fluid justify-content-between">
@@ -85,6 +93,7 @@ export class NavbarComponent {
                             <li class="nav-item active me-3">
                                 <a href="${base}tickets.html" class="nav-link">Tickets</a>
                             </li>
+                            ${tecnicosLink}
                             <li class="nav-item active me-3">
                                 <a href="${clientesRoute}" class="nav-link">Clientes</a>
                             </li>
