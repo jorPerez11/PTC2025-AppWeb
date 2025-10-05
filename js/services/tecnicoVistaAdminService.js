@@ -28,7 +28,7 @@ export async function getUserTech(page = 0, size = 10, term = '', category = 'al
 
 export async function createUserTech(data) {
     try {
-        const response = await fetchWithAuth(`${API_URL}/users/registerTech`, {
+        const response = await fetchWithAuth(`${API_URL}/PostUser`, {
             method: "POST",
             body: JSON.stringify(data)
         });
