@@ -1,4 +1,4 @@
-import { fetchWithAuth } from "./serviceLogin";
+import { fetchWithAuth } from "../services/serviceLogin.js";
 
 const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
