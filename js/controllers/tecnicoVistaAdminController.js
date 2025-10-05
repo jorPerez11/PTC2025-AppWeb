@@ -95,6 +95,29 @@ async function cargarPaginaTecnicos(page){
     nextButton.addEventListener('click', handlePaginationClick);
 }
 
+function renderFilterBar(){
+  // 1. Obtener la referencia al elemento select
+    const selectCategoria = document.getElementById('statusFilter');
+
+    // Limpiar opciones anteriores
+    selectCategoria.innerHTML = '<option value="all">Todas las categorías</option>';
+
+    // 2. Iterar sobre el objeto categoriasApi para llenar el select
+    const categoriasArray = Object.values(categoriasApi);
+
+    categoriasArray.forEach(categoria => {
+        const option = document.createElement('option');
+        // Usamos el nombre de la categoría (displayName) como valor y texto,
+        // tal como se hacía en tu código original para el filtro.
+        option.value = categoria.displayName; 
+        option.textContent = categoria.displayName;
+        selectCategoria.appendChild(option);
+    });
+    
+    // **No se genera más HTML.**
+    console.log("✅ Selector de Categorías (statusFilter) llenado con éxito.");
+}
+
 
 //MANEJO DE CLICS EN BOTONES DE SIGUEINTE / ANTERIOR
 function handlePaginationClick(event) {
@@ -162,76 +185,6 @@ async function initTecnicos() {
     }catch(err) {
     console.error('Error cargando usuarios:', err);
   }
-}
-
-function renderFilterBar() {
-  const html = `
-    <div class="filter-bar-custom">
-      <div class="row align-items-center top-bar">
-        <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
-          <div class="user-counts ms-5">
-            <div class="techCount">
-              <span id="userCount">0</span> Técnicos
-            </div>
-            <small>Basado en <span id="filterCount">0</span> Filtro(s)</small>
-          </div>
-        </div>
-
-        <div class="col-lg-8 col-md-12 pb-0 pt-3">
-          <div class="input-group search-container">
-            <span class="input-group-text search-icon-span">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" id="busquedaUsuario" class="form-control search-input" placeholder="Buscar Usuario / Email / ID">
-            <button class="btn btn-outline-danger d-none" id="btnBuscar"></button>
-          </div>
-          <button class="btn btn-add-user d-flex align-items-center justify-content-center mt-4 mb-4 me-3">
-            <i class="bi bi-plus-lg me-2"></i> Agregar técnico
-          </button>
-        </div>
-
-        
-      </div>
-
-      <hr class="filter-divider">
-
-      <div class="d-flex flex-wrap gap-3 filter-row">
-        <div class="filter-select-wrapper">
-          <select id="periodFilter" class="form-select styled-select">
-          <i class="bi bi-calendar-event filter-icon"></i>
-            <option value="all">Todo el tiempo</option>
-            <option value="today">Hoy</option>
-            <option value="week">Esta semana</option>
-            <option value="month">Este mes</option>
-          </select>
-        </div>
-        
-
-        <div class="filter-select-wrapper">
-           <select id="statusFilter" class="form-select styled-select">
-           <i class="bi bi-list-check filter-icon"></i>
-            <option value="all">Todas las categorías</option>
-_  
-            // Usa el objeto categoriasApi para generar las opciones dinámicamente
-            ${Object.keys(categoriasApi).map(catName => 
-                 `<option value="${catName}">${catName}</option>` 
-              ).join('')}
-          </select>
-        </div>
-
-        <div class="d-flex align-items-center filter-select-quantity">
-          <label for="ticketsPerPage" class="form-label me-2 ">Filtrar por cantidad:</label>
-          <select id="ticketsPerPage" class="form-select" style="width: auto;">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-
-      </div>
-    </div>
-  `;
-  document.getElementById('filter-bar-container').innerHTML = html;
 }
 
 
