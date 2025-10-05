@@ -618,14 +618,15 @@ async function handleFormSubmit(event) {
     }
 }
 
-async function abrirFormularioEdicion(user) {
+async function abrirFormularioEdicion(userId) {
     // 1. Limpiar el formulario (reutilizando la función que llena las categorías)
     await abrirFormularioCreacion(); // Esto limpia y carga el select de categorías
-    console.log("ID del usuario para la búsqueda:", user.userId); // <- Añade esto
+    await cargarCategoriasEnFormulario();
 
-    const data = await getUserTech(0, 1, String(user.userId), 'all', 'all');
-    console.log("Datos recibidos de getUserTech:", data);
-    const usuarios = data.content || data;
+    const res = await getUserTech(0, 1, String(userId), 'all', 'all'); 
+    console.log("ID del usuario para la búsqueda:", res);
+
+    const usuarios = res.content || res;
     const u = usuarios[0];
 
     if (!u) {
@@ -638,27 +639,31 @@ async function abrirFormularioEdicion(user) {
         }
 
     // 2. Llenar los campos con los datos del usuario
-    document.getElementById('userId').value = user.userId || ''; // ID oculto
-    document.getElementById('nombreCompleto').value = user.name || '';
-    document.getElementById('nombreUsuario').value = user.username || '';
-    document.getElementById('email').value = user.email || '';
-    document.getElementById('telefono').value = user.phone || '';
+    document.getElementById('userId').value = u.userId || u.id || ''; // ID oculto
+    document.getElementById('nombreCompleto').value = u.name || '';
+    document.getElementById('nombreUsuario').value = u.username || '';
+    document.getElementById('email').value = u.email || '';
+    document.getElementById('telefono').value = u.phone || '';
     
     // 3. Seleccionar la categoría correcta
     const selectCategoria = document.getElementById('categoria');
-    if (user.category && user.category.id) {
+    if (u.category && u.category.id) {
         // Asignar el valor del ID de la categoría (ej. "2") al select
-        selectCategoria.value = user.category.id;
+        selectCategoria.value = u.category.id;
     } else {
         // Resetear la selección si no hay categoría
         selectCategoria.value = "";
     }
 
     // 4. Cambiar el título del modal
-    document.getElementById('modalAgregarTecnicoLabel').textContent = `Editar Técnico: ${user.name}`;
+    document.getElementById('modalAgregarTecnicoLabel').textContent = `Editar Técnico: ${u.name}`;
+
+    const modalElement = document.getElementById('modalAgregarTecnico');
+    const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    myModal.show();
     
     // El modal ya estará abierto gracias a abrirFormularioCreacion()
-    console.log(`Abierto formulario para edición del usuario ${user.userId}`);
+    console.log(`Abierto formulario para edición del usuario ${userId}`);
 }
 
 async function confirmarEliminacion(userId) {
