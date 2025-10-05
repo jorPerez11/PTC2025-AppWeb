@@ -126,19 +126,75 @@
 
             
         </div>
-        <button class="btn btn-add-user d-flex align-items-center justify-content-center mt-4 mb-4 me-3">
-            <i class="bi bi-plus-lg me-2"></i> Agregar técnico
-        </button>
+        
     </div>
 
     
 
    <div class="container mt-5">
-        <!-- A: Aquí irá la barra de filtros -->
-        <div id="filter-bar-container" class="mb-4"></div>
+    <div id="filter-bar-container" class="mb-4">
+        <div class="filter-bar-custom">
+            <div class="row align-items-center top-bar">
+                <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
+                    <div class="user-counts ms-5">
+                        <div class="techCount">
+                            <span id="userCount">0</span> Técnicos
+                        </div>
+                        <small>Basado en <span id="filterCount">0</span> Filtro(s)</small>
+                    </div>
+                </div>
 
-        <!-- B: Aquí muestras las cards-->
-        <div id="lista-usuarios"></div>
+                <div class="col-lg-8 col-md-12 pb-0 pt-3 d-flex">
+                    <div class="input-group search-container">
+                        <span class="input-group-text search-icon-span">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="busquedaUsuario" class="form-control search-input" placeholder="Buscar Usuario / Email / ID">
+                        <button class="btn btn-outline-danger d-none" id="btnBuscar"></button>
+                    </div>
+                    <button class="btn btn-add-user d-flex align-items-center justify-content-center mt-4 mb-4 me-3">
+                        <i class="bi bi-plus-lg me-2"></i> Agregar técnico
+                    </button>
+                </div>
+            </div>
+
+            <hr class="filter-divider">
+
+            <div class="d-flex flex-wrap gap-3 filter-row">
+                <div class="filter-select-wrapper">
+                    <select id="periodFilter" class="form-select styled-select">
+                        <i class="bi bi-calendar-event filter-icon"></i>
+                        <option value="all">Todo el tiempo</option>
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta semana</option>
+                        <option value="month">Este mes</option>
+                    </select>
+                </div>
+                
+
+                <div class="filter-select-wrapper">
+                    <select id="statusFilter" class="form-select styled-select">
+                        <i class="bi bi-list-check filter-icon"></i>
+                        <option value="all">Todas las categorías</option>
+                        </select>
+                </div>
+
+                <div class="d-flex align-items-center filter-select-quantity">
+                    <label for="ticketsPerPage" class="form-label me-2 ">Filtrar por cantidad:</label>
+                    <select id="ticketsPerPage" class="form-select" style="width: auto;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+        </div>
+    
+    <div id="lista-usuarios"></div>
+
+    </div>
 
         <div class="d-flex justify-content-center mt-4 mb-4">
             <ul class="pagination" id="paginationControls">
