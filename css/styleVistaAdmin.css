@@ -105,9 +105,38 @@ body {
     font-size: 18px;
 }
 
-.header h2 {
-    margin-top: 50px;
+.header-container{
+    background-color: #060B2C;
+}
+
+.header{
+    background-color:#060B2C;
+    color: rgb(209, 209, 209);
+}
+
+.btn-add-user {
+    /* Ajusta el padding para un look más moderno y consistente */
+    padding: 8px 15px; 
+    /* Colores limpios */
+    background-color: #ffffff; /* O un color de acento, ejemplo: azul/morado */
+    color: #060B2C; 
+    border: none;
+    border-radius: 6px;
     font-weight: 600;
+    
+    /* Asegura que el botón se alinea perfectamente con la altura de la fila */
+    height: 37px; /* Aprox. la altura del SVG, aunque align-items-center ayuda mucho */
+    
+    /* Clase d-flex ya está en el HTML, pero este es el resultado esperado */
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Pequeña separación entre el icono y el texto */
+}
+
+/* Hover effect */
+.btn-add-user:hover {
+    background-color: #dadada;
+    color: #03071E;
 }
 
 .botonInicioSesion:focus {

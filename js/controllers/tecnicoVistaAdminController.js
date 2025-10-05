@@ -519,19 +519,24 @@ function mostrarCreacion(fechaStr, estado) {
 }
 
 async function abrirFormularioCreacion() {
+    const modalElement = document.getElementById('modalAgregarTecnico');
+    const formElement = modalElement.querySelector('form');
+
+    if (formElement) {
+        formElement.reset(); // Limpia todos los campos del formulario
+    }
+    document.getElementById('userId').value = '';
+
+    document.getElementById('modalAgregarTecnicoLabel').textContent = 'Agregar Nuevo Técnico';
+
     // 1. Obtener la referencia al elemento select
     const selectCategoria = document.getElementById('categoria');
 
-
-    // Si el elemento no existe (Error anterior), salimos.
     if (!selectCategoria) {
         console.error('El elemento select con ID "categoria" no fue encontrado.');
         return; 
     }
 
-    
-
-    // 3. Iterar sobre el objeto categoriasApi
     // Object.values() nos da un array con los objetos de categoría ({id: X, displayName: Y})
     const categoriasArray = Object.values(categoriasApi);
 
@@ -544,8 +549,7 @@ async function abrirFormularioCreacion() {
         selectCategoria.appendChild(option);
     });
 
-    // 5. Mostrar el modal (usando el ID 'modalAgregarTecnico')
-    const modalElement = document.getElementById('modalAgregarTecnico');
+    
     const myModal = new bootstrap.Modal(modalElement);
     myModal.show();
     
