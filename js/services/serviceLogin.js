@@ -84,7 +84,7 @@ export async function fetchWithAuth(url, options = {}) {
             credentials: 'include', //Para enviar cookies
             headers: headers
         };
-                console.log('📤 Request config:', config);
+        console.log('📤 Request config:', config);
         
         
         const response = await fetch(fullUrl, config);
@@ -101,7 +101,7 @@ export async function fetchWithAuth(url, options = {}) {
             
             //  Redirigir solo si es una página HTML
             if (RedirectedToLogin()) {
-              //  window.location.href = 'inicioSesion.html';
+             //  window.location.href = 'inicioSesion.html';
             }
             
             throw new Error('Acceso denegado o sesión inválida');
@@ -170,6 +170,5 @@ export async function getUserId() {
         return false;
     }
 
-    return window.location.pathname.endsWith('.html') || !window.location.pathname.includes ('.');
+    return window.location.pathname.endsWith('.html') || !window.location.pathname.includes('.');
  }
- 

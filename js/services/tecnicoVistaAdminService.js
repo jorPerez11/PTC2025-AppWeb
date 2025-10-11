@@ -52,7 +52,7 @@ export async function updateUserTech(data, id) {
         
         console.log("Respuesta obtenida:", response); 
         console.log("Status:", response.status); // Verifica si esto es 200
-
+        //Debug
         
         // Maneja la respuesta de la actualización si es necesario
         return response;
