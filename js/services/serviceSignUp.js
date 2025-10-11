@@ -34,11 +34,10 @@ export async function checkCompanyExistence() {
     // Función auxiliar para mostrar alertas de forma segura
     const safeSwal = (config) => {
         if (typeof Swal !== 'undefined' && Swal.fire) {
-            return Swal.fire(config); // Retorna la promesa de Swal.fire
+            // Ya no usamos 'await' en el controlador para no detener la ejecución.
+            Swal.fire(config); 
         } else {
-            console.warn("SweetAlert no está disponible. Usando alert() nativo. Mensaje: " + config.text);
-            alert(config.title + "\n" + config.text);
-            return Promise.resolve(true); // Resuelve inmediatamente
+            console.warn("SweetAlert no está disponible. Mensaje: " + config.text);
         }
     };
 
@@ -51,50 +50,39 @@ export async function checkCompanyExistence() {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("-> 🛑 Error del servidor al verificar la existencia de compañías:", response.status, errorText);
+            console.error("-> Error del servidor al verificar la existencia de compañías:", response.status, errorText);
 
-            // 🚨 PAUSA 1: Alerta SweetAlert para Error HTTP. Espera a que el usuario presione "Aceptar".
-            await safeSwal({
+            // Alerta SweetAlert para Error HTTP. Ya no detiene el script.
+            safeSwal({
                 icon: 'error',
-                title: 'Error de Verificación (Revisar Consola)',
+                title: 'Error de Verificación',
                 text: `El servidor respondió con el código ${response.status}. Mensaje: ${errorText.substring(0, 100)}...`,
-                confirmButtonText: 'Continuar (No Redirigir)' 
-                // Nota: Usamos "Continuar" pero devolvemos 'false' para que el controlador tome la decisión.
+                confirmButtonText: 'Aceptar'
             });
 
-            return false;
+            return false; // El error se trata como "no confirmado", lo que desencadena la redirección a primerUso.html
         }
 
         const responseData = await response.json();
+        // Asume que la respuesta directa es el booleano
         result = typeof responseData === 'boolean' ? responseData : responseData?.exists || false;
 
-        console.log(`-> ✅ Éxito - Respuesta JSON completa:`, responseData);
-        console.log(`-> ✅ Resultado procesado (companyExists): ${result}`);
-        
-        // 🚨 PAUSA 2: Alerta SweetAlert para Éxito. Espera a que el usuario presione "Continuar".
-        await safeSwal({
-            icon: result ? 'success' : 'info',
-            title: 'Verificación de Compañía Completa (Revisar Consola)',
-            html: `Resultado del Backend: <strong>${result}</strong><br>
-                  ${result ? '¡Hay compañías! (Se mantendrá en la página).' : 'No hay compañías. (Se redirigirá).'}<br><br>
-                  Presiona 'Continuar' para que el script siga su curso.`,
-            confirmButtonText: 'Continuar'
-        });
-        
+        console.log(`-> Éxito - Resultado procesado (companyExists): ${result}`);
+
         return result;
 
     } catch (error) {
-        console.error("-> 🛑 Fallo de red/fetch al verificar la existencia de compañías:", error);
+        console.error("-> Fallo de red/fetch al verificar la existencia de compañías:", error);
 
-        // 🚨 PAUSA 3: Alerta SweetAlert para Fallo de Red. Espera a que el usuario presione "Cerrar".
-        await safeSwal({
+        // 🚨 Alerta SweetAlert para Fallo de Red. Ya no detiene el script.
+        safeSwal({
             icon: 'warning',
-            title: 'Error de Conexión (Revisar Consola)',
-            text: `Fallo al intentar conectar con el servidor: ${error.message}`,
+            title: 'Error de Conexión',
+            text: `Fallo al intentar conectar con el servidor.`,
             confirmButtonText: 'Cerrar'
         });
 
-        // En caso de fallo de red, se asume que no podemos confirmar, devolvemos false (lo cual redirige en el controlador).
+        // En caso de fallo de red, devolvemos false (lo cual redirige en el controlador si no se maneja el error).
         return false;
     }
 }
