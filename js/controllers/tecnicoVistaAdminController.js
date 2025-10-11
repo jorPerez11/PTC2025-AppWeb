@@ -7,7 +7,7 @@ import{
 
 let currentPage = 0;
 let currentSize = 10;
-
+let totalPages = 0;
 
 
 let totalElements = 0;
@@ -29,6 +29,7 @@ async function cargarPaginaTecnicos(page){
     const categoryFilter = document.getElementById('statusFilter').value;
 
     try {
+      currentPage = page
     // Almacenaremos los usuarios originales para no tener que pedirlos a la API de nuevo
     const data = await getUserTech(page, currentSize, term, categoryFilter, 'all');
     const usuarios = data.content || data;
@@ -37,13 +38,14 @@ async function cargarPaginaTecnicos(page){
     usuariosFiltradosPorBackend = usuarios; 
 
     //Actualiza las variables globales con datos de la API
-    currentPage = data.number //Numero de pagina
-    totalElements = data.totalElements; //Total de elementos encontrados
+    currentPage = data.number ?? page;//Numero de pagina
+    totalElements = data.totalElements || 0; //Total de elementos encontrados
 
     aplicarFiltroLocal();
 
-    document.querySelector('.btn-add-user').addEventListener('click', abrirFormularioCreacion);
+    updatePaginationControls(); 
 
+    document.querySelector('.btn-add-user').addEventListener('click', abrirFormularioCreacion);
 
     
     }catch(error){
@@ -52,10 +54,92 @@ async function cargarPaginaTecnicos(page){
     }
 }
 
+ //FUNCION PARA PAGINACION DE DATOS
+
+ function updatePaginationControls() {
+    const prevButton = document.getElementById('prevPage');
+    const currentPageLink = document.getElementById('currentPage');
+    const nextButton = document.getElementById('nextPage');
+    
+    // Si no se encuentran los elementos, salimos
+    if (!prevButton || !currentPageLink || !nextButton) {
+        console.error("Elementos de paginación no encontrados.");
+        return;
+    }
+
+    // 2. Actualizar el número de página actual (mostramos 1-based, por eso +1)
+    currentPageLink.textContent = currentPage + 1;
+    
+    // Usamos Math.ceil para asegurar que si hay un resto, cuenta como otra página
+    totalPages = Math.ceil(totalElements / currentSize); 
+    
+    // 4. Habilitar/Deshabilitar el botón Anterior
+    if (currentPage === 0) {
+        prevButton.classList.add('disabled');
+    } else {
+        prevButton.classList.remove('disabled');
+    }
+
+    // 5. Habilitar/Deshabilitar el botón Siguiente
+    if (currentPage >= totalPages - 1 || totalPages === 0) {
+        nextButton.classList.add('disabled');
+    } else {
+        nextButton.classList.remove('disabled');
+    }
+    
+    // 6. Remover y reasignar los Event Listeners para evitar duplicados
+    prevButton.removeEventListener('click', handlePaginationClick);
+    nextButton.removeEventListener('click', handlePaginationClick);
+    
+    prevButton.addEventListener('click', handlePaginationClick);
+    nextButton.addEventListener('click', handlePaginationClick);
+}
+
+function renderFilterBar(){
+  // 1. Obtener la referencia al elemento select
+    const selectCategoria = document.getElementById('statusFilter');
+
+    // Limpiar opciones anteriores
+    selectCategoria.innerHTML = '<option value="all">Todas las categorías</option>';
+
+    // 2. Iterar sobre el objeto categoriasApi para llenar el select
+    const categoriasArray = Object.values(categoriasApi);
+
+    categoriasArray.forEach(categoria => {
+        const option = document.createElement('option');
+        // Usamos el nombre de la categoría (displayName) como valor y texto,
+        // tal como se hacía en tu código original para el filtro.
+        option.value = categoria.displayName; 
+        option.textContent = categoria.displayName;
+        selectCategoria.appendChild(option);
+    });
+    
+    // **No se genera más HTML.**
+    console.log("✅ Selector de Categorías (statusFilter) llenado con éxito.");
+}
+
+
+//MANEJO DE CLICS EN BOTONES DE SIGUEINTE / ANTERIOR
+function handlePaginationClick(event) {
+    event.preventDefault();
+
+    const targetId = event.currentTarget.id;
+    let newPage = currentPage;
+
+    if (targetId === 'prevPage' && currentPage > 0) {
+        newPage = currentPage - 1;
+    } else if (targetId === 'nextPage' && currentPage < totalPages - 1) {
+        newPage = currentPage + 1;
+    } else {
+        return; // No hacer nada si está deshabilitado
+    }
+    
+    cargarPaginaTecnicos(newPage);
+}
+
+
 //FUNCION PARA INICIALIZAR INTERFAZ / LLAMADO DE CARGA INICIAL
 async function initTecnicos() {
-
-
     try{
         //Inicializacion de UI y eventos
         renderFilterBar();
@@ -94,9 +178,6 @@ async function initTecnicos() {
 
       currentPage = 0;
 
-    // Llama a tu función de carga de datos, pasando el nuevo tamaño
-    // Asumimos que tienes una variable global para el número de página actual (ej. currentPage = 0)
-    // y una función para recargar la tabla (ej. cargarPaginaTecnicos).
       cargarPaginaTecnicos(currentPage, currentSize); 
 
     });
@@ -104,73 +185,6 @@ async function initTecnicos() {
     }catch(err) {
     console.error('Error cargando usuarios:', err);
   }
-}
-
-function renderFilterBar() {
-  const html = `
-    <div class="filter-bar-custom">
-      <div class="row align-items-center top-bar">
-        <div class="col-lg-3 col-md-12 mb-3 mb-lg-0">
-          <div class="user-counts ms-5">
-            <div class="techCount">
-              <span id="userCount">0</span> Técnicos
-            </div>
-            <small>Basado en <span id="filterCount">0</span> Filtro(s)</small>
-          </div>
-        </div>
-
-        <div class="col-lg-8 col-md-12 pb-0 pt-3">
-          <div class="input-group search-container">
-            <span class="input-group-text search-icon-span">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" id="busquedaUsuario" class="form-control search-input" placeholder="Buscar Usuario / Email / ID">
-            <button class="btn btn-outline-danger d-none" id="btnBuscar"></button>
-          </div>
-        </div>
-
-        
-      </div>
-
-      <hr class="filter-divider">
-
-      <div class="d-flex flex-wrap gap-3 filter-row">
-        <div class="filter-select-wrapper">
-          <i class="bi bi-calendar-event filter-icon"></i>
-          <select id="periodFilter" class="form-select styled-select">
-            <option value="all">Todo el tiempo</option>
-            <option value="today">Hoy</option>
-            <option value="week">Esta semana</option>
-            <option value="month">Este mes</option>
-          </select>
-        </div>
-        
-
-        <div class="filter-select-wrapper">
-          <i class="bi bi-list-check filter-icon"></i>
-           <select id="statusFilter" class="form-select styled-select">
-            <option value="all">Todas las categorías</option>
-_  
-            // Usa el objeto categoriasApi para generar las opciones dinámicamente
-            ${Object.keys(categoriasApi).map(catName => 
-                 `<option value="${catName}">${catName}</option>` 
-              ).join('')}
-          </select>
-        </div>
-
-        <div class="d-flex align-items-center filter-select-quantity">
-          <label for="ticketsPerPage" class="form-label me-2 ">Filtrar por cantidad:</label>
-          <select id="ticketsPerPage" class="form-select" style="width: auto;">
-            <option value="2">2</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-
-      </div>
-    </div>
-  `;
-  document.getElementById('filter-bar-container').innerHTML = html;
 }
 
 
@@ -505,19 +519,26 @@ function mostrarCreacion(fechaStr, estado) {
 }
 
 async function abrirFormularioCreacion() {
+    const modalElement = document.getElementById('modalAgregarTecnico');
+    const formElement = modalElement.querySelector('form');
+
+    if (formElement) {
+        formElement.reset(); // Limpia todos los campos del formulario
+    }
+    document.getElementById('userId').value = '';
+
+    document.getElementById('modalAgregarTecnicoLabel').textContent = 'Agregar Nuevo Técnico';
+
     // 1. Obtener la referencia al elemento select
     const selectCategoria = document.getElementById('categoria');
 
-
-    // Si el elemento no existe (Error anterior), salimos.
     if (!selectCategoria) {
         console.error('El elemento select con ID "categoria" no fue encontrado.');
         return; 
     }
 
-    
+    selectCategoria.innerHTML = ''; 
 
-    // 3. Iterar sobre el objeto categoriasApi
     // Object.values() nos da un array con los objetos de categoría ({id: X, displayName: Y})
     const categoriasArray = Object.values(categoriasApi);
 
@@ -530,8 +551,7 @@ async function abrirFormularioCreacion() {
         selectCategoria.appendChild(option);
     });
 
-    // 5. Mostrar el modal (usando el ID 'modalAgregarTecnico')
-    const modalElement = document.getElementById('modalAgregarTecnico');
+    
     const myModal = new bootstrap.Modal(modalElement);
     myModal.show();
     
@@ -618,14 +638,14 @@ async function handleFormSubmit(event) {
     }
 }
 
-async function abrirFormularioEdicion(user) {
+async function abrirFormularioEdicion(userId) {
     // 1. Limpiar el formulario (reutilizando la función que llena las categorías)
     await abrirFormularioCreacion(); // Esto limpia y carga el select de categorías
-    console.log("ID del usuario para la búsqueda:", user.userId); // <- Añade esto
 
-    const data = await getUserTech(0, 1, String(user.userId), 'all', 'all');
-    console.log("Datos recibidos de getUserTech:", data);
-    const usuarios = data.content || data;
+    const res = await getUserTech(0, 1, String(userId), 'all', 'all'); 
+    console.log("ID del usuario para la búsqueda:", res);
+
+    const usuarios = res.content || res;
     const u = usuarios[0];
 
     if (!u) {
@@ -638,27 +658,31 @@ async function abrirFormularioEdicion(user) {
         }
 
     // 2. Llenar los campos con los datos del usuario
-    document.getElementById('userId').value = user.userId || ''; // ID oculto
-    document.getElementById('nombreCompleto').value = user.name || '';
-    document.getElementById('nombreUsuario').value = user.username || '';
-    document.getElementById('email').value = user.email || '';
-    document.getElementById('telefono').value = user.phone || '';
+    document.getElementById('userId').value = u.userId || u.id || ''; // ID oculto
+    document.getElementById('nombreCompleto').value = u.name || '';
+    document.getElementById('nombreUsuario').value = u.username || '';
+    document.getElementById('email').value = u.email || '';
+    document.getElementById('telefono').value = u.phone || '';
     
     // 3. Seleccionar la categoría correcta
     const selectCategoria = document.getElementById('categoria');
-    if (user.category && user.category.id) {
+    if (u.category && u.category.id) {
         // Asignar el valor del ID de la categoría (ej. "2") al select
-        selectCategoria.value = user.category.id;
+        selectCategoria.value = u.category.id;
     } else {
         // Resetear la selección si no hay categoría
         selectCategoria.value = "";
     }
 
     // 4. Cambiar el título del modal
-    document.getElementById('modalAgregarTecnicoLabel').textContent = `Editar Técnico: ${user.name}`;
+    document.getElementById('modalAgregarTecnicoLabel').textContent = `Editar Técnico: ${u.name}`;
+
+    const modalElement = document.getElementById('modalAgregarTecnico');
+    const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    myModal.show();
     
     // El modal ya estará abierto gracias a abrirFormularioCreacion()
-    console.log(`Abierto formulario para edición del usuario ${user.userId}`);
+    console.log(`Abierto formulario para edición del usuario ${userId}`);
 }
 
 async function confirmarEliminacion(userId) {

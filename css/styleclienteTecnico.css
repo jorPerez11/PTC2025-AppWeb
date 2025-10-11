@@ -125,13 +125,22 @@ h4 {
 }
 
 .separator {
-    width: 2px;
-    height: 25px;
+    width: 3.5px;
+    /* Ancho del "palito" */
+    height: 34px;
+    /* Altura del "palito" (aprox. la altura de los iconos) */
     background-color: rgba(255, 255, 255, 0.5);
+    /* Color blanco semi-transparente */
     margin: 0 10px;
 }
 
-/* Estilos de navegación y botones */
+.botonInicioSesion,
+.botonRegistro {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
 .navbar-nav {
     padding-right: 30px;
 }
@@ -182,6 +191,10 @@ h4 {
 
 .botonInicioSesion:focus {
     box-shadow: none;
+}
+
+.navbar-brand {
+    size: 100px;
 }
 
 .nav-link {

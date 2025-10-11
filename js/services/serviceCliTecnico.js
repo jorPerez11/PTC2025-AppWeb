@@ -3,8 +3,11 @@
 // URL de la API de Retool (ya no se usará, pero la mantenemos por referencia)
 const API_Clients = 'https://retoolapi.dev/KaRBTk/clienteData';
 
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
+
 // URL de la API real de Spring Boot
-const API_Tickets = 'http://localhost:8080/api/tickets';
+const API_Tickets = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/tickets';
 
 // Se obtiene el token de autenticación
 let tokenFijo = localStorage.getItem('authToken');
@@ -21,15 +24,20 @@ const commonHeaders = {
  */
 export async function getClientes() {
     try {
-        const res = await fetch(`${API_Tickets}/myTickets`, {
-            method: 'GET',
-            headers: commonHeaders
-        });
-        if (!res.ok) {
-            throw new Error('Error al cargar los clientes.');
-        }
-        return await res.json();
+        // 1. Definir la URL
+        const url = `${API_Tickets}/myTickets`;
+
+        // 2. Usar fetchWithAuth
+        // fetchWithAuth ya maneja el 'GET', headers, autenticación, 
+        // verificación de errores HTTP y el parseo a JSON.
+        const data = await fetchWithAuth(url);
+
+        // Si la promesa se resuelve, 'data' ya es el JSON de respuesta.
+        return data; 
+        
     } catch (err) {
+        // fetchWithAuth ya ha registrado un error más detallado.
+        // Aquí manejamos la contingencia para devolver un arreglo vacío.
         console.error('Error cargando clientes:', err);
         return [];
     }
@@ -43,27 +51,47 @@ export async function getClientes() {
  * @returns {Promise<Object>} El objeto de cliente actualizado.
  */
 export async function updateTicketStatus(ticketId, nuevoEstadoId, nuevoEstadoDisplayName) {
-    try {
-        const res = await fetch(`${API_Tickets}/updateStatus/${ticketId}`, {
-            method: 'PATCH',
-            headers: commonHeaders,
-            // Creamos el payload con el formato correcto que el backend espera
-            body: JSON.stringify({
-                status: {
-                    id: nuevoEstadoId,
-                    displayName: nuevoEstadoDisplayName
-                }
-            })
-        });
-        
-        // Verifica si la respuesta es exitosa (código 204 No Content para PATCH o 200 OK)
-        if (res.status === 204 || res.ok) {
-            return { message: "Ticket actualizado con éxito." };
-        } else {
-            const errorData = await res.json();
-            throw new Error(errorData.error || 'Falló la actualización en la API.');
+    // 1. Crear el payload de la petición
+    const payload = {
+        status: {
+            id: nuevoEstadoId,
+            displayName: nuevoEstadoDisplayName
         }
+    };
+
+    try {
+        // 2. Definir la URL
+        const url = `${API_Tickets}/updateStatus/${ticketId}`;
+
+        // 3. Usar fetchWithAuth
+        // Se pasa 'PATCH' y el cuerpo (body). 
+        // fetchWithAuth se encarga de:
+        // - JSON.stringify() del body (ya está en el payload, pero fetchWithAuth maneja el Content-Type)
+        // - credentials: 'include' (cookies)
+        // - headers: {'Content-Type': 'application/json'}
+        // - Manejo de errores HTTP (401, 403, 4xx, 5xx)
+        const responseData = await fetchWithAuth(url, {
+            method: 'PATCH',
+            body: JSON.stringify(payload)
+            // Ya no necesitas 'headers: commonHeaders'
+        });
+
+        // 4. Manejar el éxito: 
+        // Si fetchWithAuth no lanzó un error, la petición fue exitosa (2xx).
+        // Si el backend no devuelve un body, responseData podría ser la Response original (según tu fetchWithAuth), 
+        // pero podemos asumir el éxito si no hubo error.
+        
+        // Dado que tu lógica original solo quería confirmar el éxito o devolver un mensaje,
+        // puedes simplificarlo si la API devuelve un código 204 (No Content) sin cuerpo, 
+        // o si devuelve un objeto de confirmación.
+        
+        return responseData && typeof responseData === 'object' 
+            ? responseData 
+            : { message: "Ticket actualizado con éxito." };
+            
     } catch (err) {
+        // fetchWithAuth ya ha loggeado el error con detalles si fue un error HTTP.
+        // Relanzamos el error para que pueda ser manejado por la capa superior.
         console.error('Error al actualizar estado:', err);
         throw err;
     }

@@ -1,5 +1,10 @@
 // js/utils/authManager.js
 
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
+
+const API_URL = 'http://localhost:8080/api';
+
 export class AuthManager {
     constructor() {
         this.loginPage = this.getLoginPagePath();
@@ -29,22 +34,60 @@ export class AuthManager {
         }
     }
 
+    async callServerLogout() {
+        console.log('📡 Llamando a endpoint de logout en el servidor...');
+
+        try {
+            // Usa la URL completa del endpoint de logout
+            const url = `${API_URL}/users/logoutWeb`;
+            console.log('🎯 URL de logout:', url);
+
+            const response = await fetchWithAuth(url, {
+                method: 'POST',
+                // No necesita body para logout
+            });
+
+            console.log('Respuesta del servidor recibida');
+            console.log('Status:', response.status);
+            console.log('OK:', response.ok);
+
+            // Verificar que la respuesta sea exitosa
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const result = await response.text();
+            console.log('Respuesta del servidor:', result);
+
+            return true;
+
+        } catch (error) {
+            console.error('Error en callServerLogout:', error);
+            console.log('Continuando con limpieza local...');
+            return false; // Indicar que falló
+        }
+    }
+
     async logout() {
         try {
             console.group('🔐 Proceso de logout');
 
-            // ✅ 1. Mostrar confirmación
+            // 1. Mostrar confirmación
             const confirmLogout = await this.showLogoutConfirmation();
             if (!confirmLogout) {
                 console.log('❌ Logout cancelado por el usuario');
                 return false;
             }
 
-            // ✅ 2. Limpiar datos ANTES de mostrar feedback
-            console.log('🧹 Limpiando datos de autenticación...');
+            // ⭐ PASO CRUCIAL: Llamar al servidor para borrar la cookie HttpOnly
+            await this.callServerLogout();
+
+            // 2. Limpiar datos ANTES de mostrar feedback (para borrar localStorage, sessionStorage, etc.)
+            console.log('🧹 Limpiando datos de autenticación locales...');
+            // Cambia la llamada a tu método general de limpieza
             await this.clearAuthDataImmediate();
 
-            // ✅ 3. Mostrar feedback y redirigir DESPUÉS de limpiar
+            // 3. Mostrar feedback y redirigir DESPUÉS de limpiar
             await this.showLogoutFeedbackAndRedirect();
 
             console.groupEnd();
@@ -52,7 +95,6 @@ export class AuthManager {
 
         } catch (error) {
             console.error('❌ Error crítico en logout:', error);
-            // Forzar limpieza y redirección incluso si hay error
             this.forceCleanupAndRedirect();
             return false;
         }
@@ -200,7 +242,7 @@ export class AuthManager {
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#F48C06',
-                cancelButtonColor: '#6c757d',
+                cancelButtonColor: '#03071E',
                 confirmButtonText: 'Sí, cerrar sesión',
                 cancelButtonText: 'Cancelar',
                 reverseButtons: true,
@@ -277,7 +319,7 @@ export class AuthManager {
 
     clearMemoryData() {
         // Limpiar variables globales específicas
-        const globalVars = ['currentUser', 'userToken', 'apiToken', 'authData', 'userProfile'];
+        const globalVars = ['currentUser', 'userToken', 'apiToken', 'authData', 'userProfile', 'authToken'];
 
         globalVars.forEach(varName => {
             if (window[varName]) {
