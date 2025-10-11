@@ -27,7 +27,13 @@ export async function login(credentials) {
  * Verifica si ya existe al menos una compañía en el backend.
  * @returns {Promise<boolean>} - True si hay compañías, false si no.
  */
+/**
+ * Verifica si ya existe al menos una compañía en el backend y muestra el resultado en una alerta.
+ * @returns {Promise<boolean>} - True si hay compañías, false si no.
+ */
 export async function checkCompanyExistence() {
+    let result = false; // Valor por defecto en caso de error
+
     try {
         const response = await fetch(`${COMPANY_API_URL}/check-company-existence`, {
             method: 'GET',
@@ -35,13 +41,48 @@ export async function checkCompanyExistence() {
         });
         
         if (!response.ok) {
-            console.error("Error del servidor al verificar la existencia de compañías:", response.status, await response.text());
+            const errorText = await response.text();
+            console.error("Error del servidor al verificar la existencia de compañías:", response.status, errorText);
+            
+            // 🚨 Alerta SweetAlert para Error HTTP
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Verificación',
+                text: `El servidor respondió con el código ${response.status}. Mensaje: ${errorText.substring(0, 100)}...`,
+                confirmButtonText: 'Aceptar'
+            });
+            
             return false;
         }
         
-        return await response.json();
+        // La respuesta esperada es un booleano (true/false) o un objeto con un booleano.
+        const responseData = await response.json();
+        
+        // Asume que la respuesta directa es el booleano o lo contiene en un campo 'exists'
+        result = typeof responseData === 'boolean' ? responseData : responseData?.exists || false;
+
+        // ✅ Alerta SweetAlert para éxito
+        Swal.fire({
+            icon: result ? 'success' : 'info',
+            title: 'Verificación Exitosa',
+            html: `Resultado del Backend: <strong>${result}</strong><br>
+                  ${result ? '¡Ya hay una compañía registrada!' : 'No se encontraron compañías registradas.'}`,
+            confirmButtonText: 'Continuar'
+        });
+
+        return result;
+
     } catch (error) {
         console.error("Fallo de red al verificar la existencia de compañías:", error);
+
+        // 🚨 Alerta SweetAlert para Fallo de Red
+        Swal.fire({
+            icon: 'warning',
+            title: 'Error de Conexión',
+            text: 'Fallo al intentar conectar con el servidor para verificar la existencia de compañías.',
+            confirmButtonText: 'Cerrar'
+        });
+
         return false;
     }
 }

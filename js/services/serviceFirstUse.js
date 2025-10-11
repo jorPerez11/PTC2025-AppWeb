@@ -10,53 +10,86 @@ const API_USERS_URL = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/users'
 
 // Función para el registro inicial (POST)
 export async function guardarPaso1EnAPI(companyData, adminData) {
-    const companyResponse = await fetch(`${API_COMPANY_URL}/PostCompany`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(companyData)
-    });
+    // La función original lanza un error si alguna de las llamadas falla.
+    // Usamos fetchPublic, que maneja errores HTTP pero omite la cookie.
+    try {
+        // 1. Llamada para la Compañía
+        // 💡 CAMBIO: Usamos fetchPublic para omitir la cookie de autenticación.
+        const companyResult = await fetchPublic(`${API_COMPANY_URL}/PostCompany`, {
+            method: 'POST',
+            body: JSON.stringify(companyData)
+        });
+        // Si la llamada es exitosa, companyResult es el JSON parseado.
 
-    if (!companyResponse.ok) {
-        const errorData = await companyResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al crear la compañía: ${companyResponse.status}`);
+        // ---
+
+        // 2. Llamada para el Administrador
+        // 💡 CAMBIO: Usamos fetchPublic para omitir la cookie de autenticación.
+        const adminResult = await fetchPublic(API_REGISTER_ADMIN, {
+            method: 'POST',
+            body: JSON.stringify(adminData)
+        });
+        // Si la llamada es exitosa, adminResult es el JSON parseado.
+
+        // ---
+
+        // 3. Devolver los resultados combinados
+        return { company: companyResult, admin: adminResult };
+
+    } catch (error) {
+        // Manejo centralizado de errores.
+        console.error('Error al guardar datos de Compañía/Administrador:', error);
+        throw error;
     }
-    const companyResult = await companyResponse.json();
-
-    const adminResponse = await fetch(API_REGISTER_ADMIN, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adminData)
-    });
-
-    if (!adminResponse.ok) {
-        const errorData = await adminResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al crear al administrador: ${adminResponse.status}`);
-    }
-    const adminResult = await adminResponse.json();
-
-    return { company: companyResult, admin: adminResult };
 }
 
 // Nueva función genérica para actualizaciones con PATCH
 export async function updateDataInAPI(type, id, data) {
+    
+    // 1. Determinar la URL
+    // Se asume que API_COMPANY_URL y API_USERS_URL están definidos
+    // Corregido: uso de template literal y operador ternario.
     const url = type === 'company' ? `${API_COMPANY_URL}/companies/${id}` : `${API_USERS_URL}/users/${id}`;
-    const response = await fetch(url, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al actualizar ${type}: ${response.status}`);
+    // 2. Usar fetchPublic para manejar la petición
+    // 💡 CAMBIO CLAVE: Usamos fetchPublic porque estos endpoints PATCH son 'permitAll()'.
+    // fetchPublic ya se encarga de:
+    // - Omitir las credenciales (cookies)
+    // - Añadir el 'Content-Type: application/json' (gracias a la lógica de fetchWithAuth)
+    // - Manejar errores HTTP y parsear el JSON de la respuesta
+    
+    // NOTA: fetchPublic ya tiene la lógica de error incorporada y lanza la excepción si !response.ok
+    try {
+        const result = await fetchPublic(url, {
+            method: 'PATCH',
+            // fetchPublic/fetchWithAuth ya maneja el Content-Type, solo necesitamos el body.
+            body: JSON.stringify(data)
+        });
+        
+        // Si no hay error, retorna el resultado JSON parseado por fetchPublic/fetchWithAuth
+        return result; 
+
+    } catch (error) {
+        // Capturamos el error relanzado por fetchPublic/fetchWithAuth.
+        
+        // El error relanzado ya contiene un mensaje de error detallado (ej: "Error 400: Bad Request")
+        // Aquí puedes refinar el mensaje si lo deseas o simplemente relanzar el error.
+        
+        // Ejemplo de refinamiento:
+        // Corregido: uso de template literal en el mensaje de error.
+        const specificError = error.message.includes('Acceso denegado') 
+            ? error 
+            : new Error(`Error al actualizar ${type} con PATCH: ${error.message}`);
+        
+        throw specificError;
     }
-    return await response.json();
 }
 
 // Función para eliminar registros de manera robusta
 export async function deleteRecordsFromAPI(companyId, adminId) {
     // Intenta eliminar al usuario.
-    const adminResponse = await fetch(`http://localhost:8080/api/users/${adminId}`, {
+    // Corregido: uso de template literal en la URL.
+    const adminResponse = await fetch(`https://ptchelpdesk-a73934db2774.herokuapp.com/api/users/${adminId}`, {
         method: 'DELETE',
     });
 
@@ -65,16 +98,19 @@ export async function deleteRecordsFromAPI(companyId, adminId) {
     if (!adminResponse.ok && adminResponse.status !== 404 && adminResponse.status !== 204) {
         // Lanza un error solo para otros códigos de estado.
         const errorData = await adminResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(errorData.error || `Error al eliminar al administrador: ${adminResponse.status}`);
     }
 
     // Intenta eliminar la compañía.
+    // Corregido: uso de template literal en la URL.
     const companyResponse = await fetch(`${API_COMPANY_URL}/companies/${companyId}`, {
         method: 'DELETE',
     });
 
     if (!companyResponse.ok && companyResponse.status !== 404 && companyResponse.status !== 204) {
         const errorData = await companyResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(errorData.error || `Error al eliminar la compañía: ${companyResponse.status}`);
     }
 }
@@ -85,7 +121,8 @@ export async function deleteRecordsFromAPI(companyId, adminId) {
  * @returns {Promise<object>} - El objeto del usuario actualizado.
  */
 export async function finalizarAdminSetupAPI(userId) {
-    const response = await fetch(`http://localhost:8080/api/firstuse/finalize-admin/${userId}`, {
+    // Corregido: uso de template literal en la URL.
+    const response = await fetch(`https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/finalize-admin/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" }
     });
@@ -93,6 +130,7 @@ export async function finalizarAdminSetupAPI(userId) {
     const responseText = await response.text();
 
     if (!response.ok) {
+        // Corregido: uso de template literal en el mensaje de error.
         let errorMsg = `Error del servidor: ${response.status}`;
         try {
             const errorData = JSON.parse(responseText);
@@ -112,8 +150,10 @@ export async function obtenerCategoriasAPI() {
         // Obtener más detalles del error
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
+    // Corregido: uso de template literal en el mensaje de error.
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     return response.json();
 }
@@ -128,13 +168,16 @@ export async function agregarCategoriaAPI(nombre) {
         // Obtener más detalles del error
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
+    // Corregido: uso de template literal en el mensaje de error.
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     return response.json();
 }
 
 export async function editarCategoriaAPI(id, nombre) {
+    // Corregido: uso de template literal en la URL.
     const response = await fetch(`${API_URL2}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -144,8 +187,10 @@ export async function editarCategoriaAPI(id, nombre) {
         // Obtener más detalles del error
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
+    // Corregido: uso de template literal en el mensaje de error.
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     return response.json();
 }
@@ -154,6 +199,7 @@ export async function editarCategoriaAPI(id, nombre) {
 export async function eliminarCategoriaAPI(id) {
     try {
         console.log("Enviando DELETE para categoría:", id);
+        // Corregido: uso de template literal en la URL.
         const response = await fetch(`${API_URL2}/${id}`, {
             method: 'DELETE',
             headers: {
@@ -170,10 +216,12 @@ export async function eliminarCategoriaAPI(id) {
         try {
             responseData = JSON.parse(responseText);
         } catch (e) {
+            // Corregido: uso de template literal en el mensaje de error.
             throw new Error(`Respuesta inválida del servidor: ${responseText}`);
         }
 
         if (!response.ok) {
+            // Corregido: uso de template literal en el mensaje de error.
             throw new Error(responseData.error || `Error del servidor: ${response.status}`);
         }
 
@@ -204,6 +252,7 @@ export async function agregarTecnicoPendienteAPI(datosTecnico, companyId) {
     const responseText = await response.text();
 
     if (!response.ok) {
+        // Corregido: uso de template literal en el mensaje de error.
         let errorMsg = `Error del servidor: ${response.status}`;
         try {
             const errorData = JSON.parse(responseText);
@@ -219,6 +268,7 @@ export async function agregarTecnicoPendienteAPI(datosTecnico, companyId) {
 
 // Servicio para asignar una categoría a un técnico pendiente y activarlo
 export async function asignarCategoriaYActivarTecnicoAPI(id, categoryId) {
+    // Corregido: uso de template literal en la URL.
     const response = await fetch(`${API_ASIGNAR_CATEGORIA}/${id}/asignar-categoria`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -228,6 +278,7 @@ export async function asignarCategoriaYActivarTecnicoAPI(id, categoryId) {
     const responseText = await response.text();
 
     if (!response.ok) {
+        // Corregido: uso de template literal en el mensaje de error.
         let errorMsg = `Error del servidor: ${response.status}`;
         try {
             const errorData = JSON.parse(responseText);
@@ -250,7 +301,8 @@ export async function activatePendingTechniciansAPI(companyId) {
     try {
         console.log("Enviando solicitud para activar técnicos pendientes, companyId:", companyId);
         
-        const response = await fetch(`http://localhost:8080/api/firstuse/activate-pending-technicians`, {
+        // Corregido: uso de template literal en la URL.
+        const response = await fetch(`https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/activate-pending-technicians`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ companyId: companyId })
@@ -260,6 +312,7 @@ export async function activatePendingTechniciansAPI(companyId) {
         console.log("Respuesta del servidor (texto):", responseText);
 
         if (!response.ok) {
+            // Corregido: uso de template literal en el mensaje de error.
             let errorMsg = `Error del servidor: ${response.status}`;
             try {
                 const errorData = JSON.parse(responseText);
@@ -287,8 +340,10 @@ export async function obtenerTecnicosAPI() {
         // Obtener más detalles del error
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
+    // Corregido: uso de template literal en el mensaje de error.
     if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
     return response.json();
 }
@@ -304,6 +359,7 @@ export async function agregarTecnicoAPI(datosTecnico) {
 
     if (!response.ok) {
         // Intentar parsear como JSON si es posible
+        // Corregido: uso de template literal en el mensaje de error.
         let errorMsg = `Error del servidor: ${response.status}`;
         try {
             const errorData = JSON.parse(responseText);
@@ -314,11 +370,13 @@ export async function agregarTecnicoAPI(datosTecnico) {
         throw new Error(errorMsg);
     }
 
+    // Corregido: uso de template literal en el mensaje de error.
     if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
-    return response.json();
+    return JSON.parse(responseText); // Devuelve el JSON parseado del responseText
 }
 
 export async function editarTecnicoAPI(id, datosTecnico) {
+    // Corregido: uso de template literal en la URL.
     const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -328,6 +386,7 @@ export async function editarTecnicoAPI(id, datosTecnico) {
         // Obtener más detalles del error
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
     if (!response.ok) throw new Error("Error al actualizar el técnico");
@@ -335,12 +394,14 @@ export async function editarTecnicoAPI(id, datosTecnico) {
 }
 
 export async function eliminarTecnicoAPI(id) {
+    // Corregido: uso de template literal en la URL.
     const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
     // Verifica si la respuesta no fue exitosa
     if (!response.ok) {
         const errorData = await response.text();
         console.error("Error del servidor:", response.status, errorData);
+        // Corregido: uso de template literal en el mensaje de error.
         throw new Error(`Error del servidor: ${response.status} - ${errorData}`);
     }
 
