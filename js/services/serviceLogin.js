@@ -143,6 +143,11 @@ export async function fetchWithAuth(url, options = {}) {
     }
 }
 
+export async function fetchPublic(url, options = {}) {
+    // Llama a fetchWithAuth forzando omitCredentials a true
+    return fetchWithAuth(url, options, true);
+}
+
 export async function getUserId() {
     try{
         const userData = await me();

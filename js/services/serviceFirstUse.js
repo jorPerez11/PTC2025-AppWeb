@@ -1,3 +1,6 @@
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth, fetchPublic } from "../services/serviceLogin.js";
+
 // Constantes de API
 const API_URL2 = "http://localhost:8080/api/firstuse/categorias";
 const API_URL = "http://localhost:8080/api/firstuse/tecnicoData";
@@ -10,47 +13,77 @@ const API_USERS_URL = 'http://localhost:8080/api/users';
 
 // Función para el registro inicial (POST)
 export async function guardarPaso1EnAPI(companyData, adminData) {
-    const companyResponse = await fetch(`${API_COMPANY_URL}/PostCompany`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(companyData)
-    });
+    // La función original lanza un error si alguna de las llamadas falla.
+    // Usamos fetchPublic, que maneja errores HTTP pero omite la cookie.
+    try {
+        // 1. Llamada para la Compañía
+        // 💡 CAMBIO: Usamos fetchPublic para omitir la cookie de autenticación.
+        const companyResult = await fetchPublic(`${API_COMPANY_URL}/PostCompany`, {
+            method: 'POST',
+            body: JSON.stringify(companyData)
+        });
+        // Si la llamada es exitosa, companyResult es el JSON parseado.
 
-    if (!companyResponse.ok) {
-        const errorData = await companyResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al crear la compañía: ${companyResponse.status}`);
+        // ---
+
+        // 2. Llamada para el Administrador
+        // 💡 CAMBIO: Usamos fetchPublic para omitir la cookie de autenticación.
+        const adminResult = await fetchPublic(API_REGISTER_ADMIN, {
+            method: 'POST',
+            body: JSON.stringify(adminData)
+        });
+        // Si la llamada es exitosa, adminResult es el JSON parseado.
+
+        // ---
+
+        // 3. Devolver los resultados combinados
+        return { company: companyResult, admin: adminResult };
+
+    } catch (error) {
+        // Manejo centralizado de errores.
+        console.error('Error al guardar datos de Compañía/Administrador:', error);
+        throw error;
     }
-    const companyResult = await companyResponse.json();
-
-    const adminResponse = await fetch(API_REGISTER_ADMIN, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(adminData)
-    });
-
-    if (!adminResponse.ok) {
-        const errorData = await adminResponse.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al crear al administrador: ${adminResponse.status}`);
-    }
-    const adminResult = await adminResponse.json();
-
-    return { company: companyResult, admin: adminResult };
 }
 
 // Nueva función genérica para actualizaciones con PATCH
 export async function updateDataInAPI(type, id, data) {
+    
+    // 1. Determinar la URL
+    // Se asume que API_COMPANY_URL y API_USERS_URL están definidos
     const url = type === 'company' ? `${API_COMPANY_URL}/companies/${id}` : `${API_USERS_URL}/users/${id}`;
-    const response = await fetch(url, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Error al parsear JSON.' }));
-        throw new Error(errorData.error || `Error al actualizar ${type}: ${response.status}`);
+    // 2. Usar fetchPublic para manejar la petición
+    // 💡 CAMBIO CLAVE: Usamos fetchPublic porque estos endpoints PATCH son 'permitAll()'.
+    // fetchPublic ya se encarga de:
+    // - Omitir las credenciales (cookies)
+    // - Añadir el 'Content-Type: application/json' (gracias a la lógica de fetchWithAuth)
+    // - Manejar errores HTTP y parsear el JSON de la respuesta
+    
+    // NOTA: fetchPublic ya tiene la lógica de error incorporada y lanza la excepción si !response.ok
+    try {
+        const result = await fetchPublic(url, {
+            method: 'PATCH',
+            // fetchPublic/fetchWithAuth ya maneja el Content-Type, solo necesitamos el body.
+            body: JSON.stringify(data)
+        });
+        
+        // Si no hay error, retorna el resultado JSON parseado por fetchPublic/fetchWithAuth
+        return result; 
+
+    } catch (error) {
+        // Capturamos el error relanzado por fetchPublic/fetchWithAuth.
+        
+        // El error relanzado ya contiene un mensaje de error detallado (ej: "Error 400: Bad Request")
+        // Aquí puedes refinar el mensaje si lo deseas o simplemente relanzar el error.
+        
+        // Ejemplo de refinamiento:
+        const specificError = error.message.includes('Acceso denegado') 
+            ? error 
+            : new Error(`Error al actualizar ${type} con PATCH: ${error.message}`);
+        
+        throw specificError;
     }
-    return await response.json();
 }
 
 // Función para eliminar registros de manera robusta
