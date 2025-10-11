@@ -5,20 +5,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- VERIFICACIÓN INMEDIATA AL CARGAR LA PÁGINA ---
     // Mostrar cursor de carga inmediatamente
     document.body.style.cursor = 'wait';
+
+    let companyExists = false;
+
     try {
-        const companyExists = await checkCompanyExistence();
+        companyExists = await checkCompanyExistence();
+        
         if (!companyExists) {
             // Si no hay compañías, redirigir inmediatamente al primer uso
             console.log("No hay compañías existentes, redirigiendo al primer uso...");
+            // Es crucial restablecer el cursor ANTES de la redirección, aunque no siempre se ve.
+            document.body.style.cursor = 'default'; 
             window.location.href = "primerUso.html";
-            return; // Importante: salir de la función para no cargar el formulario
+            return; // Importante: salir de la función
         }
     } catch (error) {
-        // Restaurar cursor normal en caso de error
-        document.body.style.cursor = 'default';
+        // Restaurar cursor normal en caso de error de red/servidor (ya no es estrictamente necesario, pero no estorba)
+        // document.body.style.cursor = 'default'; // Se moverá al finally
+        
         console.error("Error al verificar existencia de compañías:", error);
-        // En caso de error, mostramos el formulario normal pero con un mensaje de advertencia
-        showGlobalMessage("Error al verificar el estado del sistema. Puede continuar con el registro.", 'error');
+        
+        // El error fue lanzado/mostrado en la función checkCompanyExistence
+        showGlobalMessage("Error al verificar el estado del sistema. Por favor, recarga o intenta más tarde.", 'error');
+        
+        return; // Salir, ya que la verificación falló catastróficamente
+    } finally {
+        // ✅ SOLUCIÓN: Restablece el cursor siempre, haya habido éxito o error (excepto redirección).
+        if (companyExists) {
+            document.body.style.cursor = 'default';
+        }
+        // Si hay un error, el 'return' en el catch ya detuvo el flujo y el cursor se restablece más abajo.
+        // La mejor práctica es simplemente restablecerlo aquí:
+        document.body.style.cursor = 'default';
     }
 
     // --- SOLO SI HAY COMPAÑÍAS EXISTENTES, CARGAMOS EL FORMULARIO DE REGISTRO NORMAL ---
