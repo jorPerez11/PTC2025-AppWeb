@@ -1,3 +1,6 @@
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth, fetchPublic } from "../services/serviceLogin.js";
+
 // Constantes de API
 const API_URL2 = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/categorias";
 const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api/firstuse/tecnicoData";
@@ -48,7 +51,6 @@ export async function updateDataInAPI(type, id, data) {
     
     // 1. Determinar la URL
     // Se asume que API_COMPANY_URL y API_USERS_URL están definidos
-    // Corregido: uso de template literal y operador ternario.
     const url = type === 'company' ? `${API_COMPANY_URL}/companies/${id}` : `${API_USERS_URL}/users/${id}`;
 
     // 2. Usar fetchPublic para manejar la petición
@@ -76,7 +78,6 @@ export async function updateDataInAPI(type, id, data) {
         // Aquí puedes refinar el mensaje si lo deseas o simplemente relanzar el error.
         
         // Ejemplo de refinamiento:
-        // Corregido: uso de template literal en el mensaje de error.
         const specificError = error.message.includes('Acceso denegado') 
             ? error 
             : new Error(`Error al actualizar ${type} con PATCH: ${error.message}`);
