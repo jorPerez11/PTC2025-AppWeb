@@ -27,48 +27,49 @@ export async function login(credentials) {
  * Verifica si ya existe al menos una compañía en el backend.
  * @returns {Promise<boolean>} - True si hay compañías, false si no.
  */
-/**
- * Verifica si ya existe al menos una compañía en el backend y muestra el resultado en una alerta.
- * @returns {Promise<boolean>} - True si hay compañías, false si no.
- */
 export async function checkCompanyExistence() {
-    let result = false; // Valor por defecto en caso de error
+    let result = false;
+
+    // Función auxiliar para mostrar alertas de forma segura
+    const safeSwal = (config) => {
+        if (typeof Swal !== 'undefined' && Swal.fire) {
+            Swal.fire(config);
+        } else {
+            // Mensaje de consola si Swal no está disponible (para debugging)
+            console.warn("SweetAlert no está disponible. Mensaje: " + config.text);
+        }
+    };
 
     try {
         const response = await fetch(`${COMPANY_API_URL}/check-company-existence`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error("Error del servidor al verificar la existencia de compañías:", response.status, errorText);
-            
+
             // 🚨 Alerta SweetAlert para Error HTTP
-            Swal.fire({
+            safeSwal({
                 icon: 'error',
                 title: 'Error de Verificación',
                 text: `El servidor respondió con el código ${response.status}. Mensaje: ${errorText.substring(0, 100)}...`,
                 confirmButtonText: 'Aceptar'
             });
-            
+
             return false;
         }
-        
-        // La respuesta esperada es un booleano (true/false) o un objeto con un booleano.
+
         const responseData = await response.json();
-        
-        // Asume que la respuesta directa es el booleano o lo contiene en un campo 'exists'
+        // Asume que la respuesta directa es el booleano
         result = typeof responseData === 'boolean' ? responseData : responseData?.exists || false;
 
-        // ✅ Alerta SweetAlert para éxito
-        Swal.fire({
-            icon: result ? 'success' : 'info',
-            title: 'Verificación Exitosa',
-            html: `Resultado del Backend: <strong>${result}</strong><br>
-                  ${result ? '¡Ya hay una compañía registrada!' : 'No se encontraron compañías registradas.'}`,
-            confirmButtonText: 'Continuar'
-        });
+        // ❌ ELIMINAMOS LA ALERTA DE ÉXITO. Solo devolvemos el resultado.
+        
+        // **DEBUGGING:** Si quieres ver el resultado antes de redirigir, usa console.log
+        alert(`[checkCompanyExistence] Respuesta del Backend: ${result}`);
+
 
         return result;
 
@@ -76,10 +77,10 @@ export async function checkCompanyExistence() {
         console.error("Fallo de red al verificar la existencia de compañías:", error);
 
         // 🚨 Alerta SweetAlert para Fallo de Red
-        Swal.fire({
+        safeSwal({
             icon: 'warning',
             title: 'Error de Conexión',
-            text: 'Fallo al intentar conectar con el servidor para verificar la existencia de compañías.',
+            text: `Fallo al intentar conectar con el servidor: ${error.message}`,
             confirmButtonText: 'Cerrar'
         });
 
