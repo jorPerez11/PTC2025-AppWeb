@@ -772,16 +772,49 @@ export function actualizarEquipoEnStorage(id, accion, categoria, username = '') 
   console.log("Equipo actualizado en storage:", equipo);
 }
 
-export function marcarTecnicoComoAñadido(idTecnico, categoria, username, restaurando = false) {
-  const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
-  if (!btnAñadir) return;
-  const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
-  if (!contenedorAcciones) return;
+// Corregido: La función debe ser ASYNC para poder usar 'await'
+export async function marcarTecnicoComoAñadido(idTecnico, categoria, username, restaurando = false) {
+    const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
+    if (!btnAñadir) return;
+    const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
+    if (!contenedorAcciones) return;
 
-  if (!restaurando) actualizarEquipoEnStorage(idTecnico, "agregar", categoria, username);
+    // Solo si no estamos restaurando (es decir, el usuario acaba de hacer click en añadir)
+    if (!restaurando) {
+        try {
+            // 🛑 LÍNEA CLAVE AGREGADA: Llamar a la API para asignar la categoría y activar el técnico
+            // Esto es lo que faltaba para reflejar el cambio en la BD.
+            console.log(`Llamando a la API para asignar categoría ${categoria} al técnico ${idTecnico}`);
+            await asignarCategoriaYActivarTecnicoAPI(idTecnico, categoria);
 
-  const accionesContainer = document.getElementById(`acciones-${idTecnico}`);
-  marcarTecnicoComoAñadidoVisual(idTecnico, accionesContainer, restaurando, username);
+            // Si el backend responde OK, actualizamos el localStorage
+            actualizarEquipoEnStorage(idTecnico, "agregar", categoria, username);
+
+            // Mostrar mensaje de éxito específico para esta acción
+            Swal.fire({
+                icon: 'success',
+                title: 'Técnico añadido y categorizado',
+                text: 'El técnico ha sido asignado a su equipo y a su categoría.',
+                timer: 1500,
+                showConfirmButton: false
+            });
+            
+        } catch (error) {
+            console.error("Error al asignar categoría y activar técnico:", error);
+            // Si el backend falla, mostramos el error y detenemos la ejecución
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al añadir al equipo',
+                text: error.message || "Ocurrió un error al intentar asignar la categoría en el sistema.",
+                confirmButtonText: 'Aceptar'
+            });
+            return; // Salir de la función para no actualizar la vista si falla el backend
+        }
+    }
+    
+    // Luego actualizamos la vista (Visualización en el frontend)
+    const accionesContainer = document.getElementById(`acciones-${idTecnico}`);
+    marcarTecnicoComoAñadidoVisual(idTecnico, accionesContainer, restaurando, username);
 }
 
 export function obtenerCategoriaTecnico(id) {
