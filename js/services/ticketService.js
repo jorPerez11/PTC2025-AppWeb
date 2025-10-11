@@ -1,7 +1,7 @@
 // 1. Importar la función `fetchWithAuth` que maneja el token internamente
 import { fetchWithAuth } from "../services/serviceLogin.js";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 // Define los encabezados comunes, incluyendo el token de autorización
 const commonHeaders = {

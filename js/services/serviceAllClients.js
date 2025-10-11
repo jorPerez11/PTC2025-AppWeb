@@ -4,8 +4,8 @@
 import { fetchWithAuth } from "../services/serviceLogin.js";
 
 // Usaremos las URLs de tu API de Spring Boot
-const API_CLIENTS = 'http://localhost:8080/api/clients'; 
-const API_TICKETS = 'http://localhost:8080/api/tickets';
+const API_CLIENTS = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/clients'; 
+const API_TICKETS = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/tickets';
 
 // Se obtiene el token de autenticación
 let tokenFijo = localStorage.getItem('authToken');
