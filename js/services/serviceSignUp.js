@@ -1,8 +1,8 @@
 // La URL base la API, apuntando al controlador de usuarios.
-const API_URL = 'http://localhost:8080/api/users';
+const API_URL = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/users';
 
 // URL para endpoints de compañías (nueva constante)
-const COMPANY_API_URL = 'http://localhost:8080/api';
+const COMPANY_API_URL = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api';
 
 /**
  * Envía las credenciales al backend para su validación.

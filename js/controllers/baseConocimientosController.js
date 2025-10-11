@@ -5,6 +5,8 @@ import {
     deleteSolution
 } from '../services/baseConocimientosService.js'
 
+import { getUserId } from '../services/serviceLogin.js'
+
 let solutions = [];
 let currentPage = 0;
 let currentSize = 4;
@@ -293,13 +295,15 @@ crearArticuloBtn.addEventListener('click', () => {
 });
 
 createArticleForm.addEventListener('submit', async (event) => {
+
+    const creatorUserId = await getUserId();
     event.preventDefault();
     const articleId = document.getElementById('articleId').value;
     const solutionData = {
         solutionTitle: document.getElementById('articleTitle').value,
         descriptionS: document.getElementById('articleDescription').value,
         category: { id: parseInt(document.getElementById('articleCategory').value) },
-        userId: 24,
+        userId: creatorUserId,
         solutionSteps: document.getElementById('articleSteps').value,
         keyWords: document.getElementById('articleKeywords').value
     };
