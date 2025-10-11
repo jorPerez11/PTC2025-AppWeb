@@ -25,6 +25,7 @@ export async function login(credentials) {
 
 /**
  * Verifica si ya existe al menos una compañía en el backend.
+ * Esta versión incluye pausas de SweetAlert para debugging.
  * @returns {Promise<boolean>} - True si hay compañías, false si no.
  */
 export async function checkCompanyExistence() {
@@ -33,14 +34,16 @@ export async function checkCompanyExistence() {
     // Función auxiliar para mostrar alertas de forma segura
     const safeSwal = (config) => {
         if (typeof Swal !== 'undefined' && Swal.fire) {
-            Swal.fire(config);
+            return Swal.fire(config); // Retorna la promesa de Swal.fire
         } else {
-            // Mensaje de consola si Swal no está disponible (para debugging)
-            console.warn("SweetAlert no está disponible. Mensaje: " + config.text);
+            console.warn("SweetAlert no está disponible. Usando alert() nativo. Mensaje: " + config.text);
+            alert(config.title + "\n" + config.text);
+            return Promise.resolve(true); // Resuelve inmediatamente
         }
     };
 
     try {
+        console.log("-> Iniciando verificación de existencia de compañías...");
         const response = await fetch(`${COMPANY_API_URL}/check-company-existence`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
@@ -48,42 +51,50 @@ export async function checkCompanyExistence() {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error("Error del servidor al verificar la existencia de compañías:", response.status, errorText);
+            console.error("-> 🛑 Error del servidor al verificar la existencia de compañías:", response.status, errorText);
 
-            // 🚨 Alerta SweetAlert para Error HTTP
-            safeSwal({
+            // 🚨 PAUSA 1: Alerta SweetAlert para Error HTTP. Espera a que el usuario presione "Aceptar".
+            await safeSwal({
                 icon: 'error',
-                title: 'Error de Verificación',
+                title: 'Error de Verificación (Revisar Consola)',
                 text: `El servidor respondió con el código ${response.status}. Mensaje: ${errorText.substring(0, 100)}...`,
-                confirmButtonText: 'Aceptar'
+                confirmButtonText: 'Continuar (No Redirigir)' 
+                // Nota: Usamos "Continuar" pero devolvemos 'false' para que el controlador tome la decisión.
             });
 
             return false;
         }
 
         const responseData = await response.json();
-        // Asume que la respuesta directa es el booleano
         result = typeof responseData === 'boolean' ? responseData : responseData?.exists || false;
 
-        // ❌ ELIMINAMOS LA ALERTA DE ÉXITO. Solo devolvemos el resultado.
+        console.log(`-> ✅ Éxito - Respuesta JSON completa:`, responseData);
+        console.log(`-> ✅ Resultado procesado (companyExists): ${result}`);
         
-        // **DEBUGGING:** Si quieres ver el resultado antes de redirigir, usa console.log
-        alert(`[checkCompanyExistence] Respuesta del Backend: ${result}`);
-
-
+        // 🚨 PAUSA 2: Alerta SweetAlert para Éxito. Espera a que el usuario presione "Continuar".
+        await safeSwal({
+            icon: result ? 'success' : 'info',
+            title: 'Verificación de Compañía Completa (Revisar Consola)',
+            html: `Resultado del Backend: <strong>${result}</strong><br>
+                  ${result ? '¡Hay compañías! (Se mantendrá en la página).' : 'No hay compañías. (Se redirigirá).'}<br><br>
+                  Presiona 'Continuar' para que el script siga su curso.`,
+            confirmButtonText: 'Continuar'
+        });
+        
         return result;
 
     } catch (error) {
-        console.error("Fallo de red al verificar la existencia de compañías:", error);
+        console.error("-> 🛑 Fallo de red/fetch al verificar la existencia de compañías:", error);
 
-        // 🚨 Alerta SweetAlert para Fallo de Red
-        safeSwal({
+        // 🚨 PAUSA 3: Alerta SweetAlert para Fallo de Red. Espera a que el usuario presione "Cerrar".
+        await safeSwal({
             icon: 'warning',
-            title: 'Error de Conexión',
+            title: 'Error de Conexión (Revisar Consola)',
             text: `Fallo al intentar conectar con el servidor: ${error.message}`,
             confirmButtonText: 'Cerrar'
         });
 
+        // En caso de fallo de red, se asume que no podemos confirmar, devolvemos false (lo cual redirige en el controlador).
         return false;
     }
 }
