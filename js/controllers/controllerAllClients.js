@@ -4,7 +4,9 @@
 import {
     fetchAllClients,
     fetchTicketDetails,
-    formatRegistrationDate
+    formatRegistrationDate,
+    fetchTechUsersForSearch,
+    patchTicketTechnician 
 } from '../services/serviceAllClients.js';
 
 // Variables globales para el estado de la aplicación
@@ -12,6 +14,7 @@ let currentPage = 1;
 let ticketsPerPage = 10;
 let totalPages = 0;
 let totalElements = 0;
+let currentTicketId = null; // Variable para almacenar el ID del ticket actual
 
 /**
  * Inicializa la aplicación. Se ejecuta al cargar el DOM.
@@ -20,6 +23,7 @@ async function init() {
     renderFilterBar();
     await fetchAndRenderClients();
     initFilterEvents();
+    initReasignacionEvents();
 }
 
 /**
@@ -273,6 +277,87 @@ function updatePagination() {
 async function changePage(newPage) {
     currentPage = newPage;
     await fetchAndRenderClients();
+}
+
+/**
+ * Inicializa la lógica de eventos y Select2 para la reasignación.
+ */
+function initReasignacionEvents() {
+    
+    // 1. Inicializar Select2 con búsqueda remota y adaptadores de datos
+    $('#selectTecnicoBusqueda').select2({
+        dropdownParent: $('#modalVerActividad'),
+        placeholder: "Buscar técnico (Nombre, ID, Usuario)...",
+        allowClear: true,
+        minimumInputLength: 3, 
+        // Lógica de búsqueda que usa tu servicio
+        ajax: {
+            transport: async function (params, success, failure) {
+                try {
+                    // Llama a la función del servicio con el término de búsqueda
+                    const data = await fetchTechUsersForSearch(params.data.term);
+                    success(data); // Pasa la data al formato Select2
+                } catch (error) {
+                    failure(error);
+                }
+            },
+            dataType: 'json',
+            delay: 250,
+            cache: true
+        }
+    });
+
+    // 2. Manejo del click en 'Reasignar Técnico'
+    $('#btnReasignarTecnico').on('click', function() {
+        $('#tecnicoActualContainer').hide();
+        $('#reasignarInputContainer').show();
+        // Abrir el Select2 automáticamente
+        $('#selectTecnicoBusqueda').select2('open'); 
+    });
+
+    // 3. Manejo del click en 'Cancelar'
+    $('#btnCancelarReasignacion').on('click', function() {
+        // Limpiar y ocultar
+        $('#selectTecnicoBusqueda').val(null).trigger('change'); 
+        $('#reasignarInputContainer').hide();
+        // Mostrar el nombre actual
+        $('#tecnicoActualContainer').show(); 
+    });
+    
+    // 4. Manejo de la selección del nuevo técnico (PATCH/GUARDAR)
+    $('#selectTecnicoBusqueda').on('select2:select', async function (e) {
+        const nuevoTecnico = e.params.data;
+        const ticketId = currentTicketId; // Usamos la variable global
+        
+        if (ticketId && nuevoTecnico.id) {
+            const result = await Swal.fire({
+                title: '¿Confirmar reasignación?',
+                text: `¿Estás seguro de reasignar el Ticket #${ticketId} al técnico ${nuevoTecnico.text}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, reasignar',
+                cancelButtonText: 'No, cancelar'
+            });
+
+            if (result.isConfirmed) {
+                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id);
+
+                if (success) {
+                    // 1. Actualizar el nombre en el modal
+                    document.getElementById('lblTecnico').textContent = nuevoTecnico.text.split('(')[0].trim();
+                    // 2. Volver al estado de visualización
+                    $('#btnCancelarReasignacion').trigger('click'); 
+                    Swal.fire('¡Reasignado!', `Ticket #${ticketId} reasignado exitosamente.`, 'success');
+                    // Opcional: Recargar la lista principal si la vista cambia mucho
+                    // await fetchAndRenderClients(); 
+                }
+                // Si falla, el service ya muestra el error.
+            } else {
+                 // Si cancela la confirmación, solo volvemos al estado de visualización
+                $('#btnCancelarReasignacion').trigger('click');
+            }
+        }
+    });
 }
 
 /**
