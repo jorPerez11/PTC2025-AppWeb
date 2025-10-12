@@ -122,6 +122,12 @@ async function getClientDetails(userId) {
         return userData;
     } catch (error) {
          console.error("Error al obtener datos del cliente:", error);
+         // Mostrar una alerta de error usando SweetAlert2
+         Swal.fire({
+             icon: 'error',
+             title: 'Error de Datos',
+             text: 'No se pudieron cargar los datos del cliente.',
+         });
          return null;
     }
 }
@@ -137,22 +143,13 @@ function mostrarDatosCliente(userData) {
     // 2. Poblar los campos de visualización (usando innerText)
     
     const clientName = userData.displayName || userData.name || 'N/A';
-    document.getElementById('modalClientNameDisplay').innerText = clientName;
+    document.getElementById('modalClientNameDisplay').value = clientName;
     
-    document.getElementById('modalClientEmailDisplay').innerText = userData.email || 'N/A';
+    document.getElementById('modalClientEmailDisplay').value = userData.email || 'N/A';
     
-    document.getElementById('modalClientUserDisplay').innerText = userData.username || 'N/A';
+    document.getElementById('modalClientUserDisplay').value = userData.username || 'N/A';
     
-    document.getElementById('modalClientPhoneDisplay').innerText = userData.phone || 'N/A';
-    
-    
-    // 3. Mostrar el modal
-    const modalElement = document.getElementById('modalDatosCliente');
-    if (modalElement) {
-        // Asegúrate de que 'bootstrap' esté cargado
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    }
+    document.getElementById('modalClientPhoneDisplay').value = userData.phone || 'N/A';
 }
 
 
@@ -188,33 +185,20 @@ function mostrarDetallesTicket(ticketData) {
         ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
     }
 
+     const clientIdField = document.getElementById('modalTicketClientId');
+    if (clientIdField) {
+        clientIdField.value = clientDataId || 'N/A';
+    }
+
     const clientDataId = ticketData.id_user;
     document.getElementById('modalTicketUserId').value = clientDataId;
 
-    const viewClientButton = document.getElementById('viewClientButton'); 
-    if (viewClientButton) {
-        // Limpiamos listeners anteriores y añadimos el nuevo
-        viewClientButton.onclick = async () => {
-            if (clientDataId) {
-                // Deshabilitar botón durante la carga para UX
-                viewClientButton.disabled = true;
-                viewClientButton.innerText = 'Cargando...';
-
-                const userData = await getClientDetails(clientDataId);
-                
-                // Re-habilitar botón
-                viewClientButton.disabled = false;
-                viewClientButton.innerText = 'Ver Cliente';
-
-                if (userData) {
-                    mostrarDatosCliente(userData);
-                } else {
-                    alert('No se pudieron cargar los datos del cliente.');
-                }
-            } else {
-                alert('ID de cliente no disponible para este ticket.');
+    if (clientDataId) {
+        getClientDetails(clientDataId).then(userData => {
+            if (userData) {
+                mostrarDatosCliente(userData);
             }
-        };
+        });
     }
 
     // 4. Muestra el modal de Bootstrap
