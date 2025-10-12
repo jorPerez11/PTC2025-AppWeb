@@ -297,7 +297,7 @@ function initReasignacionEvents() {
         minimumInputLength: 3,
         width: 'resolve',
 
-        // ********** LÓGICA AJAX CON fetchWithAuth (CORREGIDA) **********
+        // ********** LÓGICA AJAX CON fetchWithAuth (VERSIÓN ROBUSTA) **********
         ajax: {
             dataType: 'json',
             delay: 250,
@@ -314,43 +314,50 @@ function initReasignacionEvents() {
                     const response = await fetchWithAuth(url);
 
                     if (!response.ok) {
-                        // El manejo de error HTTP está aquí
+                        // El manejo de error HTTP (4xx/5xx)
                         let errorText = response.statusText;
-                        // Intenta leer el error solo si hay un problema
                         try {
                             const errorBody = await response.json();
                             errorText = errorBody.error || errorBody.message || errorText;
-                        } catch (e) { /* ignora, el cuerpo puede estar vacío */ }
+                        } catch (e) { /* ignora */ }
 
                         failure({ message: `Error ${response.status}: ${errorText}` });
                         return;
                     }
 
-                    // ********** AISLAMIENTO CRÍTICO DE LECTURA DE JSON **********
-                    let data;
-                    try {
-                        data = await response.json();
-                        console.log("Respuesta JSON (ÉXITO):", data); // DEBE MOSTRARSE
-                    } catch (jsonError) {
-                        console.error("ERROR: No se pudo parsear el JSON de la respuesta.", jsonError);
-                        console.log("Estructura de la respuesta:", response); // Muestra la respuesta Fetch cruda
-                        failure({ message: "El servidor devolvió un error de formato JSON." });
-                        return;
+                    // ********** SOLUCIÓN CRÍTICA: Lectura Segura de JSON **********
+                    const responseText = await response.text();
+                    // Objeto por defecto si la respuesta es 200 pero vacía (necesario para .content)
+                    let data = { content: [], number: 0, totalPages: 0 }; 
+
+                    if (responseText) {
+                        try {
+                            data = JSON.parse(responseText);
+                            console.log("Respuesta JSON (ÉXITO):", data); // ¡ESTO DEBE APARECER AHORA!
+                        } catch (jsonError) {
+                            // Falla si el cuerpo no es JSON válido (ej: texto simple o mal formado)
+                            console.error("ERROR: No se pudo parsear el JSON. Respuesta cruda:", responseText, jsonError);
+                            failure({ message: "El servidor devolvió datos con formato incorrecto." });
+                            return;
+                        }
+                    } else {
+                        // Caso donde el backend devuelve 200 OK con cuerpo vacío
+                        console.log("El servidor devolvió un cuerpo vacío (HTTP 200). Usando array vacío.");
                     }
                     // *************************************************************
                     
-                    // Si llegamos aquí, 'data' es un objeto JSON válido.
+                    // Si llegamos aquí, 'data' es un objeto JSON válido (o el objeto por defecto { content: [] })
                     
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
 
-                        // Usamos 'userid' y 'fullname' (basado en logs SQL)
+                        // **USAMOS 'userid' y 'fullname' debido a los logs SQL de Hibernate**
                         const displayId = user.userid || 'N/A';
                         const nameText = user.fullname || user.username || 'Técnico sin nombre';
 
                         return {
-                            id: user.userid,
-                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}`
+                            id: user.userid, // ID: El valor real a enviar
+                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}` // TEXTO VISIBLE
                         };
                     });
 
@@ -364,12 +371,13 @@ function initReasignacionEvents() {
                     success(formattedData);
 
                 } catch (error) {
-                    console.error("Error en transport Select2 (FINAL CATCH):", error);
+                    // Este catch se activa por fallos de red o si fetchWithAuth lanza una excepción
+                    console.error("Error en transport Select2 (FALLO GENERAL):", error);
                     failure({ message: "Error de red o servidor: " + error.message });
                 }
             },
 
-            // Este método ya no es necesario, pero lo mantenemos por si Select2 intenta usarlo
+            // data: Define los parámetros que Select2 envía a 'transport'
             data: function (params) {
                 return {
                     term: params.term,
@@ -414,10 +422,11 @@ function initReasignacionEvents() {
             });
 
             if (result.isConfirmed) {
-                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id);
+                // Asumimos que patchTicketTechnician está disponible globalmente
+                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id); 
 
                 if (success) {
-                    // 1. Actualizar el nombre en el modal
+                    // 1. Actualizar el nombre en el modal (quita el texto entre paréntesis)
                     document.getElementById('lblTecnico').textContent = nuevoTecnico.text.split('(')[0].trim();
                     // 2. Volver al estado de visualización
                     $('#btnCancelarReasignacion').trigger('click');
@@ -425,7 +434,7 @@ function initReasignacionEvents() {
                     // Opcional: Recargar la lista principal si la vista cambia mucho
                     // await fetchAndRenderClients(); 
                 }
-                // Si falla, el service ya muestra el error.
+                // Si falla, se asume que patchTicketTechnician ya mostró un error.
             } else {
                 // Si cancela la confirmación, solo volvemos al estado de visualización
                 $('#btnCancelarReasignacion').trigger('click');
