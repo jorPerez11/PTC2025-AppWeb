@@ -382,7 +382,17 @@ function initReasignacionEvents() {
         const nuevoTecnico = e.params.data;
         const ticketId = currentTicketId; // Usamos la variable global
 
+        // ********** AGREGAR LOGS DE DEPURACIÓN **********
+        console.log("Evento select2:select activado.");
+        console.log("nuevoTecnico (e.params.data):", nuevoTecnico);
+        console.log("Ticket ID (currentTicketId):", ticketId);
+        // ************************************************
+
         if (ticketId && nuevoTecnico.id) {
+            // ********** AGREGAR LOG DE ÉXITO DE CONDICIÓN **********
+            console.log("Condición (ticketId && nuevoTecnico.id) CUMPLIDA. Ejecutando Swal.fire...");
+            // ************************************************
+
             const result = await Swal.fire({
                 title: '¿Confirmar reasignación?',
                 text: `¿Estás seguro de reasignar el Ticket #${ticketId} al técnico ${nuevoTecnico.text}?`,
@@ -407,7 +417,11 @@ function initReasignacionEvents() {
                 }
                 // Si falla, se asume que patchTicketTechnician ya mostró un error.
             } else {
-                // Si cancela la confirmación, solo volvemos al estado de visualización
+                // ********** AGREGAR LOG DE FALLO DE CONDICIÓN **********
+                console.error("ERROR: No se puede reasignar. ticketId o nuevoTecnico.id está vacío/nulo.");
+                // ************************************************
+
+                // Si falla, volvemos a ocultar el campo de búsqueda
                 $('#btnCancelarReasignacion').trigger('click');
             }
         }
