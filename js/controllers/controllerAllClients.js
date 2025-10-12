@@ -4,7 +4,10 @@
 import {
     fetchAllClients,
     fetchTicketDetails,
-    formatRegistrationDate
+    formatRegistrationDate,
+    fetchTechUsersForSearch,
+    patchTicketTechnician,
+    fetchSelect2
 } from '../services/serviceAllClients.js';
 
 // Variables globales para el estado de la aplicación
@@ -12,6 +15,10 @@ let currentPage = 1;
 let ticketsPerPage = 10;
 let totalPages = 0;
 let totalElements = 0;
+let currentTicketId = null; // Variable para almacenar el ID del ticket actual
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 /**
  * Inicializa la aplicación. Se ejecuta al cargar el DOM.
@@ -20,6 +27,7 @@ async function init() {
     renderFilterBar();
     await fetchAndRenderClients();
     initFilterEvents();
+    initReasignacionEvents();
 }
 
 /**
@@ -226,9 +234,9 @@ function updateCounts() {
 function updatePagination() {
     const paginationContainer = document.getElementById('pagination-container');
     if (!paginationContainer) return;
-    
+
     paginationContainer.innerHTML = ''; // Limpiar el contenedor antes de renderizar
-    
+
     if (totalPages > 1) {
         const paginationHtml = `
             <ul class="pagination justify-content-center mt-4 mb-4" id="paginationControls">
@@ -248,7 +256,7 @@ function updatePagination() {
             </ul>
         `;
         paginationContainer.innerHTML = paginationHtml;
-        
+
         // Asignar los listeners a los nuevos elementos
         document.querySelector('[data-page="prev"]').addEventListener('click', (e) => {
             e.preventDefault();
@@ -276,10 +284,177 @@ async function changePage(newPage) {
 }
 
 /**
+ * Inicializa la lógica de eventos y Select2 para la reasignación.
+ */
+function initReasignacionEvents() {
+    // 1. Inicializar Select2 con búsqueda remota y CORRECCIÓN DE ESTILO
+    $('#selectTecnicoBusqueda').select2({
+        // CORRECCIÓN VISUAL: Asegura que el dropdown aparezca sobre el modal
+        dropdownParent: $('#modalVerActividad'),
+
+        placeholder: "Buscar técnico (Nombre, ID, Usuario)...",
+        allowClear: true,
+        language: "es",
+        minimumInputLength: 3,
+        width: '100%', 
+        // ********** AÑADE LA TRADUCCIÓN MANUAL AQUÍ **********
+        language: {
+            noResults: function () {
+                return "No se encontraron resultados";
+            },
+            searching: function () {
+                return "Buscando...";
+            },
+            inputTooShort: function (args) {
+                var remainingChars = args.minimum - args.input.length;
+                return 'Introduce ' + remainingChars + ' caracteres o más';
+            },
+            errorLoading: function () {
+                return 'Error al cargar los resultados.';
+            },
+            loadingMore: function () {
+                return 'Cargando más resultados...';
+            }
+        },
+
+        // ********** LÓGICA AJAX CON fetchWithAuth (VERSIÓN ROBUSTA) **********
+        ajax: {
+            dataType: 'json',
+            delay: 250,
+            cache: true,
+
+            transport: async function (params, success, failure) {
+                const encodedTerm = encodeURIComponent(params.data.term || "");
+                const page = params.data.page || 0;
+                const size = 20;
+                const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
+
+                try {
+                    // LLAMADA SIMPLIFICADA: fetchSelect2 maneja la autenticación, errores, y parseo.
+                    const data = await fetchSelect2(url);
+
+                    // Si data viene vacío por error de red/parseo/HTTP, 'data.content' será [] por defaultData
+
+                    // Mapeo al formato Select2 (ProcessResults)
+                    const results = data.content.map(user => {
+                        const displayId = user.id || 'N/A'; // Usamos 'id'
+                        const nameText = user.name || user.username || 'Técnico sin nombre'; // Usamos 'name'
+
+                        return {
+                            id: user.id, // El valor real a enviar es 'id'
+                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}` // TEXTO VISIBLE
+                        };
+                    });
+
+                    const formattedData = {
+                        results: results,
+                        pagination: {
+                            // Se asume que data.number es el número de página actual (0-based)
+                            // y data.totalPages es el total de páginas.
+                            more: data.number < data.totalPages - 1
+                        }
+                    };
+
+                    success(formattedData);
+
+                } catch (error) {
+                    // Este catch solo se activaría si falla la lógica de Select2 o el mapeo
+                    console.error("Error inesperado en transport Select2:", error);
+                    // failure({ message: "Error al procesar los técnicos." }); // No es necesario si devolvemos vacío
+
+                    // Aseguramos una respuesta de fallo a Select2, aunque fetchSelect2 ya lo haya manejado
+                    failure({ message: "Error al procesar la lista." });
+                }
+            },
+
+            // data: Define los parámetros que Select2 envía a 'transport'
+            data: function (params) {
+                return {
+                    term: params.term,
+                    page: params.page || 0,
+                    size: 20
+                };
+            }
+        }
+        // *******************************************************
+    });
+
+    // 2. Manejo del click en 'Reasignar Técnico'
+    $('#btnReasignarTecnico').on('click', function () {
+        $('#tecnicoActualContainer').hide();
+        $('#reasignarInputContainer').show();
+        // Abrir el Select2 automáticamente
+        $('#selectTecnicoBusqueda').select2('open');
+    });
+
+    // 3. Manejo del click en 'Cancelar'
+    $('#btnCancelarReasignacion').on('click', function () {
+        // Limpiar y ocultar
+        $('#selectTecnicoBusqueda').val(null).trigger('change');
+        $('#reasignarInputContainer').hide();
+        // Mostrar el nombre actual
+        $('#tecnicoActualContainer').show();
+    });
+
+    // 4. Manejo de la selección del nuevo técnico (PATCH/GUARDAR)
+    $('#selectTecnicoBusqueda').on('select2:select', async function (e) {
+        const nuevoTecnico = e.params.data;
+        const ticketId = currentTicketId; // Usamos la variable global
+
+        // ********** AGREGAR LOGS DE DEPURACIÓN **********
+        console.log("Evento select2:select activado.");
+        console.log("nuevoTecnico (e.params.data):", nuevoTecnico);
+        console.log("Ticket ID (currentTicketId):", ticketId);
+        // ************************************************
+
+        if (ticketId && nuevoTecnico.id) {
+            // ********** AGREGAR LOG DE ÉXITO DE CONDICIÓN **********
+            console.log("Condición (ticketId && nuevoTecnico.id) CUMPLIDA. Ejecutando Swal.fire...");
+            // ************************************************
+
+            const result = await Swal.fire({
+                title: '¿Confirmar reasignación?',
+                text: `¿Estás seguro de reasignar el Ticket #${ticketId} al técnico ${nuevoTecnico.text}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, reasignar',
+                cancelButtonText: 'No, cancelar',
+                confirmButtonColor: '#F48C06',
+                cancelButtonColor: '#03071E'
+            });
+
+            if (result.isConfirmed) {
+                // Asumimos que patchTicketTechnician está disponible globalmente
+                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id);
+
+                if (success) {
+                    // 1. Actualizar el nombre en el modal (quita el texto entre paréntesis)
+                    document.getElementById('lblTecnico').textContent = nuevoTecnico.text.split('(')[0].trim();
+                    // 2. Volver al estado de visualización
+                    $('#btnCancelarReasignacion').trigger('click');
+                    Swal.fire('¡Reasignado!', `Ticket #${ticketId} reasignado exitosamente.`, 'success');
+                    // Opcional: Recargar la lista principal si la vista cambia mucho
+                    // await fetchAndRenderClients(); 
+                }
+                // Si falla, se asume que patchTicketTechnician ya mostró un error.
+            } else {
+                // ********** AGREGAR LOG DE FALLO DE CONDICIÓN **********
+                console.error("ERROR: No se puede reasignar. ticketId o nuevoTecnico.id está vacío/nulo.");
+                // ************************************************
+
+                // Si falla, volvemos a ocultar el campo de búsqueda
+                $('#btnCancelarReasignacion').trigger('click');
+            }
+        }
+    });
+}
+
+/**
  * Abre el modal de actividad y carga los detalles del ticket.
  * @param {string} ticketId El ID del ticket para obtener los detalles.
  */
 async function openActivityModal(ticketId) {
+    currentTicketId = ticketId;
     const ticketDetails = await fetchTicketDetails(ticketId);
 
     if (ticketDetails) {

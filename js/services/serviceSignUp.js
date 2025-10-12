@@ -25,23 +25,64 @@ export async function login(credentials) {
 
 /**
  * Verifica si ya existe al menos una compañía en el backend.
+ * Esta versión incluye pausas de SweetAlert para debugging.
  * @returns {Promise<boolean>} - True si hay compañías, false si no.
  */
 export async function checkCompanyExistence() {
+    let result = false;
+
+    // Función auxiliar para mostrar alertas de forma segura
+    const safeSwal = (config) => {
+        if (typeof Swal !== 'undefined' && Swal.fire) {
+            // Ya no usamos 'await' en el controlador para no detener la ejecución.
+            Swal.fire(config); 
+        } else {
+            console.warn("SweetAlert no está disponible. Mensaje: " + config.text);
+        }
+    };
+
     try {
+        console.log("-> Iniciando verificación de existencia de compañías...");
         const response = await fetch(`${COMPANY_API_URL}/check-company-existence`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         if (!response.ok) {
-            console.error("Error del servidor al verificar la existencia de compañías:", response.status, await response.text());
-            return false;
+            const errorText = await response.text();
+            console.error("-> Error del servidor al verificar la existencia de compañías:", response.status, errorText);
+
+            // Alerta SweetAlert para Error HTTP. Ya no detiene el script.
+            safeSwal({
+                icon: 'error',
+                title: 'Error de Verificación',
+                text: `El servidor respondió con el código ${response.status}. Mensaje: ${errorText.substring(0, 100)}...`,
+                confirmButtonText: 'Aceptar'
+            });
+
+            return false; // El error se trata como "no confirmado", lo que desencadena la redirección a primerUso.html
         }
-        
-        return await response.json();
+
+        const responseData = await response.json();
+        // Asume que la respuesta directa es el booleano
+        result = typeof responseData === 'boolean' ? responseData : responseData?.exists || false;
+
+        console.log(`-> Éxito - Resultado procesado (companyExists): ${result}`);
+
+        return result;
+
     } catch (error) {
-        console.error("Fallo de red al verificar la existencia de compañías:", error);
+        console.error("-> Fallo de red/fetch al verificar la existencia de compañías:", error);
+
+        // 🚨 Alerta SweetAlert para Fallo de Red. Ya no detiene el script.
+        safeSwal({
+            icon: 'warning',
+            title: 'Error de Conexión',
+            text: `Fallo al intentar conectar con el servidor.`,
+            confirmButtonText: 'Cerrar'
+        });
+
+        // En caso de fallo de red, devolvemos false (lo cual redirige en el controlador si no se maneja el error).
         return false;
     }
 }
