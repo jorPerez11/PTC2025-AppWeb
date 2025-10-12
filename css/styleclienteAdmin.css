@@ -65,6 +65,155 @@ h4 {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Estilos específicos para la versión móvil - CORREGIDOS */
+@media (max-width: 1199.98px) {
+    .dropdown-menu {
+        background-color: #03071E !important; /* Mantener fondo oscuro */
+        border: 1px solid #F48C06 !important; /* Borde naranja */
+        border-radius: 8px !important;
+        box-shadow: 0 4px 15px rgba(244, 140, 6, 0.2) !important;
+        padding: 0.5rem 0 !important;
+        margin-top: 0.5rem !important;
+        margin-left: 1rem !important;
+    }
+    
+    .dropdown-item {
+        padding: 0.75rem 1.5rem !important;
+        border-left: none !important; /* Eliminar borde izquierdo */
+        transition: all 0.3s ease !important;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #F48C06 !important; /* Fondo naranja en hover */
+        color: #03071E !important; /* Texto oscuro en hover */
+        transform: translateX(5px) !important;
+        border-left: none !important;
+    }
+    
+    .dropdown-divider {
+        margin: 0.5rem 1.5rem !important;
+        width: calc(100% - 3rem) !important;
+    }
+
+    /* ELIMINAR SUBRAYADO de "Mi Perfil" en móvil */
+    .nav-item.dropdown .nav-link.dropdown-toggle::before {
+        display: none !important;
+    }
+
+    /* Asegurar que solo cambie el color de la fuente en "Mi Perfil" */
+    .nav-item.dropdown .nav-link.dropdown-toggle:hover::before {
+        width: 0 !important;
+    }
+
+    /* Solo color naranja en el texto, sin subrayado */
+    .nav-item.dropdown .nav-link.dropdown-toggle:hover {
+        color: #F48C06 !important;
+    }
+}
+
+.navbar {
+    background-color: #03071E;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mejora el contraste y legibilidad */
+.dropdown-item:active {
+    background-color: #F48C06 !important;
+    color: #03071E !important;
+}
+
+/* Estilos para los botones de notificaciones y configuración */
+.botonNotificaciones,
+.botonConfig {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.botonNotificaciones:hover,
+.botonConfig:hover {
+    transform: scale(1.1) !important;
+}
+
+.botonNotificaciones:focus,
+.botonConfig:focus {
+    box-shadow: 0 0 0 2px rgba(244, 140, 6, 0.5) !important;
+}
+
+/* Asegurar que el z-index sea correcto */
+.dropdown {
+    position: relative !important;
+}
+
+.dropdown-menu {
+    z-index: 1000 !important;
+}
+
+/* Estilos para el icono de usuario en el dropdown de desktop */
+.btn.botonUser img {
+    transition: all 0.3s ease !important;
+    border-radius: 50% !important;
+}
+
+.btn.botonUser:hover img {
+    box-shadow: 0 0 0 2px #F48C06 !important;
+}
+
+.separator {
+    width: 2px;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin: 0 10px;
+}
+
+.more-options {
+    position: absolute;
+    bottom: 10px;    /* 10px desde el borde inferior de la tarjeta */
+    right: 10px;     /* 10px desde el borde derecho de la tarjeta */
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff; /* Un color de fondo claro */
+    display: flex; /* Usado para centrar el ícono */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10; /* Asegura que esté por encima de otros elementos */
+}
+
+.more-options i {
+    color: #303030; /* Color del ícono */
+}
+
+.iconDots{
+    color: #1c1c1c; /* Color del ícono */
+
+}
+
+.page-link {
+    color: black;
+}
+
+.page-link:hover {
+    color: black;
+}
+
+.page-link:focus{
+    color: black;
+    outline: none;
+    box-shadow: none;
+}
+
 .separator {
     width: 3.5px;
     /* Ancho del "palito" */
