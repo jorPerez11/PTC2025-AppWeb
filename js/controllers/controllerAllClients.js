@@ -283,30 +283,53 @@ async function changePage(newPage) {
  * Inicializa la lógica de eventos y Select2 para la reasignación.
  */
 function initReasignacionEvents() {
-    
-    // 1. Inicializar Select2 con búsqueda remota y adaptadores de datos
+    // 1. Inicializar Select2 con búsqueda remota y CORRECCIÓN DE ESTILO
     $('#selectTecnicoBusqueda').select2({
+        // CORRECCIÓN VISUAL: Asegura que el dropdown aparezca sobre el modal
+        dropdownParent: $('#modalVerActividad'), 
+        
         placeholder: "Buscar técnico (Nombre, ID, Usuario)...",
         allowClear: true,
         language: "es",
         minimumInputLength: 3,
-        width: 'resolve', // Asegura que tome el 100% del contenedor
-        dropdownParent: $('#modalVerActividad'), 
-        // Lógica de búsqueda que usa tu servicio
+        width: 'resolve',
+        
+        // ********** NUEVA LÓGICA AJAX SIMPLIFICADA **********
         ajax: {
-            transport: async function (params, success, failure) {
-                try {
-                    // Llama a la función del servicio con el término de búsqueda
-                    const data = await fetchTechUsersForSearch(params.data.term);
-                    success(data); // Pasa la data al formato Select2
-                } catch (error) {
-                    failure(error);
-                }
-            },
+            url: `${API_URL}/users/tech`, // Usar la URL directamente
             dataType: 'json',
             delay: 250,
-            cache: true
+            cache: true,
+            
+            // 1. data: Define qué parámetros enviar al backend (solo 'term' es necesario)
+            data: function (params) {
+                return {
+                    term: params.term, // El texto de búsqueda
+                    page: 0,           // Búsqueda en la primera página
+                    size: 20           // Tamaño razonable de resultados
+                    // Opcional: category: 'all', period: 'all'
+                };
+            },
+            
+            // 2. processResults: Define cómo Select2 debe mapear la respuesta
+            processResults: function (data, params) {
+                // 'data' es la respuesta Page<UserDTO> completa de tu backend
+                const results = data.content.map(user => ({
+                    // Asegúrate de usar la propiedad correcta (userId o id)
+                    id: user.userId, 
+                    text: `${user.fullName} (${user.username}) - ID: ${user.userId}`
+                }));
+
+                return {
+                    results: results,
+                    // pagination.more es opcional, pero mantiene Select2 contento
+                    pagination: {
+                        more: (params.page * 20) < data.totalElements 
+                    }
+                };
+            }
         }
+        // *******************************************************
     });
 
     // 2. Manejo del click en 'Reasignar Técnico'
