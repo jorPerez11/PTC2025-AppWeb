@@ -433,6 +433,7 @@ function initReasignacionEvents() {
  * @param {string} ticketId El ID del ticket para obtener los detalles.
  */
 async function openActivityModal(ticketId) {
+    currentTicketId = ticketId;
     const ticketDetails = await fetchTicketDetails(ticketId);
 
     if (ticketDetails) {
