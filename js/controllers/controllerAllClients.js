@@ -296,7 +296,7 @@ function initReasignacionEvents() {
         allowClear: true,
         language: "es",
         minimumInputLength: 3,
-        width: 'resolve',
+        width: '100%', 
 
         // ********** LÓGICA AJAX CON fetchWithAuth (VERSIÓN ROBUSTA) **********
         ajax: {
