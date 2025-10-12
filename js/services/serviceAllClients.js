@@ -18,40 +18,99 @@ const commonHeaders = {
 };
 
 /**
- * Función auxiliar para llamadas AJAX de Select2 con paginación de Spring Boot (Page<T>).
- * Utiliza fetchWithAuth pero maneja la lectura del cuerpo de forma segura.
- * @param {string} url - La URL del endpoint.
- * @returns {Promise<Object>} Objeto JSON con la estructura de paginación o un objeto vacío.
+ * Realiza una petición con autenticación específica para Select2 (paginación de Spring Boot).
+ * Este método NO llama a fetchWithAuth, realiza su propia lógica de fetch y manejo de errores.
+ * @param {string} url - La URL del endpoint de paginación (ej: /users/tech?page=...&term=...).
+ * @param {Object} [options={}] - Opciones adicionales para la llamada fetch.
+ * @returns {Promise<Object>} Objeto JSON con la estructura de paginación { content: [], ...} o un objeto vacío.
  */
-export async function fetchSelect2(url) {
+export async function fetchSelect2(url, options = {}) {
+    console.log('🔄 Fetching (Select2):', url);
+    
+    // Objeto por defecto para asegurar la estructura de retorno
+    const defaultData = { content: [], number: 0, totalPages: 0, totalElements: 0 };
+    
     try {
-        const response = await fetchWithAuth(url); // fetchWithAuth ahora devuelve la respuesta cruda (Response)
+        // ********** COPIA DE CONFIGURACIÓN DE fetchWithAuth **********
         
-        // ********** LECTURA ROBUSTA DEL CUERPO **********
-        const responseText = await response.text();
-        // Objeto por defecto si la respuesta es 200 pero vacía
-        let data = { content: [], number: 0, totalPages: 0 }; 
+        // 1. Contruye la URL COMPLETA
+        const fullUrl = url.startsWith('http') ? url : `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 
+        const isFormData = options.body instanceof FormData;
+        const headers = { ...options.headers};
+
+        if(!isFormData){
+            headers['Content-Type'] = 'application/json';
+        }
+
+        const config = {
+            ...options,
+            credentials: 'include', // Para enviar cookies
+            headers: headers
+        };
+        console.log('📤 Request config (Select2):', config);
+        
+        // 2. Realiza la llamada fetch
+        const response = await fetch(fullUrl, config);
+        
+        const contentType = response.headers.get('content-type');
+        const isJson = contentType && contentType.includes('application/json');
+        
+        // 3. Manejar errores de autenticación
+        if (response.status === 401 || response.status === 403) {
+             console.error('Sesión expirada o token inválido durante Select2. Por favor, vuelve a iniciar sesión.');
+             clearUserData();
+             if (RedirectedToLogin()) {
+                 // window.location.href = 'inicioSesion.html';
+             }
+             // Retornamos defaultData para que Select2 no falle y se vacíe
+             return defaultData; 
+        }
+        
+        // 4. Manejar otros errores HTTP (4xx/5xx)
+        if (!response.ok) {
+            let errorMessage = `Error ${response.status}: ${response.statusText}`;
+            
+            // Consumimos el body para obtener el mensaje de error
+            if (isJson) {
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (parseError) { /* warn */ }
+            } else {
+                 try {
+                    const errorText = await response.text();
+                    errorMessage = errorText || errorMessage;
+                 } catch (textError) { /* warn */ }
+            }
+            console.error('❌ fetchSelect2 Error HTTP:', errorMessage);
+            return defaultData; // Devolvemos defaultData para que Select2 no falle
+        }
+        
+        // ********** LÓGICA DE ÉXITO (MODIFICADA) **********
+        // Si llegamos aquí, response.ok es true. Leemos el body y devolvemos los datos.
+        
+        // Usamos .text() para manejar cuerpos vacíos o JSON malformados
+        const responseText = await response.text(); 
+        
         if (responseText) {
             try {
-                data = JSON.parse(responseText);
-                console.log("✅ fetchSelect2 JSON OK:", data); // Log de ÉXITO
+                const data = JSON.parse(responseText);
+                console.log("✅ fetchSelect2 JSON OK:", data); 
+                return data; // Retorna el objeto de datos
             } catch (jsonError) {
                 console.error("❌ fetchSelect2: Error de formato JSON. Respuesta cruda:", responseText, jsonError);
-                // No relanzamos el error, devolvemos data vacía para no romper Select2
-                return data; 
+                return defaultData; // Devuelve vacío en caso de parseo roto
             }
         } else {
             console.warn("⚠️ fetchSelect2: Respuesta vacía (HTTP 200).");
+            return defaultData; // Devuelve vacío si el cuerpo es una cadena vacía
         }
-        
-        return data; 
 
     } catch (error) {
-        // Captura errores lanzados por fetchWithAuth (4xx, 5xx, red)
-        console.error("❌ fetchSelect2: Error al obtener datos:", error);
-        // Devolvemos una estructura vacía para que Select2 no falle
-        return { content: [], number: 0, totalPages: 0 };
+        // Captura errores de red/conexión (errores lanzados por fetch)
+        console.error("❌ fetchSelect2: Error de red o conexión:", error);
+        return defaultData; // Devuelve vacío en caso de fallo de red
     }
 }
 

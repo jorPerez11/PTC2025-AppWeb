@@ -311,11 +311,11 @@ function initReasignacionEvents() {
                 const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
 
                 try {
-                    // LLAMADA SIMPLIFICADA
+                    // LLAMADA SIMPLIFICADA: fetchSelect2 maneja la autenticación, errores, y parseo.
                     const data = await fetchSelect2(url);
-
-                    // Si data viene vacío por error de red/parseo, 'data.content' será []
-
+                    
+                    // Si data viene vacío por error de red/parseo/HTTP, 'data.content' será [] por defaultData
+                    
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
                         // **USAMOS 'userid' y 'fullname' según tus logs SQL**
@@ -331,16 +331,21 @@ function initReasignacionEvents() {
                     const formattedData = {
                         results: results,
                         pagination: {
-                            more: data.number < data.totalPages - 1
+                            // Se asume que data.number es el número de página actual (0-based)
+                            // y data.totalPages es el total de páginas.
+                            more: data.number < data.totalPages - 1 
                         }
                     };
 
                     success(formattedData);
 
                 } catch (error) {
-                    // Este catch debería ser raramente alcanzado si fetchSelect2 es robusto
+                    // Este catch solo se activaría si falla la lógica de Select2 o el mapeo
                     console.error("Error inesperado en transport Select2:", error);
-                    failure({ message: "Error al cargar los técnicos." });
+                    // failure({ message: "Error al procesar los técnicos." }); // No es necesario si devolvemos vacío
+                    
+                    // Aseguramos una respuesta de fallo a Select2, aunque fetchSelect2 ya lo haya manejado
+                    failure({ message: "Error al procesar la lista." }); 
                 }
             },
 
