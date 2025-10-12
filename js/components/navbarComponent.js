@@ -49,10 +49,8 @@ export class NavbarComponent {
         const base = this.basePath;
         
         if (this.userRole.includes('tecnico') || this.userRole.includes('technician')) {
-            console.log('🎯 Rol detectado: Técnico -> clientesTecnico.html');
             return `${base}clientesTecnico.html`;
         } else {
-            console.log('🎯 Rol detectado: Admin -> clientesAdmin.html');
             return `${base}clientesAdmin.html`;
         }
     }

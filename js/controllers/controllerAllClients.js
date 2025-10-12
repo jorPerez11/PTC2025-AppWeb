@@ -399,7 +399,9 @@ function initReasignacionEvents() {
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, reasignar',
-                cancelButtonText: 'No, cancelar'
+                cancelButtonText: 'No, cancelar',
+                confirmButtonColor: '#F48C06',
+                cancelButtonColor: '#03071E'
             });
 
             if (result.isConfirmed) {
