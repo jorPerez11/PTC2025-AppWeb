@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/styleclienteAdmin.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
     <title>Clientes - Administrador</title>
 </head>
@@ -82,10 +83,22 @@
                         <div class="d-flex align-items-center ticket-separator">
                             <dt class="col-sm-4">Técnico encargado:</dt>
                             <dd class="col-sm-8 d-flex align-items-center">
-                                <span id="lblTecnico">—</span>
-                                <button class="btn btn-link btn-sm ms-2" id="btnReasignarTecnico">
-                                    Reasignar Técnico
-                                </button>
+                                <div id="tecnicoActualContainer" class="d-flex align-items-center">
+                                    <span id="lblTecnico">Pedro Pascal</span>
+                                    <button class="btn btn-link btn-sm ms-2" id="btnReasignarTecnico">
+                                        Reasignar Técnico
+                                    </button>
+                                </div>
+
+                                <div id="reasignarInputContainer" style="display: none; width: 100%;">
+                                    <select class="form-select form-select-sm" id="selectTecnicoBusqueda"
+                                        style="width: 100%;">
+                                        <option value="" selected disabled>Buscar técnico (Nombre, ID, Usuario)...
+                                        </option>
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-secondary mt-2"
+                                        id="btnCancelarReasignacion">Cancelar</button>
+                                </div>
                             </dd>
                         </div>
                         <div class="d-flex align-items-center ticket-separator">
@@ -99,7 +112,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
@@ -109,6 +122,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Navbar -->
     <script type="module" src="js/navbarLoader.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawR3s/44KxXzJm53M1VaeBKYWf6q9Vq38bY=" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <!-- Incluye SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="js/controllers/controllerAllClients.js" defer></script>

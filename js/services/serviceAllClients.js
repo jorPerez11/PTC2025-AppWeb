@@ -4,8 +4,9 @@
 import { fetchWithAuth } from "../services/serviceLogin.js";
 
 // Usaremos las URLs de tu API de Spring Boot
-const API_CLIENTS = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/clients'; 
+const API_CLIENTS = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/clients';
 const API_TICKETS = 'https://ptchelpdesk-a73934db2774.herokuapp.com/api/tickets';
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 // Se obtiene el token de autenticación
 let tokenFijo = localStorage.getItem('authToken');
@@ -15,6 +16,92 @@ const commonHeaders = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${tokenFijo}`
 };
+
+/**
+ * Busca técnicos filtrando por un término de búsqueda.
+ * Adaptado para el formato que Select2 espera.
+ * @param {string} term El término de búsqueda (nombre, usuario, ID).
+ * @returns {Promise<Object>} Objeto con formato { results: [ {id, text} ], total_count: number }
+ */
+export async function fetchTechUsersForSearch(term) {
+    try {
+        const response = await fetchWithAuth(`${API_URL}/users/tech?roleId=2&size=10&term=${encodeURIComponent(term)}`);
+        if (!response.ok) {
+            throw new Error(`Error al buscar técnicos: ${response.statusText}`);
+        }
+        const data = await response.json();
+
+        // Transformar la respuesta del backend al formato Select2 (id y text)
+        const transformedResults = data.content.map(user => ({
+            id: user.id, // ID del usuario técnico
+            text: `${user.fullName} (${user.username}) - ID: ${user.id}` // Formato para mostrar en el select
+        }));
+
+        return {
+            results: transformedResults,
+            total_count: data.totalElements // Usar el total de elementos para la paginación de Select2
+        };
+
+    } catch (error) {
+        console.error("Error en fetchTechUsersForSearch:", error);
+        return { results: [], total_count: 0 };
+    }
+}
+
+/**
+ * Realiza la solicitud PATCH para reasignar un técnico a un ticket.
+ * * NOTA: Esta implementación utiliza el endpoint general de actualización
+ * de tickets del cliente y envía un payload parcial (TicketDTO) que solo contiene
+ * el ID del nuevo técnico para que el backend lo procese.
+ * * @param {number} ticketId El ID del ticket a reasignar.
+ * @param {number} newTechnicianId El ID del nuevo técnico.
+ * @returns {Promise<boolean>} Devuelve true si la reasignación fue exitosa.
+ */
+export async function patchTicketTechnician(ticketId, newTechnicianId) {
+
+    try {
+        // 1. Construir el payload (TicketDTO parcial) que tu backend espera
+        const payload = {
+            // Se debe enviar la estructura anidada que el backend consume
+            assignedTech: {
+                id: newTechnicianId 
+            }
+        };
+
+        // 2. Usar el endpoint de actualización general: /client/UpdateTicket/{ticketId}
+        const response = await fetchWithAuth(`${API_BASE_URL}/client/UpdateTicket/${ticketId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            let errorMessage = `Fallo la reasignación. Estado: ${response.status}`;
+            
+            try {
+                // Intentar leer el cuerpo de error del servidor
+                const errorBody = await response.json();
+                errorMessage = errorBody.error || errorBody.message || errorMessage; 
+            } catch (e) {
+                // Si la respuesta no es JSON o es vacía
+                errorMessage = response.statusText;
+            }
+            
+            throw new Error(errorMessage);
+        }
+
+        // Si el backend devuelve 204 No Content (o 200 OK), se considera exitoso
+        return true;
+
+    } catch (error) {
+        console.error("Error en patchTicketTechnician:", error);
+        // Usar Swal para mostrar el error capturado o uno genérico
+        Swal.fire('Error de Reasignación', error.message || 'Ocurrió un error desconocido al reasignar el técnico.', 'error');
+        return false;
+    }
+}
 
 /**
  * Obtiene los clientes paginados y filtrados de la API de tu backend.
@@ -45,11 +132,11 @@ async function fetchAllClients(page = 0, size = 10, status = 'all', period = 'al
         // 2. Usar fetchWithAuth.
         // Como es un GET por defecto y no lleva body, no necesitamos pasar un segundo argumento
         const data = await fetchWithAuth(urlPath, {
-             method: 'GET',
+            method: 'GET',
         });
 
         // fetchWithAuth ya maneja la verificación de 'response.ok' y el parseo a JSON.
-        return data; 
+        return data;
     } catch (error) {
         // fetchWithAuth ya lanza un error más específico, aquí solo manejamos la contingencia.
         console.error('Error al obtener la lista de clientes paginada:', error);
@@ -75,7 +162,7 @@ async function fetchTicketDetails(ticketId) {
         // fetchWithAuth ya verificó que la respuesta sea exitosa (response.ok) 
         // y parseó el JSON, o lanzó un Error si hubo un problema.
         return data;
-        
+
     } catch (error) {
         // Manejar el error, que ya fue lanzado y loggeado por fetchWithAuth.
         console.error(`Error al obtener los detalles del ticket ${ticketId}:`, error);
