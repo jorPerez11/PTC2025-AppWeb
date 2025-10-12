@@ -19,7 +19,7 @@ const categories = [
     ];
 
 const priorities = [
-    { id: 4, name: 'Critica'}
+    { id: 4, name: 'Critica'},
     { id: 3, name: 'Alta' },
     { id: 2, name: 'Media' },
     { id: 1, name: 'Baja' }
