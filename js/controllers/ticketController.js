@@ -15,7 +15,11 @@ const estados = {
 const categories = [
         { id: 7, name: 'Equipo' },
         { id: 6, name: 'Sistema' },
-        { id: 4, name: 'Redes' }
+        { id: 5, name: 'Incidentes críticos' },
+        { id: 4, name: 'Redes' },
+        { id: 3, name: 'Gestion de usuarios' },
+        { id: 2, name: 'Consultas' },
+        { id: 1, name: 'Soporte Técnico' },
     ];
 
 const priorities = [
@@ -121,6 +125,9 @@ function mostrarDetallesTicket(ticketData) {
     const technicianName = findNameById(ticketData.id_tech, techList); // Usa la lista global de técnicos
 
     // 2. Poblar los campos visibles
+
+    document.getElementById('modalTicketIdDisplay').innerText = `#${String(ticketData.id || ticketData.ticketId).padStart(4, '0')}`;
+
     document.getElementById('modalTicketTitle').value = ticketData.title || '';
     document.getElementById('modalTicketCategory').value = categoryName;
     document.getElementById('modalTicketPriority').value = priorityName;
