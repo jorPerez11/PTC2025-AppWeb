@@ -173,6 +173,13 @@ h4 {
     width: calc(100% - 30px);
 }
 
+/* Agrega esto a tu archivo CSS */
+.swal2-container {
+    /* El z-index de los modales de Bootstrap suele ser 1050-1055.
+       Usar 2000 o más garantiza que se muestre por encima de todo. */
+    z-index: 2000 !important; 
+}
+
 .main-container {
     padding: 20px;
     margin-top: 80px;
