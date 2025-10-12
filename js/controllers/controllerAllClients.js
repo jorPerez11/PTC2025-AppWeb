@@ -16,6 +16,8 @@ let totalPages = 0;
 let totalElements = 0;
 let currentTicketId = null; // Variable para almacenar el ID del ticket actual
 
+const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
+
 /**
  * Inicializa la aplicación. Se ejecuta al cargar el DOM.
  */
