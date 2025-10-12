@@ -332,23 +332,30 @@ function initReasignacionEvents() {
                     // *******************************************************************
 
                     const data = await response.json();
+                    
+                    // ********** DEBUG CRÍTICO: Imprimir el JSON completo **********
+                    console.log("Respuesta JSON del API para técnicos:", data);
+                    // *************************************************************
 
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
-
-                        // Usamos 'user.name' y 'user.id' que coinciden con el UserDTO de Java
-                        const displayId = user.id || 'N/A'; // Usar 'id'
-                        const nameText = user.name || user.displayName || user.username || 'Técnico sin nombre';
+                        
+                        // Basado en tus logs de API/Hibernate, el backend está usando:
+                        // - ID: 'userid' (select ue1_0.userid...)
+                        // - Nombre: 'fullname' (lower(ue1_0.fullname)...)
+                        
+                        // ESTOS NOMBRES SON PROBABLEMENTE LOS QUE EL JSON ESTÁ USANDO
+                        const displayId = user.userid || 'N/A'; 
+                        const nameText = user.fullname || user.username || 'Técnico sin nombre'; 
 
                         return {
-                            // ID del elemento seleccionado, debe ser el Long id del DTO
-                            id: user.id,
-
-                            // Texto que se muestra en el dropdown
-                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}`
+                            // Usar 'userid'
+                            id: user.userid, 
+                            
+                            // Usar 'fullname'
+                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}` 
                         };
                     });
-
 
                     const formattedData = {
                         results: results,
