@@ -278,7 +278,7 @@ function mostrarDatos(usuarios) {
             </svg>
           </button>
           <ul class="dropdown-menu" aria-labelledby="${dropdownId}">
-            <li><a class="dropdown-item ver-actividad" href="#" data-id="${user.id || user.userId}"><i class="bi bi-eye me-2"></i>Ver actividad</a></li>
+            <li><a class="dropdown-item ver-actividad" href="#" data-id="${user.id || user.userId}"><i class="bi bi-eye me-2"></i>Ver datos</a></li>
             <li><a class="dropdown-item editar-usuario" href="#" data-id="${user.userId || user.id}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
             <li><a class="dropdown-item text-danger eliminar-usuario" href="#" data-id="${user.userId || user.id}"><i class="bi bi-trash me-2"></i>Eliminar</a></li>
           </ul>
@@ -341,14 +341,12 @@ function mostrarDatos(usuarios) {
 
     // 3. Eliminar Usuario
     const eliminarUsuarioBtn = row.querySelector('.eliminar-usuario');
-    if (eliminarUsuarioBtn) { // <-- ¡Verificación clave!
+    if (eliminarUsuarioBtn) { 
         eliminarUsuarioBtn.addEventListener('click', (e) => {
             e.preventDefault();
 
             const anchorElement = e.target.closest('.eliminar-usuario'); 
             
-            // 2. VERIFICACIÓN Y USO:
-            // Toda la lógica que usa 'anchorElement' DEBE ir aquí dentro:
             if (anchorElement) {
                 const userId = anchorElement.getAttribute('data-id');
 
@@ -375,15 +373,10 @@ function formatearFecha(fechaStr) {
 }
 
 
-/**
- * Filtra la lista de usuarios basándose en todos los criterios.
- */
+ //Filtra la lista de usuarios basándose en todos los criterios.
 function filtrarUsuarios() {
     // LLAMA A LA FUNCIÓN DE CARGA, forzando el inicio en la página 0.
     cargarPaginaTecnicos(0); 
-    
-    // **Nota:** No necesitas la lógica de filtro de Periodo aquí, 
-    // porque cargarPaginaTecnicos la llamará de nuevo al finalizar.
 }
 
 function aplicarFiltroLocal() {
@@ -494,10 +487,10 @@ async function abrirModalVerActividad(userId) {
 
 // Mapa de estado → [claseIcono, claseColor]
 const statusIconMap = {
-  'Abierto': ['bi-exclamation-circle', 'text-danger'],       // ❗ rojo
-  'En Proceso': ['bi-grid', 'text-warning'],                 // 🎫 naranja
-  'Cerrado': ['bi-check-circle', 'text-success'],            // ✅ verde
-  'En Espera': ['bi-clock', 'text-warning']                  // ⏰ naranja
+  'Abierto': ['bi-exclamation-circle', 'text-danger'],       
+  'En Proceso': ['bi-grid', 'text-warning'],                 
+  'Cerrado': ['bi-check-circle', 'text-success'],            
+  'En Espera': ['bi-clock', 'text-warning']                  
 };
 
 // Inyecta el icono de creación + fecha
@@ -624,7 +617,6 @@ async function handleFormSubmit(event) {
 
     } catch (error) {
         // 6. Manejo de Errores
-        // ❌ SWEETALERT DE ERROR
         Swal.fire({
             title: "Error de Guardado",
             text: `❌ Error: ${errorMessage}`,
@@ -686,7 +678,7 @@ async function abrirFormularioEdicion(userId) {
 }
 
 async function confirmarEliminacion(userId) {
-     // Es crucial validar que el ID exista antes de intentar eliminar
+     // Validar que el ID exista antes de intentar eliminar
     if (!userId) {
         console.error("No se proporcionó un ID de técnico para eliminar.");
         Swal.fire({
@@ -698,7 +690,6 @@ async function confirmarEliminacion(userId) {
     }
     
     // 1. Confirmación de Usuario para la eliminación
-    // 1. Sustitución de 'confirm()' por SweetAlert2
     const result = await Swal.fire({
         title: '¿Confirmar Eliminación?',
         text: "¿Está seguro de que desea eliminar este técnico? ¡Esta acción no se puede deshacer!",
