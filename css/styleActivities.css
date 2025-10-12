@@ -788,6 +788,11 @@ body {
     color: black; /* Labels de checkbox también naranja */
 }
 
+.modal-header{
+    background-color: #03071E;
+    color: white;
+}
+
 .edit-activity-button {
     background-color: #DC2F02;
     color: white;

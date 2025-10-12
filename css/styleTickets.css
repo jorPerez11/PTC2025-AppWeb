@@ -321,6 +321,10 @@ h4 {
     color: white;
 }
 
+.idTicketText{
+    color: #c3c3c3;
+}
+
 .navbar-brand {
     size: 100px;
 }
