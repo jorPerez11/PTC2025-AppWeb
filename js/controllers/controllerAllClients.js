@@ -6,7 +6,8 @@ import {
     fetchTicketDetails,
     formatRegistrationDate,
     fetchTechUsersForSearch,
-    patchTicketTechnician
+    patchTicketTechnician,
+    fetchSelect2
 } from '../services/serviceAllClients.js';
 
 // Variables globales para el estado de la aplicación
@@ -307,51 +308,17 @@ function initReasignacionEvents() {
                 const encodedTerm = encodeURIComponent(params.data.term || "");
                 const page = params.data.page || 0;
                 const size = 20;
-
                 const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
 
                 try {
-                    const response = await fetchWithAuth(url);
+                    // LLAMADA SIMPLIFICADA
+                    const data = await fetchSelect2(url);
 
-                    if (!response.ok) {
-                        // El manejo de error HTTP (4xx/5xx)
-                        let errorText = response.statusText;
-                        try {
-                            const errorBody = await response.json();
-                            errorText = errorBody.error || errorBody.message || errorText;
-                        } catch (e) { /* ignora */ }
+                    // Si data viene vacío por error de red/parseo, 'data.content' será []
 
-                        failure({ message: `Error ${response.status}: ${errorText}` });
-                        return;
-                    }
-
-                    // ********** SOLUCIÓN CRÍTICA: Lectura Segura de JSON **********
-                    const responseText = await response.text();
-                    // Objeto por defecto si la respuesta es 200 pero vacía (necesario para .content)
-                    let data = { content: [], number: 0, totalPages: 0 }; 
-
-                    if (responseText) {
-                        try {
-                            data = JSON.parse(responseText);
-                            console.log("Respuesta JSON (ÉXITO):", data); // ¡ESTO DEBE APARECER AHORA!
-                        } catch (jsonError) {
-                            // Falla si el cuerpo no es JSON válido (ej: texto simple o mal formado)
-                            console.error("ERROR: No se pudo parsear el JSON. Respuesta cruda:", responseText, jsonError);
-                            failure({ message: "El servidor devolvió datos con formato incorrecto." });
-                            return;
-                        }
-                    } else {
-                        // Caso donde el backend devuelve 200 OK con cuerpo vacío
-                        console.log("El servidor devolvió un cuerpo vacío (HTTP 200). Usando array vacío.");
-                    }
-                    // *************************************************************
-                    
-                    // Si llegamos aquí, 'data' es un objeto JSON válido (o el objeto por defecto { content: [] })
-                    
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
-
-                        // **USAMOS 'userid' y 'fullname' debido a los logs SQL de Hibernate**
+                        // **USAMOS 'userid' y 'fullname' según tus logs SQL**
                         const displayId = user.userid || 'N/A';
                         const nameText = user.fullname || user.username || 'Técnico sin nombre';
 
@@ -371,9 +338,9 @@ function initReasignacionEvents() {
                     success(formattedData);
 
                 } catch (error) {
-                    // Este catch se activa por fallos de red o si fetchWithAuth lanza una excepción
-                    console.error("Error en transport Select2 (FALLO GENERAL):", error);
-                    failure({ message: "Error de red o servidor: " + error.message });
+                    // Este catch debería ser raramente alcanzado si fetchSelect2 es robusto
+                    console.error("Error inesperado en transport Select2:", error);
+                    failure({ message: "Error al cargar los técnicos." });
                 }
             },
 
@@ -423,7 +390,7 @@ function initReasignacionEvents() {
 
             if (result.isConfirmed) {
                 // Asumimos que patchTicketTechnician está disponible globalmente
-                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id); 
+                const success = await patchTicketTechnician(ticketId, nuevoTecnico.id);
 
                 if (success) {
                     // 1. Actualizar el nombre en el modal (quita el texto entre paréntesis)

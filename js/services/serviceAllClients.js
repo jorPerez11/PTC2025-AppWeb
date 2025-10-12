@@ -18,6 +18,44 @@ const commonHeaders = {
 };
 
 /**
+ * Función auxiliar para llamadas AJAX de Select2 con paginación de Spring Boot (Page<T>).
+ * Utiliza fetchWithAuth pero maneja la lectura del cuerpo de forma segura.
+ * @param {string} url - La URL del endpoint.
+ * @returns {Promise<Object>} Objeto JSON con la estructura de paginación o un objeto vacío.
+ */
+export async function fetchSelect2(url) {
+    try {
+        const response = await fetchWithAuth(url); // fetchWithAuth ahora devuelve la respuesta cruda (Response)
+        
+        // ********** LECTURA ROBUSTA DEL CUERPO **********
+        const responseText = await response.text();
+        // Objeto por defecto si la respuesta es 200 pero vacía
+        let data = { content: [], number: 0, totalPages: 0 }; 
+
+        if (responseText) {
+            try {
+                data = JSON.parse(responseText);
+                console.log("✅ fetchSelect2 JSON OK:", data); // Log de ÉXITO
+            } catch (jsonError) {
+                console.error("❌ fetchSelect2: Error de formato JSON. Respuesta cruda:", responseText, jsonError);
+                // No relanzamos el error, devolvemos data vacía para no romper Select2
+                return data; 
+            }
+        } else {
+            console.warn("⚠️ fetchSelect2: Respuesta vacía (HTTP 200).");
+        }
+        
+        return data; 
+
+    } catch (error) {
+        // Captura errores lanzados por fetchWithAuth (4xx, 5xx, red)
+        console.error("❌ fetchSelect2: Error al obtener datos:", error);
+        // Devolvemos una estructura vacía para que Select2 no falle
+        return { content: [], number: 0, totalPages: 0 };
+    }
+}
+
+/**
  * Busca técnicos filtrando por un término de búsqueda.
  * Adaptado para el formato que Select2 espera.
  * @param {string} term El término de búsqueda (nombre, usuario, ID).
