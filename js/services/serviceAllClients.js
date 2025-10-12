@@ -23,28 +23,42 @@ const commonHeaders = {
  * @param {string} term El término de búsqueda (nombre, usuario, ID).
  * @returns {Promise<Object>} Objeto con formato { results: [ {id, text} ], total_count: number }
  */
+// serviceAllClients.js (FUNCIÓN CORREGIDA)
+
+// Asegúrate de definir API_URL globalmente
+// const API_URL = '...'; 
+
 export async function fetchTechUsersForSearch(term) {
     try {
-        const response = await fetchWithAuth(`${API_URL}/users/tech?roleId=2&size=10&term=${encodeURIComponent(term)}`);
+        const encodedTerm = encodeURIComponent(term);
+        
+        // Usar valores fijos o razonables para los parámetros no proporcionados por Select2
+        const page = 0;
+        const size = 20; 
+        const category = 'all'; // Omitir si no es necesario para la búsqueda de técnicos
+        const period = 'all';   // Omitir si no es necesario para la búsqueda de técnicos
+
+        const response = await fetchWithAuth(`${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}&category=${category}&period=${period}`);
         if (!response.ok) {
             throw new Error(`Error al buscar técnicos: ${response.statusText}`);
         }
         const data = await response.json();
 
-        // Transformar la respuesta del backend al formato Select2 (id y text)
+        // Mapeo al formato Select2 (id y text)
         const transformedResults = data.content.map(user => ({
-            id: user.id, // ID del usuario técnico
-            text: `${user.fullName} (${user.username}) - ID: ${user.id}` // Formato para mostrar en el select
+            id: user.id, // Usar 'userId' si es el campo correcto de tu DTO
+            text: `${user.name} (${user.username}) - ID: ${user.userId}`
         }));
 
         return {
             results: transformedResults,
-            total_count: data.totalElements // Usar el total de elementos para la paginación de Select2
+            // total_count es opcional si no usas paginación en Select2
+            // total_count: data.totalElements 
         };
 
     } catch (error) {
         console.error("Error en fetchTechUsersForSearch:", error);
-        return { results: [], total_count: 0 };
+        return { results: [] };
     }
 }
 
@@ -64,7 +78,7 @@ export async function patchTicketTechnician(ticketId, newTechnicianId) {
         const payload = {
             // Se debe enviar la estructura anidada que el backend consume
             assignedTech: {
-                id: newTechnicianId 
+                id: newTechnicianId
             }
         };
 
@@ -79,16 +93,16 @@ export async function patchTicketTechnician(ticketId, newTechnicianId) {
 
         if (!response.ok) {
             let errorMessage = `Fallo la reasignación. Estado: ${response.status}`;
-            
+
             try {
                 // Intentar leer el cuerpo de error del servidor
                 const errorBody = await response.json();
-                errorMessage = errorBody.error || errorBody.message || errorMessage; 
+                errorMessage = errorBody.error || errorBody.message || errorMessage;
             } catch (e) {
                 // Si la respuesta no es JSON o es vacía
                 errorMessage = response.statusText;
             }
-            
+
             throw new Error(errorMessage);
         }
 
