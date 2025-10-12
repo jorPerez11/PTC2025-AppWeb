@@ -9,7 +9,7 @@ const commonHeaders = {
 };
 
 export async function getTech(){
-    const url = `${API_URL}/api/GetTech`;
+    const url = `${API_URL}/GetTech`;
 
     try{
         const response = await fetchWithAuth(url);
