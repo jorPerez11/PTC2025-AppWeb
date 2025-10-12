@@ -313,17 +313,16 @@ function initReasignacionEvents() {
                 try {
                     // LLAMADA SIMPLIFICADA: fetchSelect2 maneja la autenticación, errores, y parseo.
                     const data = await fetchSelect2(url);
-                    
+
                     // Si data viene vacío por error de red/parseo/HTTP, 'data.content' será [] por defaultData
-                    
+
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
-                        // **USAMOS 'userid' y 'fullname' según tus logs SQL**
-                        const displayId = user.userid || 'N/A';
-                        const nameText = user.fullname || user.username || 'Técnico sin nombre';
+                        const displayId = user.id || 'N/A'; // Usamos 'id'
+                        const nameText = user.name || user.username || 'Técnico sin nombre'; // Usamos 'name'
 
                         return {
-                            id: user.userid, // ID: El valor real a enviar
+                            id: user.id, // El valor real a enviar es 'id'
                             text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}` // TEXTO VISIBLE
                         };
                     });
@@ -333,7 +332,7 @@ function initReasignacionEvents() {
                         pagination: {
                             // Se asume que data.number es el número de página actual (0-based)
                             // y data.totalPages es el total de páginas.
-                            more: data.number < data.totalPages - 1 
+                            more: data.number < data.totalPages - 1
                         }
                     };
 
@@ -343,9 +342,9 @@ function initReasignacionEvents() {
                     // Este catch solo se activaría si falla la lógica de Select2 o el mapeo
                     console.error("Error inesperado en transport Select2:", error);
                     // failure({ message: "Error al procesar los técnicos." }); // No es necesario si devolvemos vacío
-                    
+
                     // Aseguramos una respuesta de fallo a Select2, aunque fetchSelect2 ya lo haya manejado
-                    failure({ message: "Error al procesar la lista." }); 
+                    failure({ message: "Error al procesar la lista." });
                 }
             },
 
