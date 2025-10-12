@@ -29,6 +29,12 @@ const findNameById = (id, array) => {
     // Convierte el ID a número por si viene como string del JSON.
     const numericId = parseInt(id); 
     const item = array.find(item => item.id === numericId);
+    if (item && (item.displayName || item.name)) {
+        // Devuelve el displayName, si no existe, intenta con name.
+        return item.displayName || item.name || 'N/A';
+    }
+    
+    // Para categorías y prioridades (que usan 'name' en tus arrays locales)
     return item ? item.name : 'N/A';
 };
 
@@ -200,10 +206,9 @@ async function obtenerTickets() {
                 id: ticket.ticketId, 
                 title: ticket.title || 'Sin Título',
                 description: ticket.description || 'Sin descripción',
-                // Usamos Optional Chaining para obtener el ID, o un valor por defecto.
-                id_category: ticket.category?.id || ticket.id_category, // Asume que el ID está aquí
-                id_priority: ticket.priority?.id || ticket.id_priority, // Asume que el ID está aquí
-                id_tech: ticket.technician?.id || ticket.id_technician // Asume que el ID está aquí
+                id_category: ticket.category?.id, 
+                id_priority: ticket.priority?.id, 
+                id_tech: ticket.assignedTech?.id 
             });
 
 
