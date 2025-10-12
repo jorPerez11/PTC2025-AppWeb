@@ -297,6 +297,25 @@ function initReasignacionEvents() {
         language: "es",
         minimumInputLength: 3,
         width: '100%', 
+        // ********** AÑADE LA TRADUCCIÓN MANUAL AQUÍ **********
+        language: {
+            noResults: function () {
+                return "No se encontraron resultados";
+            },
+            searching: function () {
+                return "Buscando...";
+            },
+            inputTooShort: function (args) {
+                var remainingChars = args.minimum - args.input.length;
+                return 'Introduce ' + remainingChars + ' caracteres o más';
+            },
+            errorLoading: function () {
+                return 'Error al cargar los resultados.';
+            },
+            loadingMore: function () {
+                return 'Cargando más resultados...';
+            }
+        },
 
         // ********** LÓGICA AJAX CON fetchWithAuth (VERSIÓN ROBUSTA) **********
         ajax: {
