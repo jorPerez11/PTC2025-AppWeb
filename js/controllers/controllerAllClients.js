@@ -15,7 +15,8 @@ let ticketsPerPage = 10;
 let totalPages = 0;
 let totalElements = 0;
 let currentTicketId = null; // Variable para almacenar el ID del ticket actual
-
+// 1. Importar la función `fetchWithAuth` que maneja el token internamente
+import { fetchWithAuth } from "../services/serviceLogin.js";
 const API_URL = "https://ptchelpdesk-a73934db2774.herokuapp.com/api";
 
 /**
@@ -296,38 +297,59 @@ function initReasignacionEvents() {
         minimumInputLength: 3,
         width: 'resolve',
         
-        // ********** NUEVA LÓGICA AJAX SIMPLIFICADA **********
+        // ********** LÓGICA AJAX CON fetchWithAuth (CORREGIDA) **********
         ajax: {
-            url: `${API_URL}/users/tech`, // Usar la URL directamente
             dataType: 'json',
             delay: 250,
             cache: true,
             
-            // 1. data: Define qué parámetros enviar al backend (solo 'term' es necesario)
-            data: function (params) {
-                return {
-                    term: params.term, // El texto de búsqueda
-                    page: 0,           // Búsqueda en la primera página
-                    size: 20           // Tamaño razonable de resultados
-                    // Opcional: category: 'all', period: 'all'
-                };
+            // Usamos la función 'transport' para interceptar la llamada
+            transport: async function (params, success, failure) {
+                const encodedTerm = encodeURIComponent(params.data.term || "");
+                const page = params.data.page || 0;
+                const size = 20; // Tamaño fijo para la búsqueda
+                
+                const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
+
+                try {
+                    // *** Llamamos a fetchWithAuth para INCLUIR EL TOKEN ***
+                    const response = await fetchWithAuth(url);
+                    
+                    if (!response.ok) {
+                         // Si es 401, el error se maneja en fetchWithAuth o debe propagarse
+                        throw new Error(`Error ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Mapeo al formato Select2 (ProcessResults)
+                    const results = data.content.map(user => ({
+                        id: user.userId, 
+                        text: `${user.fullName} (${user.username}) - ID: ${user.userId}`
+                    }));
+
+                    const formattedData = {
+                        results: results,
+                        pagination: {
+                            more: data.number < data.totalPages - 1 
+                        }
+                    };
+                    
+                    // Llama a success con los datos mapeados
+                    success(formattedData); 
+                    
+                } catch (error) {
+                    console.error("Error en transport Select2:", error);
+                    failure(error); // Llama a failure para que Select2 muestre el error
+                }
             },
             
-            // 2. processResults: Define cómo Select2 debe mapear la respuesta
-            processResults: function (data, params) {
-                // 'data' es la respuesta Page<UserDTO> completa de tu backend
-                const results = data.content.map(user => ({
-                    // Asegúrate de usar la propiedad correcta (userId o id)
-                    id: user.userId, 
-                    text: `${user.fullName} (${user.username}) - ID: ${user.userId}`
-                }));
-
+            // Este método ya no es necesario, pero lo mantenemos por si Select2 intenta usarlo
+            data: function (params) {
                 return {
-                    results: results,
-                    // pagination.more es opcional, pero mantiene Select2 contento
-                    pagination: {
-                        more: (params.page * 20) < data.totalElements 
-                    }
+                    term: params.term,
+                    page: params.page || 0,
+                    size: 20
                 };
             }
         }
