@@ -286,10 +286,12 @@ function initReasignacionEvents() {
     
     // 1. Inicializar Select2 con búsqueda remota y adaptadores de datos
     $('#selectTecnicoBusqueda').select2({
-        dropdownParent: $('#modalVerActividad'),
         placeholder: "Buscar técnico (Nombre, ID, Usuario)...",
         allowClear: true,
-        minimumInputLength: 3, 
+        language: "es",
+        minimumInputLength: 3,
+        width: 'resolve', // Asegura que tome el 100% del contenedor
+        dropdownParent: $('#modalVerActividad'), 
         // Lógica de búsqueda que usa tu servicio
         ajax: {
             transport: async function (params, success, failure) {
