@@ -1,10 +1,38 @@
 import { getTicketCounts } from '../services/serviceDashboard.js';
+import { getUser, getUserId } from '../services/serviceConfig.js'
 
 let ticketCounts = {
     enEspera: 0,
     enProceso: 0,
     cerradas: 0
 };
+
+const username = document.getElementById('username');
+let currentUserId = null;
+
+async function loadUsername(){
+    try{
+        if(!currentUserId){
+            currentUserId = await getUserId();
+        }
+
+        
+        const userData = await getUser(currentUserId);
+
+        if(userData){
+            username.textContent = userData.name || 'Usuario';
+        }
+        
+    }catch (error) {
+            console.error('Error al cargar datos:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudieron cargar los datos del perfil.',
+                icon: 'error',
+                timer: 4000
+            });
+        }
+}
 
 //  CÁLCULO DE RENDIMIENTO 
 function calculatePerformanceValue(counts) {
@@ -56,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // lógica para cargar la data de graficos
     initDashboardData();
+    loadUsername();
     
 
 });

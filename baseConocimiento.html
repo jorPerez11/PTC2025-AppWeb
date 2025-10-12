@@ -203,29 +203,29 @@
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createArticleModalLabel">Crear Nuevo Artículo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="createArticleForm">
                 <input type="hidden" id="articleId" name="articleId">
                 <div class="mb-3">
-                    <label for="articleTitle" class="form-label">Título</label>
+                    <label for="articleTitle" class="form-label fw-semibold">Título</label>
                     <input type="text" class="form-control" id="articleTitle" required maxlength="100">
                 </div>
                 <div class="mb-3">
-                    <label for="articleDescription" class="form-label">Descripción</label>
+                    <label for="articleDescription" class="form-label fw-semibold">Descripción</label>
                     <textarea class="form-control" id="articleDescription" rows="3" required maxlength="400"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="articleSteps" class="form-label">Pasos de solución</label>
+                    <label for="articleSteps" class="form-label fw-semibold">Pasos de solución</label>
                     <textarea class="form-control" id="articleSteps" rows="3" required maxlength="500"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="articleKeywords" class="form-label">Palabras clave</label>
+                    <label for="articleKeywords" class="form-label fw-semibold">Palabras clave</label>
                     <textarea class="form-control" id="articleKeywords" rows="2" required maxlength="50"></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="articleCategory" class="form-label">Categoría</label>
+                    <label for="articleCategory" class="form-label fw-semibold">Categoría</label>
                     <select class="form-select" id="articleCategory" required>
                     <option selected disabled value="">Selecciona una categoría</option>
                     </select>
