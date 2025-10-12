@@ -65,6 +65,12 @@ h4 {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
+.swal2-container {
+    /* El z-index de los modales de Bootstrap suele ser 1050-1055.
+       Usar 2000 o más garantiza que se muestre por encima de todo. */
+    z-index: 2000 !important; 
+}
+
 /* Estilos específicos para la versión móvil - CORREGIDOS */
 @media (max-width: 1199.98px) {
     .dropdown-menu {
