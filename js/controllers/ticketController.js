@@ -126,7 +126,7 @@ function mostrarDetallesTicket(ticketData) {
         technicianField.value = technicianName;
     }
 
-    // 3. Poblar el campo ID invisible (NUEVO REQUERIMIENTO)
+    // 3. Poblar el campo ID invisible 
     const ticketIdHiddenField = document.getElementById('modalTicketId');
     if (ticketIdHiddenField) {
         ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
@@ -147,6 +147,12 @@ async function obtenerTickets() {
         const data = await getTickets(currentPage, currentSize);
         // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
         const items = data?.content || [];
+
+         console.log("Respuesta Completa de la API (DATA):", data);
+
+         if (items.length > 0) {
+            console.log("Estructura de un Ticket (Primer Item):", items[0]);
+        }
 
         // Actualizar variables de paginación con la respuesta de la API
         totalPages = data.totalPages;
