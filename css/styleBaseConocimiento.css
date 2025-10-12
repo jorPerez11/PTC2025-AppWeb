@@ -513,7 +513,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background-color: #f8f9fa;
+  background-color: #d5d7e3;
   padding: 0 1rem;
   z-index: 2;
 }
