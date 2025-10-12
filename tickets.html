@@ -118,59 +118,50 @@
 
     <!--MODAL VER DATOS-->
     <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="viewTicketModalLabel">
-                    Detalles del Ticket: <span id="modalTicketIdDisplay">#0000</span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            
-            <div class="modal-body">
-                <input type="hidden" id="modalTicketId">
-
-                <div class="mb-4 border-bottom pb-2">
-                    <p class="text-muted mb-0">Título del Ticket</p>
-                    <h3 class="fw-bold" id="modalTicketTitle"></h3>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewTicketModalLabel">Detalles del Ticket <span id="modalTicketIdDisplay" class="text-muted">#0000</span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalTicketId">
 
-                <div class="row mb-4">
+                    <div class="mb-3">
+                        <label for="modalTicketTitle" class="form-label fw-semibold">Título</label>
+                        <input type="text" class="form-control" id="modalTicketTitle" readonly>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="mb-3">
+                            <label for="modalTicketCategory" class="form-label fw-semibold">Categoría</label>
+                            <input type="text" class="form-control" id="modalTicketCategory" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="modalTicketPriority" class="form-label fw-semibold">Prioridad</label>
+                            <input type="text" class="form-control" id="modalTicketPriority" readonly>
+                        </div>
+                    </div>
                     
-                    <div class="col-md-4">
-                        <label class="form-label text-muted">Categoría</label>
-                        <p class="form-control-plaintext fw-semibold" id="modalTicketCategory"></p>
+
+                    <div class="mb-3">
+                        <label for="modalTicketTechnician" class="form-label fw-semibold">Técnico Asignado</label>
+                        <input type="text" class="form-control" id="modalTicketTechnician" readonly>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label text-muted">Prioridad</label>
-                        <p class="form-control-plaintext fw-semibold" id="modalTicketPriority"></p>
+                    <div class="mb-3">
+                        <label for="modalTicketDescription" class="form-label fw-semibold">Descripción</label>
+                        <textarea class="form-control" id="modalTicketDescription" rows="3" readonly></textarea>
                     </div>
 
-                    <div class="col-md-4">
-                        <label class="form-label text-muted">Técnico Asignado</label>
-                        <p class="form-control-plaintext fw-semibold" id="modalTicketTechnician"></p>
-                    </div>
                 </div>
-                
-                <hr>
-
-                <div class="mb-3">
-                    <label for="modalTicketDescription" class="form-label fw-semibold">Descripción Completa</label>
-                    <div class="p-3 border rounded bg-light" style="min-height: 100px;">
-                        <p class="mb-0 text-break" id="modalTicketDescription"></p>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
-
-            </div>
-            
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.js"></script>
