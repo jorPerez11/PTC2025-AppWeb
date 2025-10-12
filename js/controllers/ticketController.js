@@ -1,8 +1,11 @@
 import {
     getTech,
     getTickets,
-    updateTicket
+    updateTicket,
+    getUser
 } from "../services/ticketService.js";
+
+
 
 // Las variables y objetos se definen fuera del evento DOMContentLoaded
 // para que su alcance sea global dentro del script.
@@ -112,6 +115,46 @@ async function loadTechs() {
     }
 }
 
+async function getClientDetails(userId) {
+    console.log(`Buscando datos del cliente con ID: ${userId}...`);
+    try{
+        const userData = await getUser(userId);
+        return userData;
+    } catch (error) {
+         console.error("Error al obtener datos del cliente:", error);
+         return null;
+    }
+}
+
+function mostrarDatosCliente(userData) {
+        
+    // 1. Poblar el campo ID oculto
+    const clientIdHiddenField = document.getElementById('modalClientId');
+    if (clientIdHiddenField) {
+        clientIdHiddenField.value = userData.id;
+    }
+    
+    // 2. Poblar los campos de visualización (usando innerText)
+    
+    const clientName = userData.displayName || userData.name || 'N/A';
+    document.getElementById('modalClientNameDisplay').innerText = clientName;
+    
+    document.getElementById('modalClientEmailDisplay').innerText = userData.email || 'N/A';
+    
+    document.getElementById('modalClientUserDisplay').innerText = userData.username || 'N/A';
+    
+    document.getElementById('modalClientPhoneDisplay').innerText = userData.phone || 'N/A';
+    
+    
+    // 3. Mostrar el modal
+    const modalElement = document.getElementById('modalDatosCliente');
+    if (modalElement) {
+        // Asegúrate de que 'bootstrap' esté cargado
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+}
+
 
 /**
  * Función para poblar el modal de detalles del ticket.
@@ -143,6 +186,35 @@ function mostrarDetallesTicket(ticketData) {
     const ticketIdHiddenField = document.getElementById('modalTicketId');
     if (ticketIdHiddenField) {
         ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
+    }
+
+    const clientDataId = ticketData.id_user;
+    document.getElementById('modalTicketUserId').value = clientDataId;
+
+    const viewClientButton = document.getElementById('viewClientButton'); 
+    if (viewClientButton) {
+        // Limpiamos listeners anteriores y añadimos el nuevo
+        viewClientButton.onclick = async () => {
+            if (clientDataId) {
+                // Deshabilitar botón durante la carga para UX
+                viewClientButton.disabled = true;
+                viewClientButton.innerText = 'Cargando...';
+
+                const userData = await getClientDetails(clientDataId);
+                
+                // Re-habilitar botón
+                viewClientButton.disabled = false;
+                viewClientButton.innerText = 'Ver Cliente';
+
+                if (userData) {
+                    mostrarDatosCliente(userData);
+                } else {
+                    alert('No se pudieron cargar los datos del cliente.');
+                }
+            } else {
+                alert('ID de cliente no disponible para este ticket.');
+            }
+        };
     }
 
     // 4. Muestra el modal de Bootstrap
@@ -215,7 +287,8 @@ async function obtenerTickets() {
                 description: ticket.description || 'Sin descripción',
                 id_category: ticket.category?.id, 
                 id_priority: ticket.priority?.id, 
-                id_tech: ticket.assignedTech?.id 
+                id_tech: ticket.assignedTech?.id,
+                id_user: ticket.user?.id || ticket.userId
             });
 
 

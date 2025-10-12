@@ -116,7 +116,7 @@
         </div>
     </div>
 
-    <!--MODAL VER DATOS-->
+    <!--MODAL VER DATOS TICKET-->
     <div class="modal fade" id="viewTicketModal" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
@@ -157,6 +157,49 @@
 
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-target="#modalDatosCliente" data-bs-dismiss="modal">Datos del Cliente →</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--MODAL VER DATOS CLIENTE-->
+    <div class="modal fade" id="modalDatosCliente" tabindex="-1" aria-labelledby="viewTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewTicketModalLabel">Datos del Cliente</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="modalClientId">
+
+                    <div class="mb-4">
+                        <label for="modalTicketTitle" class="form-label fw-semibold mb-0">Nombre Completo</label>
+                        <input type="text" class="form-control" id="modalClientNameDisplay" readonly>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="modalTicketTitle" class="form-label fw-semibold mb-0">Correo electrónico</label>
+                        <input type="text" class="form-control" id="modalClientEmailDisplay" readonly>
+                    </div> 
+
+                    <div class="row mb-3"> 
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label for="modalTicketCategory" class="form-label fw-semibold">Usuario</label>
+                            <input type="text" class="form-control" id="modalClientUserDisplay" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="modalTicketPriority" class="form-label fw-semibold">Teléfono</label>
+                            <input type="text" class="form-control" id="modalClientPhoneDisplay" readonly>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-target="#viewTicketModal" data-bs-dismiss="modal">← Volver al Ticket</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
