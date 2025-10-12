@@ -311,14 +311,25 @@ function initReasignacionEvents() {
                 
                 const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
 
-                try {
-                    // *** Llamamos a fetchWithAuth para INCLUIR EL TOKEN ***
+               try {
                     const response = await fetchWithAuth(url);
                     
+                    // ********** CORRECCIÓN CRÍTICA DE MANEJO DE ERRORES HTTP **********
                     if (!response.ok) {
-                         // Si es 401, el error se maneja en fetchWithAuth o debe propagarse
-                        throw new Error(`Error ${response.status}: ${response.statusText}`);
+                         let errorText = response.statusText;
+                         try {
+                             // Intenta leer el JSON de error del backend si existe
+                             const errorBody = await response.json(); 
+                             errorText = errorBody.error || errorBody.message || errorText;
+                         } catch (e) {
+                             // Si no es JSON o está vacío, usa el texto de estado
+                         }
+                         
+                         // Lanza un error específico para Select2
+                         failure({ message: `Error ${response.status}: ${errorText}` });
+                         return;
                     }
+                    // *******************************************************************
                     
                     const data = await response.json();
                     
@@ -335,12 +346,13 @@ function initReasignacionEvents() {
                         }
                     };
                     
-                    // Llama a success con los datos mapeados
                     success(formattedData); 
                     
                 } catch (error) {
+                    // Este catch se activará si hay un fallo de red o el error del failure()
                     console.error("Error en transport Select2:", error);
-                    failure(error); // Llama a failure para que Select2 muestre el error
+                    // Select2 espera el objeto failure: { message: "..." }
+                    failure({ message: "Error de red o servidor: " + error.message });
                 }
             },
             
