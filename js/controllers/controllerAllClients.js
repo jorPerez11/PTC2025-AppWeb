@@ -6,7 +6,7 @@ import {
     fetchTicketDetails,
     formatRegistrationDate,
     fetchTechUsersForSearch,
-    patchTicketTechnician 
+    patchTicketTechnician
 } from '../services/serviceAllClients.js';
 
 // Variables globales para el estado de la aplicación
@@ -233,9 +233,9 @@ function updateCounts() {
 function updatePagination() {
     const paginationContainer = document.getElementById('pagination-container');
     if (!paginationContainer) return;
-    
+
     paginationContainer.innerHTML = ''; // Limpiar el contenedor antes de renderizar
-    
+
     if (totalPages > 1) {
         const paginationHtml = `
             <ul class="pagination justify-content-center mt-4 mb-4" id="paginationControls">
@@ -255,7 +255,7 @@ function updatePagination() {
             </ul>
         `;
         paginationContainer.innerHTML = paginationHtml;
-        
+
         // Asignar los listeners a los nuevos elementos
         document.querySelector('[data-page="prev"]').addEventListener('click', (e) => {
             e.preventDefault();
@@ -289,65 +289,76 @@ function initReasignacionEvents() {
     // 1. Inicializar Select2 con búsqueda remota y CORRECCIÓN DE ESTILO
     $('#selectTecnicoBusqueda').select2({
         // CORRECCIÓN VISUAL: Asegura que el dropdown aparezca sobre el modal
-        dropdownParent: $('#modalVerActividad'), 
-        
+        dropdownParent: $('#modalVerActividad'),
+
         placeholder: "Buscar técnico (Nombre, ID, Usuario)...",
         allowClear: true,
         language: "es",
         minimumInputLength: 3,
         width: 'resolve',
-        
+
         // ********** LÓGICA AJAX CON fetchWithAuth (CORREGIDA) **********
         ajax: {
             dataType: 'json',
             delay: 250,
             cache: true,
-            
+
             // Usamos la función 'transport' para interceptar la llamada
             transport: async function (params, success, failure) {
                 const encodedTerm = encodeURIComponent(params.data.term || "");
                 const page = params.data.page || 0;
                 const size = 20; // Tamaño fijo para la búsqueda
-                
+
                 const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
 
-               try {
+                try {
                     const response = await fetchWithAuth(url);
-                    
+
                     // ********** CORRECCIÓN CRÍTICA DE MANEJO DE ERRORES HTTP **********
                     if (!response.ok) {
-                         let errorText = response.statusText;
-                         try {
-                             // Intenta leer el JSON de error del backend si existe
-                             const errorBody = await response.json(); 
-                             errorText = errorBody.error || errorBody.message || errorText;
-                         } catch (e) {
-                             // Si no es JSON o está vacío, usa el texto de estado
-                         }
-                         
-                         // Lanza un error específico para Select2
-                         failure({ message: `Error ${response.status}: ${errorText}` });
-                         return;
+                        let errorText = response.statusText;
+                        try {
+                            // Intenta leer el JSON de error del backend si existe
+                            const errorBody = await response.json();
+                            errorText = errorBody.error || errorBody.message || errorText;
+                        } catch (e) {
+                            // Si no es JSON o está vacío, usa el texto de estado
+                        }
+
+                        // Lanza un error específico para Select2
+                        failure({ message: `Error ${response.status}: ${errorText}` });
+                        return;
                     }
                     // *******************************************************************
-                    
+
                     const data = await response.json();
-                    
+
                     // Mapeo al formato Select2 (ProcessResults)
-                    const results = data.content.map(user => ({
-                        id: user.userId, 
-                        text: `${user.fullName} (${user.username}) - ID: ${user.userId}`
-                    }));
+                    const results = data.content.map(user => {
+
+                        // Usamos 'user.name' y 'user.id' que coinciden con el UserDTO de Java
+                        const displayId = user.id || 'N/A'; // Usar 'id'
+                        const nameText = user.name || user.displayName || user.username || 'Técnico sin nombre';
+
+                        return {
+                            // ID del elemento seleccionado, debe ser el Long id del DTO
+                            id: user.id,
+
+                            // Texto que se muestra en el dropdown
+                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}`
+                        };
+                    });
+
 
                     const formattedData = {
                         results: results,
                         pagination: {
-                            more: data.number < data.totalPages - 1 
+                            more: data.number < data.totalPages - 1
                         }
                     };
-                    
-                    success(formattedData); 
-                    
+
+                    success(formattedData);
+
                 } catch (error) {
                     // Este catch se activará si hay un fallo de red o el error del failure()
                     console.error("Error en transport Select2:", error);
@@ -355,7 +366,7 @@ function initReasignacionEvents() {
                     failure({ message: "Error de red o servidor: " + error.message });
                 }
             },
-            
+
             // Este método ya no es necesario, pero lo mantenemos por si Select2 intenta usarlo
             data: function (params) {
                 return {
@@ -369,27 +380,27 @@ function initReasignacionEvents() {
     });
 
     // 2. Manejo del click en 'Reasignar Técnico'
-    $('#btnReasignarTecnico').on('click', function() {
+    $('#btnReasignarTecnico').on('click', function () {
         $('#tecnicoActualContainer').hide();
         $('#reasignarInputContainer').show();
         // Abrir el Select2 automáticamente
-        $('#selectTecnicoBusqueda').select2('open'); 
+        $('#selectTecnicoBusqueda').select2('open');
     });
 
     // 3. Manejo del click en 'Cancelar'
-    $('#btnCancelarReasignacion').on('click', function() {
+    $('#btnCancelarReasignacion').on('click', function () {
         // Limpiar y ocultar
-        $('#selectTecnicoBusqueda').val(null).trigger('change'); 
+        $('#selectTecnicoBusqueda').val(null).trigger('change');
         $('#reasignarInputContainer').hide();
         // Mostrar el nombre actual
-        $('#tecnicoActualContainer').show(); 
+        $('#tecnicoActualContainer').show();
     });
-    
+
     // 4. Manejo de la selección del nuevo técnico (PATCH/GUARDAR)
     $('#selectTecnicoBusqueda').on('select2:select', async function (e) {
         const nuevoTecnico = e.params.data;
         const ticketId = currentTicketId; // Usamos la variable global
-        
+
         if (ticketId && nuevoTecnico.id) {
             const result = await Swal.fire({
                 title: '¿Confirmar reasignación?',
@@ -407,14 +418,14 @@ function initReasignacionEvents() {
                     // 1. Actualizar el nombre en el modal
                     document.getElementById('lblTecnico').textContent = nuevoTecnico.text.split('(')[0].trim();
                     // 2. Volver al estado de visualización
-                    $('#btnCancelarReasignacion').trigger('click'); 
+                    $('#btnCancelarReasignacion').trigger('click');
                     Swal.fire('¡Reasignado!', `Ticket #${ticketId} reasignado exitosamente.`, 'success');
                     // Opcional: Recargar la lista principal si la vista cambia mucho
                     // await fetchAndRenderClients(); 
                 }
                 // Si falla, el service ya muestra el error.
             } else {
-                 // Si cancela la confirmación, solo volvemos al estado de visualización
+                // Si cancela la confirmación, solo volvemos al estado de visualización
                 $('#btnCancelarReasignacion').trigger('click');
             }
         }
