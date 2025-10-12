@@ -332,28 +332,29 @@ function initReasignacionEvents() {
                     // *******************************************************************
 
                     const data = await response.json();
-                    
+
                     // ********** DEBUG CRÍTICO: Imprimir el JSON completo **********
                     console.log("Respuesta JSON del API para técnicos:", data);
+                    alert("Respuesta JSON del API para técnicos:\n\n" + JSON.stringify(data, null, 2));
                     // *************************************************************
 
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
-                        
+
                         // Basado en tus logs de API/Hibernate, el backend está usando:
                         // - ID: 'userid' (select ue1_0.userid...)
                         // - Nombre: 'fullname' (lower(ue1_0.fullname)...)
-                        
+
                         // ESTOS NOMBRES SON PROBABLEMENTE LOS QUE EL JSON ESTÁ USANDO
-                        const displayId = user.userid || 'N/A'; 
-                        const nameText = user.fullname || user.username || 'Técnico sin nombre'; 
+                        const displayId = user.userid || 'N/A';
+                        const nameText = user.fullname || user.username || 'Técnico sin nombre';
 
                         return {
                             // Usar 'userid'
-                            id: user.userid, 
-                            
+                            id: user.userid,
+
                             // Usar 'fullname'
-                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}` 
+                            text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}`
                         };
                     });
 
