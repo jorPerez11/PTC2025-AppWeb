@@ -180,7 +180,7 @@ export async function patchTicketTechnician(ticketId, newTechnicianId) {
         };
 
         // 2. Usar el endpoint de actualización general: /client/UpdateTicket/{ticketId}
-        const response = await fetchWithAuth(`${API_BASE_URL}/client/UpdateTicket/${ticketId}`, {
+        const response = await fetchWithAuth(`${API_URL}/client/UpdateTicket/${ticketId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
