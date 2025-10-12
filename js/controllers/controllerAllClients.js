@@ -303,57 +303,53 @@ function initReasignacionEvents() {
             delay: 250,
             cache: true,
 
-            // Usamos la función 'transport' para interceptar la llamada
             transport: async function (params, success, failure) {
                 const encodedTerm = encodeURIComponent(params.data.term || "");
                 const page = params.data.page || 0;
-                const size = 20; // Tamaño fijo para la búsqueda
+                const size = 20;
 
                 const url = `${API_URL}/users/tech?page=${page}&size=${size}&term=${encodedTerm}`;
 
                 try {
                     const response = await fetchWithAuth(url);
 
-                    // ********** CORRECCIÓN CRÍTICA DE MANEJO DE ERRORES HTTP **********
                     if (!response.ok) {
+                        // El manejo de error HTTP está aquí
                         let errorText = response.statusText;
+                        // Intenta leer el error solo si hay un problema
                         try {
-                            // Intenta leer el JSON de error del backend si existe
                             const errorBody = await response.json();
                             errorText = errorBody.error || errorBody.message || errorText;
-                        } catch (e) {
-                            // Si no es JSON o está vacío, usa el texto de estado
-                        }
+                        } catch (e) { /* ignora, el cuerpo puede estar vacío */ }
 
-                        // Lanza un error específico para Select2
                         failure({ message: `Error ${response.status}: ${errorText}` });
                         return;
                     }
-                    // *******************************************************************
 
-                    const data = await response.json();
-
-                    // ********** DEBUG CRÍTICO: Imprimir el JSON completo **********
-                    console.log("Respuesta JSON del API para técnicos:", data);
-                    alert("Respuesta JSON del API para técnicos:\n\n" + JSON.stringify(data, null, 2));
+                    // ********** AISLAMIENTO CRÍTICO DE LECTURA DE JSON **********
+                    let data;
+                    try {
+                        data = await response.json();
+                        console.log("Respuesta JSON (ÉXITO):", data); // DEBE MOSTRARSE
+                    } catch (jsonError) {
+                        console.error("ERROR: No se pudo parsear el JSON de la respuesta.", jsonError);
+                        console.log("Estructura de la respuesta:", response); // Muestra la respuesta Fetch cruda
+                        failure({ message: "El servidor devolvió un error de formato JSON." });
+                        return;
+                    }
                     // *************************************************************
-
+                    
+                    // Si llegamos aquí, 'data' es un objeto JSON válido.
+                    
                     // Mapeo al formato Select2 (ProcessResults)
                     const results = data.content.map(user => {
 
-                        // Basado en tus logs de API/Hibernate, el backend está usando:
-                        // - ID: 'userid' (select ue1_0.userid...)
-                        // - Nombre: 'fullname' (lower(ue1_0.fullname)...)
-
-                        // ESTOS NOMBRES SON PROBABLEMENTE LOS QUE EL JSON ESTÁ USANDO
+                        // Usamos 'userid' y 'fullname' (basado en logs SQL)
                         const displayId = user.userid || 'N/A';
                         const nameText = user.fullname || user.username || 'Técnico sin nombre';
 
                         return {
-                            // Usar 'userid'
                             id: user.userid,
-
-                            // Usar 'fullname'
                             text: `${nameText} (Usuario: ${user.username}) - ID: ${displayId}`
                         };
                     });
@@ -368,9 +364,7 @@ function initReasignacionEvents() {
                     success(formattedData);
 
                 } catch (error) {
-                    // Este catch se activará si hay un fallo de red o el error del failure()
-                    console.error("Error en transport Select2:", error);
-                    // Select2 espera el objeto failure: { message: "..." }
+                    console.error("Error en transport Select2 (FINAL CATCH):", error);
                     failure({ message: "Error de red o servidor: " + error.message });
                 }
             },
