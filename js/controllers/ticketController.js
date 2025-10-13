@@ -185,7 +185,7 @@ function mostrarDetallesTicket(ticketData) {
         ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
     }
 
-     const clientIdField = document.getElementById('modalTicketClientId');
+     const clientIdField = document.getElementById('modalTicketUserId');
     if (clientIdField) {
         clientIdField.value = clientDataId || 'N/A';
     }
