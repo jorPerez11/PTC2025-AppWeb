@@ -1,72 +1,49 @@
 // js/controllers/notisController.js
 
-// Importa el nuevo servicio de notificaciones
-import { notificationService } from '../services/notisService.js'; 
-
 document.addEventListener('DOMContentLoaded', () => {
     const mainContent = document.querySelector('.main-content');
     const noNotificationsView = document.getElementById('no-notifications-view');
-    
-    // Contenedor principal para la lista de notificaciones (se creará al inicio)
-    const notificationsListContainer = document.createElement('div');
-    notificationsListContainer.id = 'notifications-list';
-    notificationsListContainer.className = 'notifications-container';
-    
-    // Asegurarse de que solo se añade una vez
-    if (!document.getElementById('notifications-list')) {
-        mainContent.appendChild(notificationsListContainer);
-    }
-    
-    /**
-     * Mapea los datos del backend a un formato usable en el frontend
-     * @param {Object} data - NotificationDTO (historial) o NotificationMessageDTO (tiempo real)
-     * @returns {Object} Objeto normalizado
-     */
-    function normalizeNotificationData(data) {
-        // Usa 'type' para mensajes en tiempo real; 'status' o 'seen' para historial
-        const type = data.type || 'General'; 
-        
-        let iconoBs = 'bi-bell-fill';
-        let iconoClass = 'icon-general';
-        let tipo = 'Notificación General';
-        
-        // Define el link solo si hay un ticketId
-        const link = data.ticketId ? `#/tickets/view/${data.ticketId}` : '#'; 
 
-        // Lógica específica para técnicos (TIPO: ASSIGNMENT o REMINDER)
-        if (type === 'ASSIGNMENT' || type === 'REMINDER') {
-            iconoBs = 'bi-ticket-fill';
-            iconoClass = 'icon-ticket';
-            tipo = (type === 'ASSIGNMENT') ? 'Nuevo Ticket Asignado' : 'Recordatorio Urgente';
-        } 
-        
-        // El DTO del historial puede usar 'notificationDate' o 'date'.
-        const date = data.date || data.notificationDate; 
-        const formattedDate = date ? new Date(date).toLocaleDateString('es-ES') : 'Fecha desconocida';
-
-        return {
-            id: data.notificationId || data.id, // Acepta ambos nombres por si el DTO de historial usa 'id'
-            tipo: tipo,
-            mensaje: data.message,
-            fecha: formattedDate,
-            iconoClass: iconoClass,
-            iconoBs: iconoBs,
-            link: link,
-            isSeen: data.seen === 1 // Asume que el historial tiene el campo 'seen'
-        };
-    }
+    // --- Datos de Notificaciones de Ejemplo (Simulación de la base de datos) ---
+    // Si esta lista estuviera vacía, se mostraría el mensaje "No tienes notificaciones".
+    const notificaciones = [
+        { 
+            id: 1, 
+            tipo: 'Nuevo mensaje', 
+            mensaje: 'Tienes un nuevo mensaje de José Carlos', 
+            fecha: '11/07/2025', 
+            iconoClass: 'icon-message', 
+            iconoBs: 'bi-chat-dots-fill', 
+            link: '#' 
+        },
+        { 
+            id: 2, 
+            tipo: 'Nueva incidencia', 
+            mensaje: 'Tienes un nuevo ticket asignado por el cliente/a Marta Lopez.', 
+            fecha: '11/07/2025', 
+            iconoClass: 'icon-ticket', 
+            iconoBs: 'bi-ticket-fill', 
+            link: '#' 
+        },
+        { 
+            id: 3, 
+            tipo: 'Nueva incidencia', 
+            mensaje: 'Tienes un nuevo ticket asignado por el cliente/a Mario Gómez.', 
+            fecha: '20/06/2025', 
+            iconoClass: 'icon-ticket', 
+            iconoBs: 'bi-ticket-fill', 
+            link: '#' 
+        }
+    ];
 
     /**
      * Función para crear el HTML de una tarjeta de notificación
-     * @param {Object} noti - Objeto de notificación normalizado
+     * @param {Object} noti - Objeto de notificación
      * @returns {string} HTML de la notificación
      */
     function crearNotificacionHTML(noti) {
-        // La clase 'unread' se basa en el campo 'isSeen' del objeto normalizado
-        const cardClass = noti.isSeen ? 'notification-card' : 'notification-card unread';
-        
         return `
-            <div class="${cardClass}" id="noti-${noti.id}" data-ticket-id="${noti.ticketId || ''}">
+            <div class="notification-card" id="noti-${noti.id}">
                 <div class="notification-content">
                     <div class="notification-icon-wrapper ${noti.iconoClass}">
                         <i class="bi ${noti.iconoBs}"></i>
@@ -88,58 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Función para añadir una nueva notificación al inicio de la lista (para tiempo real)
-     * @param {Object} notiData - El DTO recibido por WebSocket
+     * Función para renderizar todas las notificaciones
+     * @param {Array} listaNotificaciones - La lista de notificaciones a mostrar
      */
-    function addRealTimeNotification(notiData) {
-        const noti = normalizeNotificationData(notiData);
-        // Las notificaciones en tiempo real siempre se consideran no leídas (isSeen: false)
-        noti.isSeen = false; 
-
-        const html = crearNotificacionHTML(noti);
-        
-        // Agrega el nuevo HTML al principio de la lista
-        notificationsListContainer.insertAdjacentHTML('afterbegin', html);
-        
-        // Oculta la vista de "No tienes notificaciones" si estaba visible
-        noNotificationsView.style.display = 'none';
-
-        // Opcional: Mostrar un toast o SweetAlert
-        Swal.fire({ 
-            toast: true, 
-            position: 'top-end', 
-            icon: 'info', 
-            title: noti.tipo, 
-            text: noti.mensaje,
-            showConfirmButton: false, 
-            timer: 4000 
-        });
-        
-        // Vuelve a añadir event listeners al nuevo botón de eliminar
-        document.querySelector(`#noti-${noti.id} .btn-eliminar`)
-                .addEventListener('click', manejarEliminarNotificacion);
-    }
-    
-    /**
-     * Función para renderizar todas las notificaciones (carga inicial)
-     */
-    async function loadAndRenderNotifications() {
-        // Limpia la lista anterior
-        notificationsListContainer.innerHTML = ''; 
-        
-        // 1. Carga el historial real
-        const historial = await notificationService.getNotificationHistory();
-
-        if (historial && historial.length > 0) {
+    function renderizarNotificaciones(listaNotificaciones) {
+        if (listaNotificaciones && listaNotificaciones.length > 0) {
+            // Oculta el mensaje de "No tienes notificaciones"
             noNotificationsView.style.display = 'none';
+
+            // Contenedor para las tarjetas de notificaciones
+            const notiContainer = document.createElement('div');
+            notiContainer.id = 'notifications-list';
+            notiContainer.className = 'notifications-container'; // Usa tu clase de estilo si tienes una específica para el listado
             
-            // Normaliza, renderiza y añade a la vista
-            const htmlContent = historial
-                                .map(normalizeNotificationData)
-                                .map(crearNotificacionHTML)
-                                .join('');
+            // Genera el HTML de cada notificación
+            notiContainer.innerHTML = listaNotificaciones.map(crearNotificacionHTML).join('');
             
-            notificationsListContainer.innerHTML = htmlContent;
+            // Inyecta el contenedor en el main
+            mainContent.appendChild(notiContainer);
 
             // Añade los event listeners para el botón de eliminar
             document.querySelectorAll('.btn-eliminar').forEach(button => {
@@ -147,41 +90,65 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         } else {
+            // Muestra el mensaje de "No tienes notificaciones"
             noNotificationsView.style.display = 'block';
+
+            // Asegúrate de que no haya una lista de notificaciones si estaba antes
+            const existingList = document.getElementById('notifications-list');
+            if (existingList) {
+                existingList.remove();
+            }
         }
     }
 
     /**
      * Función para manejar la eliminación de una notificación
+     * @param {Event} event - El evento click
      */
     function manejarEliminarNotificacion(event) {
-        const notificationId = event.currentTarget.getAttribute('data-notification-id');
+        const button = event.currentTarget;
+        const notificationId = button.getAttribute('data-notification-id');
         
+        // **PASO 1: Mostrar confirmación (usando SweetAlert2)**
         Swal.fire({
-            // ... (Lógica de SweetAlert2)
+            title: '¿Estás seguro?',
+            text: "Esta notificación se eliminará permanentemente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // TODO: Aquí debes llamar a una API DELETE/PUT para marcar como leída o eliminar en el backend
-                console.log(`Llamada API para eliminar notificación con ID: ${notificationId}`);
-                
-                // Simulación de eliminación visual
+                // **PASO 2: Lógica de Eliminación (Simulación)**
+                // Normalmente, aquí harías una llamada API para eliminar en el backend
+                console.log(`Eliminando notificación con ID: ${notificationId}`);
+
+                // Simulación de eliminación del DOM
                 const notiElement = document.getElementById(`noti-${notificationId}`);
                 if (notiElement) {
                     notiElement.remove();
                     
-                    if (notificationsListContainer.children.length === 0) {
-                        noNotificationsView.style.display = 'block';
+                    // Opcional: Mostrar mensaje de éxito
+                    Swal.fire(
+                        '¡Eliminada!',
+                        'La notificación ha sido eliminada.',
+                        'success'
+                    );
+
+                    // **PASO 3: Verificar si quedan notificaciones**
+                    // Comprobar si el contenedor de la lista queda vacío después de la eliminación
+                    const notificationsList = document.getElementById('notifications-list');
+                    if (notificationsList && notificationsList.children.length === 0) {
+                        // Si no quedan, se vuelve a renderizar para mostrar el mensaje de vacío
+                        renderizarNotificaciones([]); // Se pasa una lista vacía
                     }
                 }
             }
         });
     }
 
-    // --- LÓGICA DE INICIALIZACIÓN ---
-
-    // 1. Cargar el historial de notificaciones (API REST)
-    loadAndRenderNotifications();
-
-    // 2. Conectar al WebSocket y configurar el manejo de mensajes en tiempo real
-    notificationService.connectWebSocket(addRealTimeNotification);
+    // Llama a la función para mostrar las notificaciones al cargar la página
+    renderizarNotificaciones(notificaciones);
 });
