@@ -107,21 +107,22 @@ function renderizarSoluciones() {
 
         colDiv.innerHTML = `
             <div class="card-custom">
-                <h6 class="fw-semibold fs-5 mb-3 title">${sol.solutionTitle}</h6>
-                <p class="text-muted flex-grow-1 description">${sol.descriptionS}</p>
-                <p class="text-muted mt-3 flex-grow-1 keywords">${sol.keyWords}</p>
-                <p><span class="${categoryClass}">${categoryName}</span></p>
-                <input type="hidden" id="articleId" name="articleId">
-                <a href="#" class="readmore text-primary fw-semibold" data-action="read" data-id="${sol.solutionId}">Leer más</a>
-                <div class="dropdown more-options">
-                    <button class="btn btn-sm btn-icon border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" data-action="update" data-id="${sol.solutionId}" data-category="${sol.category.id}"><i class="fas fa-pencil-alt me-2"></i>Actualizar artículo</a></li>
-                        <li><a class="dropdown-item" data-action="delete" data-id="${sol.solutionId}"><i class="fas fa-trash-alt me-2"></i>Eliminar artículo</a></li>
-                    </ul>
-                </div>
+                <div class="d-flex justify-content-between align-items-start">         <h6 class="fw-semibold fs-5 mb-3 title">${sol.solutionTitle}</h6>
+                    <div class="dropdown more-options ms-3">             <button class="btn btn-sm btn-icon border-0 p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" data-action="update" data-id="${sol.solutionId}" data-category="${sol.category.id}"><i class="fas fa-pencil-alt me-2"></i>Actualizar artículo</a></li>
+                            <li><a class="dropdown-item" data-action="delete" data-id="${sol.solutionId}"><i class="fas fa-trash-alt me-2"></i>Eliminar artículo</a></li>
+                        </ul>
+                    </div>
+                </div>
+                            
+                <p class="text-muted flex-grow-1 description">${sol.descriptionS}</p>
+                <p class="text-muted mt-3 flex-grow-1 keywords">${sol.keyWords}</p>
+                <p><span class="${categoryClass}">${categoryName}</span></p>
+                <input type="hidden" id="articleId" name="articleId">
+                <a href="#" class="readmore text-primary fw-semibold" data-action="read" data-id="${sol.solutionId}">Leer más</a>
             </div>
         `;
         contenedorArticulos.appendChild(colDiv);
