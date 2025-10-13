@@ -118,7 +118,7 @@ async function loadUserData() {
         const userData = await getUser(currentUserId);
         
         if (userData && userData.rol) {
-            currentUserRole = userData.rol && userData.rol.displayName;
+            currentUserRole = userData.rol.displayName;
             console.log(`Usuario logueado: ID ${currentUserId}, Rol: ${currentUserRole}`);
         }
 
