@@ -1,96 +1,78 @@
-// js/services/notisService.js
+/* // js/services/notisService.js
 
-// Asumimos que 'fetchWithAuth' incluye el JWT automáticamente en los headers
-import { fetchWithAuth } from "../services/serviceLogin.js"; 
+const API_URL = `https://ptchelpdesk-a73934db2774.herokuapp.com/api/notifications/history?userId=${userId}`;
 
-const BASE_API_URL = `https://ptchelpdesk-a73934db2774.herokuapp.com/api/notifications`;
-
-/**
- * Función auxiliar para obtener el ID del usuario desde localStorage.
- * @returns {string | null} El ID del usuario o null si no existe.
- */
-function getUserId() {
-    // Obtiene el 'userId' directamente de localStorage, como solicitaste.
-    return localStorage.getItem('userId'); 
-}
-
-/**
- * 1. Carga el historial de notificaciones desde el API REST.
- * @returns {Promise<Array>} Lista de notificaciones.
- */
-export async function getNotificationHistory() {
-    const userId = getUserId(); 
-    if (!userId) {
-        console.error("Error: userId no encontrado en localStorage.");
-        return [];
-    }
+// Usaremos un objeto global simple para gestionar el estado de las notificaciones.
+const NotificationManager = {
+    notifications: [],
     
-    // Endpoint para obtener el historial: /api/notifications/history?userId={userId}
-    const API_URL = `${BASE_API_URL}/history?userId=${userId}`;
+    // Función para obtener el token JWT. 
+    // **IMPORTANTE**: Debes adaptar esta función para obtener el token de donde lo guardes 
+    // (ej. localStorage, cookies, etc.)
+    getJwtToken: () => {
+        // --- ADAPTA ESTO ---
+        // Ejemplo asumiendo que lo guardas en localStorage
+        return localStorage.getItem('jwtToken'); 
+        // -------------------
+    },
 
-    try {
-        const response = await fetchWithAuth(API_URL);
-        
-        if (!response.ok) {
-            throw new Error(`Error al cargar historial: ${response.statusText}`);
-        }
+    // Función para obtener el nombre de usuario (usado para suscripción /user)
+    getUsername: () => {
+        // --- ADAPTA ESTO ---
+        // Puedes decodificar el JWT o si lo guardas en sesión/localStorage
+        // Por ahora, asumiremos que el backend autenticado lo maneja, 
+        // pero necesitamos el nombre de usuario para el manejo local de URLs de suscripción.
+        // Si el token solo contiene info, el backend lo usa. Aquí solo lo usamos para pruebas locales.
+        return "tecnico1"; // Nombre de usuario de prueba
+        // -------------------
+    },
 
-        // Retorna la lista de objetos NotificationDTO del backend
-        return await response.json(); 
+    connect: () => {
+        const socket = new SockJS('http://localhost:8080/ws'); // Cambia 8080 si usas otro puerto
+        NotificationManager.stompClient = Stomp.over(socket);
 
-    } catch (error) {
-        console.error("❌ Error al obtener el historial de notificaciones:", error);
-        return [];
-    }
-}
-
-/**
- * 2. Conexión y Suscripción al WebSocket.
- * @param {function} onNotificationReceived - Callback que se ejecuta cuando llega un mensaje.
- * @returns {Object | null} El cliente STOMP o null si falla la conexión.
- */
-export function connectWebSocket(onNotificationReceived) {
-    const userId = getUserId();
-    const token = localStorage.getItem('jwt_token'); // Asumimos que el token también está en localStorage
-
-    if (!userId || !token) {
-        console.error("Error: userId o Token JWT no encontrados. No se puede conectar el WebSocket.");
-        return null;
-    }
-
-    // El backend usa /ws para el endpoint STOMP
-    const socket = new SockJS('https://ptchelpdesk-a73934db2774.herokuapp.com/ws'); 
-    const stompClient = Stomp.over(socket);
-    
-    // El token es CRUCIAL para que Spring Security (JwtHandshakeInterceptor) identifique al usuario.
-    const headers = {
-        'Authorization': `Bearer ${token}` 
-        // Spring Security extraerá el 'username' (que debe ser el userId) del token.
-    };
-
-    stompClient.connect(headers, frame => {
-        console.log(`🔗 Conectado al WebSocket (User ID: ${userId})`);
-
-        // Suscripción al destino privado. El destino final: /user/{userId}/queue/notifications
-        const destination = `/user/queue/notifications`;
-        
-        stompClient.subscribe(destination, message => {
-            console.log('📩 Mensaje recibido en tiempo real:', message.body);
-            // El cuerpo del mensaje es el JSON (NotificationMessageDTO)
-            const notification = JSON.parse(message.body);
+        NotificationManager.stompClient.connect({
+            // El backend espera el JWT en el encabezado de autenticación.
+            'Authorization': `Bearer ${NotificationManager.getJwtToken()}`
+        }, (frame) => {
+            console.log('✅ Conectado al WebSocket: ' + frame);
             
-            onNotificationReceived(notification); 
+            // 1. SUSCRIPCIÓN PERSONAL (para mensajes directos)
+            // Destino: /user/queue/notifications
+            NotificationManager.stompClient.subscribe('/user/queue/notifications', (message) => {
+                const notification = JSON.parse(message.body);
+                NotificationManager.handleNewNotification(notification);
+            });
+            
+            // 2. SUSCRIPCIÓN GLOBAL (solo para Admins o Roles específicos, si aplica)
+            // Ejemplo de suscripción para Administradores
+            // NotificationManager.stompClient.subscribe('/topic/admins/incidences', (message) => {
+            //     const notification = JSON.parse(message.body);
+            //     NotificationManager.handleNewNotification(notification);
+            // });
+
+        }, (error) => {
+            console.error('❌ Error de conexión WebSocket:', error);
+            // Reintento o manejo de error de UI
         });
+    },
 
-    }, error => {
-        console.error('❌ Error de conexión WebSocket:', error);
-    });
-
-    return stompClient;
-}
-
-// Exporta las funciones para que el controlador las use
-export const notificationService = {
-    getNotificationHistory,
-    connectWebSocket,
-};
+    handleNewNotification: (notification) => {
+        // Añadir a la lista local
+        NotificationManager.notifications.push(notification);
+        
+        // Renderizar la lista actualizada
+        renderNotifications();
+        
+        // Mostrar una alerta (opcional, pero buena UX)
+        Swal.fire({
+            title: notification.title || 'Nueva Notificación',
+            text: notification.message || 'Has recibido un nuevo evento.',
+            icon: 'info',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 4000
+        });
+    }
+}; */
