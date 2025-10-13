@@ -316,6 +316,11 @@ h4 {
     z-index: 1000;           /* Asegura que esté por encima de otros elementos */
 }
 
+.btnClose{
+    color: white;
+    background-color: #03071e;
+}
+
 .modal-header{
     background-color: #03071E;
     color: white;

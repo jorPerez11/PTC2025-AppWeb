@@ -12,6 +12,16 @@ body {
     color: white;
 }
 
+.btnClose{
+    color: white;
+    background-color: #03071e;
+}
+
+.btnConfirm{
+    color: white;
+    background-color: #F48C06;
+}
+
 .navbar {
     background-color: #03071E;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
