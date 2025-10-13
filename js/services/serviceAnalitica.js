@@ -39,7 +39,8 @@ export async function getTicketCounts() {
 
 export async function fetchNewUsersData() {
     try {
-        const data = await fetchWithAuth('http://localhost:8080/api/users/counts-by-month'); 
+
+        const data = await fetchWithAuth(`${API_URL}/users/counts-by-month`);
 
        
         const categories = Object.keys(data);
