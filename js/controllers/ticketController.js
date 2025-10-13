@@ -185,13 +185,11 @@ function mostrarDetallesTicket(ticketData) {
         ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
     }
 
-     const clientIdField = document.getElementById('modalTicketUserId');
+    const clientDataId = ticketData.id_user;
+    const clientIdField = document.getElementById('modalTicketUserId');
     if (clientIdField) {
         clientIdField.value = clientDataId || 'N/A';
     }
-
-    const clientDataId = ticketData.id_user;
-    document.getElementById('modalTicketUserId').value = clientDataId;
 
     if (clientDataId) {
         getClientDetails(clientDataId).then(userData => {
