@@ -131,12 +131,31 @@ function initCharts(){
 
     var solicitudesOptions = {
         chart: { type: 'bar', height: '100%', width: '100%', toolbar: { show: false }, background: 'transparent' },
-        series: [{ data: [{ x: 'En Proceso', y: ticketCounts.enProceso , fillColor: '#FF7753' }, { x: 'Cerradas', y: ticketCounts.cerradas, fillColor: '#79DA66' }, { x: 'En Espera', y: ticketCounts.enEspera, fillColor: '#DC2F02' }] }],
+        series: [{ 
+            data: [
+                { x: 'En Proceso', y: ticketCounts.enProceso , fillColor: '#f59620' }, 
+                { x: 'Cerradas', y: ticketCounts.cerradas, fillColor: '#46cd33' }, 
+                { x: 'En Espera', y: ticketCounts.enEspera, fillColor: '#df4119' }
+            ] 
+        }],
         xaxis: { labels: { style: { fontSize: '12px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 400, cssClass: 'apexcharts-xaxis-label' } } },
         yaxis: { labels: { style: { fontSize: '12px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 400, cssClass: 'apexcharts-yaxis-label' } } },
         dataLabels: { enabled: false, style: { fontSize: '12px', fontFamily: 'Poppins, Arial, sans-serif', fontWeight: 'bold' } },
         plotOptions: { bar: { distributed: true, horizontal: false, columnWidth: '90%' } },
-        grid: { show: true }
+        grid: { show: true },
+       
+        legend: {
+            show: true,
+            position: 'bottom',
+            horizontalAlign: 'center',
+            fontSize: '14px', 
+            fontFamily: 'Poppins',
+            // Marcadores de leyenda: [En Proceso, Cerradas, En Espera]
+            markers: {
+                fillColors: ['#f59620', '#46cd33', '#df4119']
+            }
+        },
+        colors: ['#f59620', '#46cd33', '#df4119'] 
     };
     var chart1 = new ApexCharts(document.querySelector("#chart1"), solicitudesOptions);
     chart1.render();

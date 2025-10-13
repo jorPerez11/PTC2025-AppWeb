@@ -199,7 +199,7 @@
 
     <!--Modal crear articulo-->
     <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="createArticleModalLabel">Crear Nuevo Artículo</h5>
@@ -214,11 +214,11 @@
                 </div>
                 <div class="mb-3">
                     <label for="articleDescription" class="form-label fw-semibold">Descripción</label>
-                    <textarea class="form-control" id="articleDescription" rows="3" required maxlength="400"></textarea>
+                    <textarea class="form-control" id="articleDescription" rows="3" required maxlength="4000"></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="articleSteps" class="form-label fw-semibold">Pasos de solución</label>
-                    <textarea class="form-control" id="articleSteps" rows="3" required maxlength="500"></textarea>
+                    <textarea class="form-control" id="articleSteps" rows="3" required maxlength="4000"></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="articleKeywords" class="form-label fw-semibold">Palabras clave</label>
@@ -234,7 +234,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" form="createArticleForm" class="btn btn-primary" id="createArticleSubmitBtn">Guardar Artículo</button>
+                <button type="submit" form="createArticleForm" class="btn btnConfirm" id="createArticleSubmitBtn">Guardar Artículo</button>
             </div>
             </div>
         </div>

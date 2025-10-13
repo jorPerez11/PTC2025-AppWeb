@@ -82,9 +82,37 @@ html, body {
     margin: 0 10px;
 }
 
+/* Botón de Cerrar/Cancelar */
+.btnClose {
+    /* Colores base */
+    color: white;
+    background-color: #040c3d; /* Nuevo color oscuro */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnClose:hover {
+    /* Oscurece el color de fondo base para dar feedback */
+    background-color: #010619; /* Ligeramente más oscuro que el base */
+}
+
+/* Botón de Confirmar */
+.btnConfirm {
+    /* Colores base */
+    color: white;
+    background-color: #F48C06; /* Color naranja original */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnConfirm:hover {
+    /* Oscurece el naranja para dar feedback */
+    background-color: #dc7605; 
+    color: white;
+}
+
 .more-options {
     position: absolute;
-    bottom: 10px;    /* 10px desde el borde inferior de la tarjeta */
     right: 10px;     /* 10px desde el borde derecho de la tarjeta */
     width: 40px;
     height: 40px;
@@ -469,7 +497,6 @@ html, body {
 
 /* 4. “Leer más” al fondo y en seminegrita */
 .readmore {
-    margin-top: auto;
     /* empuja al extremo inferior */
     font-size: 15px;
     font-weight: 600;

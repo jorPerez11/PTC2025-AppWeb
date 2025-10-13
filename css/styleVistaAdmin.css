@@ -12,6 +12,35 @@ body {
     color: white;
 }
 
+/* Botón de Cerrar/Cancelar */
+.btnClose {
+    /* Colores base */
+    color: white;
+    background-color: #040c3d; /* Nuevo color oscuro */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnClose:hover {
+    /* Oscurece el color de fondo base para dar feedback */
+    background-color: #010619; /* Ligeramente más oscuro que el base */
+}
+
+/* Botón de Confirmar */
+.btnConfirm {
+    /* Colores base */
+    color: white;
+    background-color: #F48C06; /* Color naranja original */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnConfirm:hover {
+    /* Oscurece el naranja para dar feedback */
+    background-color: #dc7605; 
+    color: white;
+}
+
 .navbar {
     background-color: #03071E;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
