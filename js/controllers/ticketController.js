@@ -1,7 +1,10 @@
 import {
+    getTech,
     getTickets,
-    updateTicket
+    updateTicket,
+    getUser
 } from "../services/ticketService.js";
+
 
 
 // Las variables y objetos se definen fuera del evento DOMContentLoaded
@@ -10,6 +13,36 @@ const estados = {
     'En espera': 'en-espera-list',
     'En progreso': 'en-progreso-list',
     'Completado': 'completado-list'
+};
+
+const categories = [
+        { id: 7, name: 'Equipo' },
+        { id: 6, name: 'Sistema' },
+        { id: 5, name: 'Incidentes críticos' },
+        { id: 4, name: 'Redes' },
+        { id: 3, name: 'Gestion de usuarios' },
+        { id: 2, name: 'Consultas' },
+        { id: 1, name: 'Soporte Técnico' },
+    ];
+
+const priorities = [
+    { id: 4, name: 'Critica'},
+    { id: 3, name: 'Alta' },
+    { id: 2, name: 'Media' },
+    { id: 1, name: 'Baja' }
+];
+
+const findNameById = (id, array) => {
+    // Convierte el ID a número por si viene como string del JSON.
+    const numericId = parseInt(id); 
+    const item = array.find(item => item.id === numericId);
+    if (item && (item.displayName || item.name)) {
+        // Devuelve el displayName, si no existe, intenta con name.
+        return item.displayName || item.name || 'N/A';
+    }
+    
+    // Para categorías y prioridades (que usan 'name' en tus arrays locales)
+    return item ? item.name : 'N/A';
 };
 
 const estadosApi = {
@@ -27,6 +60,7 @@ const badgeColors = {
 let currentPage = 0;
 let currentSize = 10;
 let totalPages = 0;
+let techList = [];
 
 const calendarIcons = {
     'En espera': `
@@ -70,12 +104,122 @@ const calendarIcons = {
     `
 };
 
+async function loadTechs() {
+    try {
+        // Llama a getTech() del service y almacena la lista de técnicos
+        techList = await getTech();
+        console.log("Técnicos cargados:", techList);
+    } catch (error) {
+        console.error("Error al cargar la lista de técnicos:", error);
+        // Si falla, techList será un array vacío, manejado por findNameById.
+    }
+}
+
+async function getClientDetails(userId) {
+    console.log(`Buscando datos del cliente con ID: ${userId}...`);
+    try{
+        const userData = await getUser(userId);
+        return userData;
+    } catch (error) {
+         console.error("Error al obtener datos del cliente:", error);
+         // Mostrar una alerta de error usando SweetAlert2
+         Swal.fire({
+             icon: 'error',
+             title: 'Error de Datos',
+             text: 'No se pudieron cargar los datos del cliente.',
+         });
+         return null;
+    }
+}
+
+function mostrarDatosCliente(userData) {
+        
+    // 1. Poblar el campo ID oculto
+    const clientIdHiddenField = document.getElementById('modalClientId');
+    if (clientIdHiddenField) {
+        clientIdHiddenField.value = userData.id;
+    }
+    
+    // 2. Poblar los campos de visualización (usando innerText)
+    
+    const clientName = userData.displayName || userData.name || 'N/A';
+    document.getElementById('modalClientNameDisplay').value = clientName;
+    
+    document.getElementById('modalClientEmailDisplay').value = userData.email || 'N/A';
+    
+    document.getElementById('modalClientUserDisplay').value = userData.username || 'N/A';
+    
+    document.getElementById('modalClientPhoneDisplay').value = userData.phone || 'N/A';
+}
+
+
+/**
+ * Función para poblar el modal de detalles del ticket.
+ * @param {object} ticketData - El objeto con los datos del ticket (incluyendo IDs de categoría/prioridad/técnico).
+ */
+function mostrarDetallesTicket(ticketData) {
+    
+    // 1. Mapear los IDs a nombres
+    const categoryName = findNameById(ticketData.id_category, categories);
+    const priorityName = findNameById(ticketData.id_priority, priorities);
+    const technicianName = findNameById(ticketData.id_tech, techList); // Usa la lista global de técnicos
+
+    // 2. Poblar los campos visibles
+
+    document.getElementById('modalTicketIdDisplay').innerText = `#${String(ticketData.id || ticketData.ticketId).padStart(4, '0')}`;
+
+    document.getElementById('modalTicketTitle').value = ticketData.title || '';
+    document.getElementById('modalTicketCategory').value = categoryName;
+    document.getElementById('modalTicketPriority').value = priorityName;
+    document.getElementById('modalTicketDescription').value = ticketData.description || '';
+    
+    // Asumiendo que has añadido el campo 'modalTicketTechnician'
+    const technicianField = document.getElementById('modalTicketTechnician');
+    if (technicianField) {
+        technicianField.value = technicianName;
+    }
+
+    // 3. Poblar el campo ID invisible 
+    const ticketIdHiddenField = document.getElementById('modalTicketId');
+    if (ticketIdHiddenField) {
+        ticketIdHiddenField.value = ticketData.id || ticketData.ticketId;
+    }
+
+    const clientDataId = ticketData.id_user;
+    const clientIdField = document.getElementById('modalTicketUserId');
+    if (clientIdField) {
+        clientIdField.value = clientDataId || 'N/A';
+    }
+
+    if (clientDataId) {
+        getClientDetails(clientDataId).then(userData => {
+            if (userData) {
+                mostrarDatosCliente(userData);
+            }
+        });
+    }
+
+    // 4. Muestra el modal de Bootstrap
+    const modalElement = document.getElementById('viewTicketModal');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+}
+
+
 // La función 'obtenerTickets' se define con un ámbito global.
 async function obtenerTickets() {
     try {
         const data = await getTickets(currentPage, currentSize);
         // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
-        const items = data?.content || []; 
+        const items = data?.content || [];
+
+         console.log("Respuesta Completa de la API (DATA):", data);
+
+         if (items.length > 0) {
+            console.log("Estructura de un Ticket (Primer Item):", items[0]);
+        }
 
         // Actualizar variables de paginación con la respuesta de la API
         totalPages = data.totalPages;
@@ -84,7 +228,7 @@ async function obtenerTickets() {
         const enEsperaList = document.getElementById(estados['En espera']);
         const enProgresoList = document.getElementById(estados['En progreso']);
         const completadoList = document.getElementById(estados['Completado']);
-        
+
         // Los contadores de estados deben reiniciarse para cada nueva página
         // Agregamos un estado 'N/A' por si acaso falla el mapeo
         const conteoEstados = { 'En espera': 0, 'En progreso': 0, 'Completado': 0, 'N/A': 0 };
@@ -94,10 +238,8 @@ async function obtenerTickets() {
         if (completadoList) completadoList.innerHTML = "";
 
         items.forEach((ticket) => {
-            // 🐛 FIX 1: Usar Optional Chaining (?.): 
-            // Esto evita el TypeError si ticket.status es null
             const estado = ticket.status?.displayName || 'N/A';
-            
+
             // Aseguramos que solo contamos estados válidos
             if (conteoEstados.hasOwnProperty(estado)) {
                 conteoEstados[estado]++;
@@ -114,11 +256,23 @@ async function obtenerTickets() {
 
             const creationDate = ticket.creationDate
                 ? new Date(ticket.creationDate).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit'
-                  })
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                })
                 : 'N/A';
+
+
+            const ticketDataForModal = JSON.stringify({
+                id: ticket.ticketId, 
+                title: ticket.title || 'Sin Título',
+                description: ticket.description || 'Sin descripción',
+                id_category: ticket.category?.id, 
+                id_priority: ticket.priority?.id, 
+                id_tech: ticket.assignedTech?.id,
+                id_user: ticket.user?.id || ticket.userId
+            });
+
 
             const card = document.createElement("div");
             card.className = "ticket-card mb-3";
@@ -149,13 +303,13 @@ async function obtenerTickets() {
                         <li style="cursor: pointer"><a class="dropdown-item" data-new-status="En progreso">En progreso</a></li>
                         <li style="cursor: pointer"><a class="dropdown-item" data-new-status="Completado">Completado</a></li>
                     </ul>
-                    <div class="chat-button" id="chatButton">
-                        <i class="fas fa-comment-alt"></i>
+                    <div class="data-button" data-ticket-json='${ticketDataForModal}'>
+                        <i class="fas fa-eye"></i>
                     </div>
                 </div>
             `;
-            
-            // ... (Resto de la lógica de listeners, permanece igual)
+
+            // Listener para el cambio de estado
             card.querySelector('.dropdown-menu').addEventListener('click', (event) => {
                 const dropdownItem = event.target.closest('.dropdown-item');
                 if (dropdownItem) {
@@ -165,10 +319,23 @@ async function obtenerTickets() {
                 }
             });
 
-            card.querySelector('.chat-button').addEventListener('click', (event) => {
-                event.stopPropagation();
-                window.location.href = 'chat.html';
-            });
+            // Listener para el botón de visualización de datos
+            const viewButton = card.querySelector('.data-button');
+            if (viewButton) {
+                viewButton.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    const ticketJson = event.currentTarget.getAttribute('data-ticket-json');
+                    if (ticketJson) {
+                        try {
+                            const ticketData = JSON.parse(ticketJson);
+                            mostrarDetallesTicket(ticketData);
+                        } catch (e) {
+                            console.error("Error parseando la data del ticket JSON:", e);
+                        }
+                    }
+                });
+            }
+
 
             container.appendChild(card);
         });
@@ -221,43 +388,72 @@ function actualizarPaginacion() {
 // La función 'actualizarEstadoTicket' también se define con un ámbito global.
 async function actualizarEstadoTicket(newStatus, ticketId) {
     try {
-        const payload = { 
+        const payload = {
             status: estadosApi[newStatus]
-        }; 
+        };
         const data = await updateTicket(payload, ticketId);
         console.log('Ticket actualizado:', data);
-        obtenerTickets(); 
+        // SweetAlert2 para mostrar confirmación (opcional, pero útil)
+        Swal.fire({
+            icon: 'success',
+            title: '¡Actualizado!',
+            text: `El ticket #${String(ticketId).padStart(4, '0')} se movió a "${newStatus}".`,
+            showConfirmButton: false,
+            timer: 1500
+        });
+        obtenerTickets();
     } catch (error) {
         console.error("Error al actualizar el ticket:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de Actualización',
+            text: 'Hubo un problema al intentar actualizar el estado del ticket.',
+        });
     }
 }
 
 // Llama a la función `obtenerTickets` una vez que el DOM esté completamente cargado.
 document.addEventListener("DOMContentLoaded", () => {
-    obtenerTickets();
+    // Es CRÍTICO que la clase 'bootstrap' esté cargada en el HTML.
 
-    // Event listener para el botón de página anterior
-    document.getElementById('prevPage').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (currentPage > 0) {
-            currentPage--;
-            obtenerTickets();
-        }
-    });
-
-    // Event listener para el botón de página siguiente
-    document.getElementById('nextPage').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (currentPage < totalPages - 1) {
-            currentPage++;
-            obtenerTickets();
-        }
-    });
-
-    // Event listener para el filtro de tamaño
-    document.getElementById('ticketsPerPage').addEventListener('change', (e) => {
-        currentSize = parseInt(e.target.value);
-        currentPage = 0; // Reinicia a la primera página al cambiar el tamaño
+    // Inicializa la carga de tickets.
+    loadTechs().then(() => {
         obtenerTickets();
     });
+
+    // Event listener para el botón de página anterior
+    const prevPageButton = document.getElementById('prevPage');
+    if (prevPageButton) {
+        prevPageButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage > 0) {
+                currentPage--;
+                obtenerTickets();
+            }
+        });
+    }
+
+
+    // Event listener para el botón de página siguiente
+    const nextPageButton = document.getElementById('nextPage');
+    if (nextPageButton) {
+        nextPageButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                obtenerTickets();
+            }
+        });
+    }
+
+
+    // Event listener para el filtro de tamaño
+    const ticketsPerPageSelect = document.getElementById('ticketsPerPage');
+    if (ticketsPerPageSelect) {
+        ticketsPerPageSelect.addEventListener('change', (e) => {
+            currentSize = parseInt(e.target.value);
+            currentPage = 0; // Reinicia a la primera página al cambiar el tamaño
+            obtenerTickets();
+        });
+    }
 });

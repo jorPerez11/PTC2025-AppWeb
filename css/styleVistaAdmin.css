@@ -1,10 +1,15 @@
 body {
     font-family: "Montserrat", sans-serif;
-    background-color: #f8f9fa;
+    background-color: #d5d7e3;
     /* Fondo más claro para el resto de la página */
     margin: 0;
     /* Asegura que no haya márgenes por defecto */
     padding: 0;
+}
+
+.modal-header{
+    background-color: #03071E;
+    color: white;
 }
 
 .navbar {
