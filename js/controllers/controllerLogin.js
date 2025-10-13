@@ -90,12 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 3. Validación de longitud mínima de la contraseña (12 caracteres)
-        if (credentials.password.length < 12) {
-            showGlobalMessage("La contraseña debe tener al menos 12 caracteres.", 'error');
-            return;
-        }
-
         try {
             loginButton.disabled = true;
             
