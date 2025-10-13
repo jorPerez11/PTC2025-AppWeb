@@ -342,6 +342,7 @@ h4 {
 .btnConfirm:hover {
     /* Oscurece el naranja para dar feedback */
     background-color: #dc7605; 
+    color: white;
 }
 
 .modal-header{
