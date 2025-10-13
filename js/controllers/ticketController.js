@@ -2,10 +2,14 @@ import {
     getTech,
     getTickets,
     updateTicket,
-    getUser
+    getUser,
+    getTicketsByTech
 } from "../services/ticketService.js";
 
+import{ getUserId } from "../services/serviceConfig.js";
 
+let currentUserId = null;
+let currentUserRole = null;
 
 // Las variables y objetos se definen fuera del evento DOMContentLoaded
 // para que su alcance sea global dentro del script.
@@ -103,6 +107,25 @@ const calendarIcons = {
     </svg>
     `
 };
+
+async function loadUserData() {
+    try {
+        if (!currentUserId) { 
+            currentUserId = await getUserId();
+        }
+
+        // 2. Obtener la data completa del usuario logueado
+        const userData = await getUser(currentUserId);
+        
+        if (userData && userData.rol) {
+            currentUserRole = userData.rol && userData.rol.displayName;
+            console.log(`Usuario logueado: ID ${currentUserId}, Rol: ${currentUserRole}`);
+        }
+
+    } catch (error) {
+        console.error("Error al cargar datos del usuario logueado:", error);
+    }
+}
 
 async function loadTechs() {
     try {
@@ -210,10 +233,26 @@ function mostrarDetallesTicket(ticketData) {
 
 // La función 'obtenerTickets' se define con un ámbito global.
 async function obtenerTickets() {
+    let data;
+
     try {
-        const data = await getTickets(currentPage, currentSize);
+        // LOGICA: Control de acceso de tickets Tecnico/Administrador
+        if (currentUserRole === 'Tecnico' && currentUserId) {
+            // Llama al NUEVO servicio paginado (ahora devuelve un objeto Page)
+            data = await getTicketsByTech(currentUserId, currentPage, currentSize);
+        } else {
+            // Llama al servicio paginado para todos (también devuelve un objeto Page)
+            data = await getTickets(currentPage, currentSize);
+        }
+
         // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
         const items = data?.content || [];
+        
+        if (items.length === 0 && currentPage > 0) {
+             // Si llegamos a una página sin contenido, volvemos a la anterior y recargamos
+             currentPage = data.number - 1;
+             return obtenerTickets(); // Llamada recursiva para recargar
+        }
 
          console.log("Respuesta Completa de la API (DATA):", data);
 
@@ -416,9 +455,13 @@ async function actualizarEstadoTicket(newStatus, ticketId) {
 document.addEventListener("DOMContentLoaded", () => {
     // Es CRÍTICO que la clase 'bootstrap' esté cargada en el HTML.
 
-    // Inicializa la carga de tickets.
-    loadTechs().then(() => {
-        obtenerTickets();
+    // 1. Cargar datos del usuario (ID y Rol) - CRÍTICO
+    loadUserData().then(() => {
+        // 2. Cargar la lista de técnicos
+        loadTechs().then(() => {
+            // 3. Inicializa la carga de tickets
+            obtenerTickets();
+        });
     });
 
     // Event listener para el botón de página anterior
