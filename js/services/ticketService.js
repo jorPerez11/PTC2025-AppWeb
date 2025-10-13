@@ -8,8 +8,8 @@ const commonHeaders = {
     'Content-Type': 'application/json',
 };
 
-export async function getTicketsByTech(id, page = 0, size = 10){
-    const url = `${API_URL}/tech/getAssignedTicketsByTechnicianIdPage/${id}?page=${page}&size=${size}`;
+export async function getTicketsByTech(technicianId, page = 0, size = 10){
+    const url = `${API_URL}/tech/getAssignedTicketsByTechnicianIdPage/${technicianId}?page=${page}&size=${size}`;
 
     try{
         const response = await fetchWithAuth(url);
