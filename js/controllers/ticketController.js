@@ -245,16 +245,14 @@ async function obtenerTickets() {
             data = await getTickets(currentPage, currentSize);
         }
 
-        
+        // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
+        const items = data?.content || [];
         
         if (items.length === 0 && currentPage > 0) {
              // Si llegamos a una página sin contenido, volvemos a la anterior y recargamos
              currentPage = data.number - 1;
              return obtenerTickets(); // Llamada recursiva para recargar
         }
-
-        // CRÍTICO: Aseguramos que data.content sea un array o un array vacío para el forEach
-        const items = data?.content || [];
 
          console.log("Respuesta Completa de la API (DATA):", data);
 
