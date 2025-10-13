@@ -179,9 +179,5 @@ export class NavbarComponent {
         const navbarContainer = document.createElement('div');
         navbarContainer.innerHTML = this.render();
         document.body.insertBefore(navbarContainer.firstElementChild, document.body.firstChild);
-
-        console.log('✅ Navbar component inyectado correctamente');
-        console.log('👤 Rol detectado:', this.userRole);
-        console.log('📍 Ruta de clientes:', this.getClientesRoute());
     }
 }

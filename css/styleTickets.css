@@ -316,6 +316,35 @@ h4 {
     z-index: 1000;           /* Asegura que esté por encima de otros elementos */
 }
 
+/* Botón de Cerrar/Cancelar */
+.btnClose {
+    /* Colores base */
+    color: white;
+    background-color: #040c3d; /* Nuevo color oscuro */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnClose:hover {
+    /* Oscurece el color de fondo base para dar feedback */
+    background-color: #010619; /* Ligeramente más oscuro que el base */
+}
+
+/* Botón de Confirmar */
+.btnConfirm {
+    /* Colores base */
+    color: white;
+    background-color: #F48C06; /* Color naranja original */
+    /* Transición para un efecto suave */
+    transition: background-color 0.3s ease;
+}
+
+.btnConfirm:hover {
+    /* Oscurece el naranja para dar feedback */
+    background-color: #dc7605; 
+    color: white;
+}
+
 .modal-header{
     background-color: #03071E;
     color: white;
