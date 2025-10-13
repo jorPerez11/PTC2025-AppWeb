@@ -82,9 +82,18 @@ html, body {
     margin: 0 10px;
 }
 
+.btnClose{
+    color: white;
+    background-color: #03071e;
+}
+
+.btnConfirm{
+    color: white;
+    background-color: #F48C06;
+}
+
 .more-options {
     position: absolute;
-    bottom: 10px;    /* 10px desde el borde inferior de la tarjeta */
     right: 10px;     /* 10px desde el borde derecho de la tarjeta */
     width: 40px;
     height: 40px;
@@ -469,7 +478,6 @@ html, body {
 
 /* 4. “Leer más” al fondo y en seminegrita */
 .readmore {
-    margin-top: auto;
     /* empuja al extremo inferior */
     font-size: 15px;
     font-weight: 600;
