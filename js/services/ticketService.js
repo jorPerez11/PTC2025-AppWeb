@@ -8,6 +8,27 @@ const commonHeaders = {
     'Content-Type': 'application/json',
 };
 
+export async function getTicketsByTech(id, page = 0, size = 10){
+    const url = `${API_URL}/tech/getAssignedTicketsByTechnicianIdPage/${id}?page=${page}&size=${size}`;
+
+    try{
+        const response = await fetchWithAuth(url);
+
+        // 🚨 DEBUG: Muestra el objeto de respuesta en la consola
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
+        
+        return response;
+
+    }catch (error) {
+        
+        // Si response existe, pero falló
+        console.error("Error al obtener los tickets:", error);
+        throw error;
+    }
+}
+
+
 export async function getUser(id){
     const url = `${API_URL}/GetUser/${id}`;
 
