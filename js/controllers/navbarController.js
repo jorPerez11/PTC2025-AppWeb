@@ -11,7 +11,6 @@ class NavbarController {
 
     async init() {
         try {
-            console.log('🚀 Inicializando NavbarController...');
             
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => this.start());
@@ -27,14 +26,12 @@ class NavbarController {
         await this.loadUserData();
         this.setupEventListeners();
         this.setupNavbarByRole();
-        console.log('✅ NavbarController inicializado correctamente');
     }
 
     async loadUserData() {
         try {
             this.currentUser = this.authManager.getCurrentUserInfo();
             if (this.currentUser) {
-                console.log('👤 Usuario cargado:', this.currentUser);
                 this.updateProfileImage();
             }
         } catch (error) {
@@ -45,7 +42,6 @@ class NavbarController {
     setupEventListeners() {
         this.setupLogoutListener();
         this.setupMobileMenuClose();
-        console.log('🎯 Event listeners del navbar configurados');
     }
 
     setupLogoutListener() {
@@ -57,7 +53,6 @@ class NavbarController {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                console.log('🖱️ Botón de logout clickeado');
                 await this.authManager.logout();
             }
         });
@@ -102,7 +97,6 @@ class NavbarController {
         const clientesLink = document.querySelector('a[href="clientesAdmin.html"]');
         if (clientesLink) {
             clientesLink.href = 'clientesTecnico.html';
-            console.log('🎯 Enlace de Clientes ajustado para técnico');
         }
     }
 
@@ -129,7 +123,6 @@ class NavbarController {
                     img.src = 'img/userIcon.png';
                 };
             });
-            console.log('🖼️ Imagen de perfil actualizada en navbar');
         }
     }
 
@@ -138,7 +131,6 @@ class NavbarController {
         profileImages.forEach(img => {
             img.src = imageUrl;
         });
-        console.log('🔄 Imagen de perfil actualizada desde externo');
     }
 
     getUserRole() {

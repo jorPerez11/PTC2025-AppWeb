@@ -9,7 +9,6 @@ class NavbarLoader {
 
     async init() {
         try {
-            console.log('🚀 Inicializando NavbarLoader...');
             
             // 1. Inyectar el navbar component
             this.navbarComponent.inject();
@@ -18,7 +17,6 @@ class NavbarLoader {
             this.navbarController = new NavbarController();
             await this.navbarController.start();
             
-            console.log('✅ NavbarLoader inicializado correctamente');
             
         } catch (error) {
             console.error('❌ Error inicializando NavbarLoader:', error);
