@@ -647,54 +647,90 @@ async function handleFormSubmit(event) {
 
     // --- VALIDACIONES DE JAVASCRIPT ---
     // 1. Validación de campos vacíos
-    if (!userData.name || !userData.username || !userData.email || !userData.phone) {
-        showGlobalMessage("Todos los campos son obligatorios.", 'error');
+    if (!fullName || !nombreUsuario || !email || !phoneNumber) {
+        Swal.fire({
+            title: "Error de Validación",
+            text: "Todos los campos obligatorios (Nombre, Email, Usuario, Teléfono, Categoría) deben ser llenados.",
+            icon: "error" // o 'warning'
+        });
         return;
     }
 
     // 2. Validación de formato de nombre (nombre y apellido)
     const nameRegex = /^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/;
-    const nameParts = userData.name.split(/\s+/).filter(Boolean);
-    if (!nameRegex.test(userData.name) || nameParts.length < 2) {
-        showGlobalMessage("Por favor, ingresa el nombre completo (nombre y apellido). Solo letras y espacios.", 'error');
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    if (!nameRegex.test(fullName) || nameParts.length < 2) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa el nombre completo (nombre y apellido). Solo letras y espacios.",
+            icon: "error"
+        });
         return;
     }
 
     // 3. Validación de nombre de usuario (alfanumérico con guiones bajos)
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
-    if (!usernameRegex.test(userData.username)) {
-        showGlobalMessage("El nombre de usuario solo puede contener letras, números y guiones bajos.", 'error');
+    if (!usernameRegex.test(nombreUsuario)) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "El nombre de usuario solo puede contener letras, números y guiones bajos.",
+            icon: "error"
+        });
         return;
     }
 
     // 4. Validación de formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(userData.email)) {
-        showGlobalMessage("Por favor, ingresa una dirección de correo electrónico válida.", 'error');
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa una dirección de correo electrónico válida.",
+            icon: "error"
+        });
         return;
     }
 
     // 5. Validación de número de teléfono con la librería intl-tel-input
     if (iti && !iti.isValidNumber()) {
-        showGlobalMessage("Por favor, ingresa un número de teléfono válido.", 'error');
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa un número de teléfono válido.",
+            icon: "error"
+        });
         return;
     }
 
     // 6. Validación de la cantidad de caracteres (min y max)
-    if (userData.name.length < 5 || userData.name.length > 100) {
-        showGlobalMessage("El nombre completo debe tener entre 5 y 100 caracteres.", 'error');
+    if (fullName.length < 5 || fullName.length > 100) {
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El nombre completo debe tener entre 5 y 100 caracteres.",
+            icon: "error"
+        });
         return;
     }
     if (userData.username.length < 3 || userData.username.length > 100) {
-        showGlobalMessage("El nombre de usuario debe tener entre 3 y 100 caracteres.", 'error');
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El nombre de usuario debe tener entre 3 y 100 caracteres.",
+            icon: "error"
+        });
         return;
     }
     if (userData.email.length > 100) {
-        showGlobalMessage("El email excede el límite de 100 caracteres.", 'error');
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El email excede el límite de 100 caracteres.",
+            icon: "error"
+        });
         return;
     }
     if (userData.phone.length > 20) {
-        showGlobalMessage("El número de teléfono excede el límite de 20 caracteres.", 'error');
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El número de teléfono excede el límite de 20 caracteres.",
+            icon: "error"
+        });
         return;
     }
     // --- FIN VALIDACIONES ---
