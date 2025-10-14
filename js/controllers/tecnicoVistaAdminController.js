@@ -764,12 +764,16 @@ async function handleFormSubmit(event) {
 
     } catch (error) {
         // 6. Manejo de Errores
-        Swal.fire({
+
+        const errorMessage = error.message || "Error desconocido al intentar guardar el técnico.";
+
+        console.error("Detalle del error:", error);
+
+         Swal.fire({
             title: "Error de Guardado",
             text: `❌ Error: ${errorMessage}`,
             icon: "error"
         });
-        console.error("Detalle del error:", error);
     } finally {
         // 7. Restaurar UI
         submitButton.textContent = 'Guardar Técnico';
