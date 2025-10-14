@@ -1,4 +1,4 @@
-import { fetchWithAuth } from "../services/serviceLogin.js"; // Asumo que esta ruta es correcta
+import { fetchWithAuth, fetchPublic } from "../services/serviceLogin.js"; // Asumo que esta ruta es correcta
 
 const BASE_URL = `https://ptchelpdesk-a73934db2774.herokuapp.com/api/notifications`;
 
@@ -22,7 +22,7 @@ export const getPendingNotifications = async () => {
 
     const url = `${BASE_URL}/pending/${userId}`;
     try {
-        const response = await fetchWithAuth(url, {
+        const response = await fetchPublic(url, {
             method: 'GET',
         });
 
