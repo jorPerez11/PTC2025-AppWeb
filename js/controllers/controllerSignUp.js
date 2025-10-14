@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         phoneMask = IMask(phoneInput, {
             mask: maskFormat,
             lazy: false,
-            placeholder: '_',
+            //placeholder: '_',
             commit: function(value, masked){
                 masked._value = value.replace(/\s+/g, '');
             }
