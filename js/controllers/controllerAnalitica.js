@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             plotOptions: {
                 bar: {
                     borderRadius: 2,
-                    columnWidth: '25%',
+                    columnWidth: '15%',
                 }
             },
             dataLabels: { enabled: false },
