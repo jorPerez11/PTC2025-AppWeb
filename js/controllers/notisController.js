@@ -134,6 +134,10 @@ function addNewNotification(noti) {
 async function loadNotifications() {
     // Usamos la función del servicio para obtener datos reales
     const notifications = await getPendingNotifications();
+
+    // 🚨 AÑADE ESTA LÍNEA PARA VER LA ESTRUCTURA DE LOS DATOS
+    console.log("➡️ Notificaciones recibidas de la API:", notifications); 
+
     renderizarNotificaciones(notifications);
 }
 
