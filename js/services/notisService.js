@@ -22,7 +22,7 @@ export const getPendingNotifications = async () => {
 
     const url = `${BASE_URL}/pending/${userId}`;
     try {
-        const response = await fetchPublic(url, {
+        const response = await fetchWithAuth(url, {
             method: 'GET',
         });
 
