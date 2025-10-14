@@ -159,7 +159,7 @@ export async function getUserId() {
 }
 
  function clearUserData(){
-    const userKeys = ['userId', 'rol', 'username', 'passwordExpired'];
+    const userKeys = ['rol', 'username', 'passwordExpired'];
     userKeys.forEach(key => localStorage.removeItem(key));
 
     console.log("datos de usuario limpiados")
