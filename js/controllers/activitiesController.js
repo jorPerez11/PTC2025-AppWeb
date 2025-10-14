@@ -341,8 +341,8 @@ activityForm.addEventListener('submit', async (event) => {
         return; // Detiene la ejecución si hay un error
     }
 
-    if (description.length > 255) {
-        Swal.fire('Error', 'La descripción no puede exceder los 255 caracteres.', 'error');
+    if (description.length > 4000) {
+        Swal.fire('Error', 'La descripción no puede exceder los 4000 caracteres.', 'error');
         return; // Detiene la ejecución si hay un error
     }
     
