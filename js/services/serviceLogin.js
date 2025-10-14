@@ -96,7 +96,7 @@ export async function fetchWithAuth(url, options = {}) {
         
         // Manejar errores de autenticación
         if (response.status === 401 || response.status === 403) {
-            console.error('Sesión expirada o token inválido. Por favor, vuelve a iniciar sesión.');
+            console.error('Acceso Denegado: El usuario no tiene permisos para ver esta información.');
             clearUserData();
             
             //  Redirigir solo si es una página HTML

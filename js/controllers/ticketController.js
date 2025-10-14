@@ -118,7 +118,7 @@ async function loadUserData() {
         const userData = await getUser(currentUserId);
         
         if (userData && userData.rol) {
-            currentUserRole = userData.rol && userData.rol.displayName;
+            currentUserRole = userData.rol.displayName;
             console.log(`Usuario logueado: ID ${currentUserId}, Rol: ${currentUserRole}`);
         }
 
@@ -237,7 +237,7 @@ async function obtenerTickets() {
 
     try {
         // LOGICA: Control de acceso de tickets Tecnico/Administrador
-        if (currentUserRole === 'Tecnico' && currentUserId) {
+        if (currentUserRole === 'Técnico' && currentUserId) {
             // Llama al NUEVO servicio paginado (ahora devuelve un objeto Page)
             data = await getTicketsByTech(currentUserId, currentPage, currentSize);
         } else {

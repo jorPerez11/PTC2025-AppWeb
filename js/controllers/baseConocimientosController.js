@@ -217,6 +217,7 @@ async function eliminarArticulo(id) {
         console.error("Error al eliminar el artículo:", error);
         Swal.fire('Error!', 'Hubo un problema al intentar eliminar el artículo.', 'error');
     } finally {
+        currentPage = 0; 
         await obtenerSoluciones();
     }
 }
@@ -330,6 +331,7 @@ createArticleForm.addEventListener('submit', async (event) => {
         console.error("Error al procesar el artículo:", error);
         Swal.fire('Error', 'No se pudo procesar el artículo.', 'error');
     } finally {
+        currentPage = 0;
         await obtenerSoluciones();
         const modal = bootstrap.Modal.getInstance(document.getElementById('createArticleModal'));
         if (modal) modal.hide();
