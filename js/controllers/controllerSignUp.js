@@ -56,6 +56,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js", // URL del script de utilidades
     });
 
+    let phoneMask;
+
+    phoneInput.addEventListener("countrychange", function(){
+        // 1. Obtiene el placeholder/formato para el país seleccionado
+        const placeholder = phoneInput.placeholder;
+
+        // 2. Transforma el placeholder a un formato de máscara (ej. (555) 5555-5555 -> {000} 0000-0000)
+        // IMask usa '0' para números y el resto son caracteres fijos.
+        const maskFormat = placeholder.replace(/0/g, '0').replace(/\d/g, '0');
+
+        if (phoneMask){
+            phoneMask.destroy();
+        }
+
+        phoneMask = IMask(phoneInput, {
+            mask: maskFormat,
+            lazy: false,
+            placeholder: '_',
+            commit: function(value, masked){
+                masked._value = value.replace(/\s+/g, '');
+            }
+        })
+    });
+
+    phoneInput.dispatchEvent(new Event('countrychange'));
+
     // Manejo del envío del formulario de registro
     registerForm.addEventListener("submit", async (event) => {
         event.preventDefault(); // Evita que la página se recargue
