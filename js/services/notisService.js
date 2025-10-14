@@ -22,22 +22,37 @@ export const getPendingNotifications = async () => {
 
     const url = `${BASE_URL}/pending/${userId}`;
     try {
-        // Usamos fetchWithAuth para incluir la cookie/credenciales
         const response = await fetchWithAuth(url, {
             method: 'GET',
         });
 
         if (!response.ok) {
-            throw new Error(`Error al obtener notificaciones: ${response.statusText}`);
+            // Maneja 401, 403, 500, etc., si llegaran a ocurrir
+            const errorBody = await response.text();
+            throw new Error(`Error al obtener notificaciones: ${response.status} ${response.statusText || errorBody}`);
         }
 
-        const data = await response.json();
+        // Leer el texto de la respuesta primero
+        const text = await response.text();
+        
+        // 🚨 CRÍTICO: Si no hay contenido (por ejemplo, 204 No Content), devolvemos un array vacío.
+        if (!text || text.length === 0) {
+            console.log(`ℹ️ No hay notificaciones pendientes para el usuario ${userId}.`);
+            return [];
+        }
+
+        // Intentar parsear el JSON
+        const data = JSON.parse(text);
         return data; // Retorna la lista de NotificationEntity
+
     } catch (error) {
-        console.error("Fallo en la llamada a getPendingNotifications:", error);
+        // Captura el error lanzado arriba o cualquier otro fallo de red/parsing
+        console.error("❌ Fallo en la llamada a getPendingNotifications:", error);
+        // Devolvemos un array vacío para que el frontend no falle
         return [];
     }
 };
+
 
 /**
  * 2. Marca una notificación como vista (seen = 1) en el backend.
