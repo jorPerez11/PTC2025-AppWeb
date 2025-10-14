@@ -1,78 +1,106 @@
-/* // js/services/notisService.js
+import { fetchWithAuth } from "../services/serviceLogin.js"; // Asumo que esta ruta es correcta
 
-const API_URL = `https://ptchelpdesk-a73934db2774.herokuapp.com/api/notifications/history?userId=${userId}`;
+const BASE_URL = `https://ptchelpdesk-a73934db2774.herokuapp.com/api/notifications`;
 
-// Usaremos un objeto global simple para gestionar el estado de las notificaciones.
-const NotificationManager = {
-    notifications: [],
-    
-    // Función para obtener el token JWT. 
-    // **IMPORTANTE**: Debes adaptar esta función para obtener el token de donde lo guardes 
-    // (ej. localStorage, cookies, etc.)
-    getJwtToken: () => {
-        // --- ADAPTA ESTO ---
-        // Ejemplo asumiendo que lo guardas en localStorage
-        return localStorage.getItem('jwtToken'); 
-        // -------------------
-    },
+// Obtiene el ID del usuario logueado. Es crucial para los endpoints /pending y /count
+const getUserId = () => {
+    // Es mejor obtener el ID justo antes de la llamada, en caso de que se actualice o se cargue tarde.
+    return localStorage.getItem('userId'); 
+};
 
-    // Función para obtener el nombre de usuario (usado para suscripción /user)
-    getUsername: () => {
-        // --- ADAPTA ESTO ---
-        // Puedes decodificar el JWT o si lo guardas en sesión/localStorage
-        // Por ahora, asumiremos que el backend autenticado lo maneja, 
-        // pero necesitamos el nombre de usuario para el manejo local de URLs de suscripción.
-        // Si el token solo contiene info, el backend lo usa. Aquí solo lo usamos para pruebas locales.
-        return "tecnico1"; // Nombre de usuario de prueba
-        // -------------------
-    },
 
-    connect: () => {
-        const socket = new SockJS('http://localhost:8080/ws'); // Cambia 8080 si usas otro puerto
-        NotificationManager.stompClient = Stomp.over(socket);
-
-        NotificationManager.stompClient.connect({
-            // El backend espera el JWT en el encabezado de autenticación.
-            'Authorization': `Bearer ${NotificationManager.getJwtToken()}`
-        }, (frame) => {
-            console.log('✅ Conectado al WebSocket: ' + frame);
-            
-            // 1. SUSCRIPCIÓN PERSONAL (para mensajes directos)
-            // Destino: /user/queue/notifications
-            NotificationManager.stompClient.subscribe('/user/queue/notifications', (message) => {
-                const notification = JSON.parse(message.body);
-                NotificationManager.handleNewNotification(notification);
-            });
-            
-            // 2. SUSCRIPCIÓN GLOBAL (solo para Admins o Roles específicos, si aplica)
-            // Ejemplo de suscripción para Administradores
-            // NotificationManager.stompClient.subscribe('/topic/admins/incidences', (message) => {
-            //     const notification = JSON.parse(message.body);
-            //     NotificationManager.handleNewNotification(notification);
-            // });
-
-        }, (error) => {
-            console.error('❌ Error de conexión WebSocket:', error);
-            // Reintento o manejo de error de UI
-        });
-    },
-
-    handleNewNotification: (notification) => {
-        // Añadir a la lista local
-        NotificationManager.notifications.push(notification);
-        
-        // Renderizar la lista actualizada
-        renderNotifications();
-        
-        // Mostrar una alerta (opcional, pero buena UX)
-        Swal.fire({
-            title: notification.title || 'Nueva Notificación',
-            text: notification.message || 'Has recibido un nuevo evento.',
-            icon: 'info',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 4000
-        });
+/**
+ * 1. Obtiene todas las notificaciones pendientes (seen = 0) para el usuario logueado.
+ * @returns {Promise<Array>} Lista de objetos de notificaciones del backend.
+ */
+export const getPendingNotifications = async () => {
+    const userId = getUserId();
+    if (!userId) {
+        console.error("No se encontró el userId en localStorage.");
+        return [];
     }
-}; */
+
+    const url = `${BASE_URL}/pending/${userId}`;
+    try {
+        // Usamos fetchWithAuth para incluir la cookie/credenciales
+        const response = await fetchWithAuth(url, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error al obtener notificaciones: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data; // Retorna la lista de NotificationEntity
+    } catch (error) {
+        console.error("Fallo en la llamada a getPendingNotifications:", error);
+        return [];
+    }
+};
+
+/**
+ * 2. Marca una notificación como vista (seen = 1) en el backend.
+ * Nota: Tu frontend usa "Eliminar", lo mapearemos a "Marcar como vista".
+ * @param {number} notificationId - ID de la notificación a marcar.
+ * @returns {Promise<boolean>} True si la actualización fue exitosa.
+ */
+export const markNotificationAsSeen = async (notificationId) => {
+    const url = `${BASE_URL}/mark-as-seen/${notificationId}`;
+    try {
+        // PUT para actualizar el estado a "visto"
+        const response = await fetchWithAuth(url, {
+            method: 'PUT',
+        });
+
+        if (response.ok) {
+            return true;
+        } else {
+            console.error(`Fallo al marcar notificación ${notificationId} como vista:`, response.statusText);
+            return false;
+        }
+    } catch (error) {
+        console.error("Fallo en la llamada a markNotificationAsSeen:", error);
+        return false;
+    }
+};
+
+/**
+ * 3. Configura y conecta el cliente WebSocket (STOMP).
+ * @param {Function} onMessageReceived - Callback para manejar notificaciones en tiempo real.
+ */
+export const connectWebSocket = (onMessageReceived) => {
+    // IMPORTANTE: La URL de WebSocket debe usar el mismo dominio que la API REST (Heroku)
+    const socketUrl = `https://ptchelpdesk-a73934db2774.herokuapp.com/ws`;
+    
+    // Usamos el protocolo seguro (wss://) si tu API está en HTTPS, lo cual es típico en Heroku.
+    const socket = new SockJS(socketUrl); 
+    const stompClient = Stomp.over(socket);
+
+    // Desactivar logs de STOMP para producción (opcional)
+    // stompClient.debug = null; 
+
+    stompClient.connect(
+        // NO se necesita enviar headers aquí porque la autenticación WebSocket en Spring Boot
+        // la configuramos para leer la cookie "authToken" de la petición HTTP de handshake.
+        {}, 
+        function (frame) {
+            console.log('✅ Conectado al WebSocket:', frame);
+
+            // Suscripción al canal privado del usuario: /user/queue/notifications
+            stompClient.subscribe('/user/queue/notifications', function (notification) {
+                console.log("🔔 Notificación recibida en tiempo real:", notification.body);
+                const payload = JSON.parse(notification.body);
+                
+                // Llama al callback para que el controlador actualice la UI
+                onMessageReceived(payload); 
+            });
+        }, 
+        function (error) {
+            console.error('❌ Error de conexión WebSocket/STOMP:', error);
+            // Mostrar un mensaje de error o intentar reconectar aquí
+        }
+    );
+    
+    return stompClient;
+};
