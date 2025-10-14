@@ -13,6 +13,9 @@ let totalPages = 0;
 let totalElements = 0;
 let usuariosFiltradosPorBackend = [];
 
+let iti;
+let phoneMask;
+
 let form;
 
 const categoriasApi = {
@@ -514,6 +517,7 @@ function mostrarCreacion(fechaStr, estado) {
 async function abrirFormularioCreacion() {
     const modalElement = document.getElementById('modalAgregarTecnico');
     const formElement = modalElement.querySelector('form');
+    const phoneInput = document.getElementById('telefono');
 
     if (formElement) {
         formElement.reset(); // Limpia todos los campos del formulario
@@ -544,12 +548,65 @@ async function abrirFormularioCreacion() {
         selectCategoria.appendChild(option);
     });
 
+    // Inicializar intl-tel-input y IMask (la nueva función)
+    if(phoneInput) {
+        initializePhoneInputAndMask(phoneInput);
+    }
     
     const myModal = new bootstrap.Modal(modalElement);
     myModal.show();
     
     console.log('Modal "Agregar Nuevo Técnico" abierto y categorías cargadas desde variable local.');
 }
+
+function initializePhoneInputAndMask(phoneInput) {
+    // ⚠️ Evitar inicializar intlTelInput más de una vez
+    if (!iti) {
+        iti = window.intlTelInput(phoneInput, {
+            preferredCountries: ["sv", "mx", "gt", "cr", "pa"], 
+            separateDialCode: true,
+            // utilsScript ya se carga en el HTML principal
+        });
+    }
+
+    // Lógica de enmascaramiento con IMask.js
+    const applyMask = () => {
+        const placeholder = phoneInput.placeholder;
+
+        // Convierte el placeholder a formato de máscara (ej. (555) 5555-5555 -> 0000 0000)
+        const maskFormat = placeholder.replace(/\d/g, '0');
+
+        if (phoneMask) {
+            phoneMask.destroy(); // Destruye la máscara anterior
+        }
+
+        phoneMask = IMask(phoneInput, {
+            mask: maskFormat,
+            lazy: true, // ✅ MÁSCARA INVISIBLE HASTA QUE SE ESCRIBE EL PRIMER DÍGITO
+            // Eliminamos 'placeholder' para no ver los '_'
+            commit: function(value, masked) {
+                // Elimina todos los caracteres no numéricos para el valor subyacente
+                masked._value = value.replace(/\D/g, ''); 
+            }
+        });
+        
+        // Limpiar el campo cuando el país cambia
+        phoneInput.value = "";
+    };
+
+    // Aplicar máscara inmediatamente después de inicializar
+    phoneInput.removeEventListener("countrychange", applyMask); // Evitar duplicados
+    phoneInput.addEventListener("countrychange", applyMask);
+    
+    // Disparar el evento de cambio de país inicial para aplicar la máscara por defecto
+    phoneInput.dispatchEvent(new Event('countrychange'));
+}
+
+
+
+
+
+
 
 async function handleFormSubmit(event) {
     event.preventDefault(); // Detiene la recarga de la página
@@ -561,8 +618,10 @@ async function handleFormSubmit(event) {
     const email = document.getElementById('email').value.trim();
     const categoryId = document.getElementById('categoria').value;
     const telefono = document.getElementById('telefono').value || "99999999";
-    const nombreUsuario = document.getElementById('nombreUsuario').value || "temp_user_" + Date.now();
+    const nombreUsuario = document.getElementById('nombreUsuario').value.trim() || "temp_user_" + Date.now();
     
+    const phoneNumber = iti ? iti.getNumber() : telefono.value;
+
     const categoriaSeleccionada = Object.values(categoriasApi).find(
         cat => String(cat.id) === categoryId
     );
@@ -582,11 +641,99 @@ async function handleFormSubmit(event) {
         name: fullName,
         username: nombreUsuario,
         email: email,
-        phone: telefono,
+        phone: phoneNumber,
         category: categoriaSeleccionada // Asegurar que sea número
     };
-        
-    
+
+    // --- VALIDACIONES DE JAVASCRIPT ---
+    // 1. Validación de campos vacíos
+    if (!fullName || !nombreUsuario || !email || !phoneNumber) {
+        Swal.fire({
+            title: "Error de Validación",
+            text: "Todos los campos obligatorios (Nombre, Email, Usuario, Teléfono, Categoría) deben ser llenados.",
+            icon: "error" // o 'warning'
+        });
+        return;
+    }
+
+    // 2. Validación de formato de nombre (nombre y apellido)
+    const nameRegex = /^[A-Za-zñÑáéíóúÁÉÍÓÚ\s]+$/;
+    const nameParts = fullName.split(/\s+/).filter(Boolean);
+    if (!nameRegex.test(fullName) || nameParts.length < 2) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa el nombre completo (nombre y apellido). Solo letras y espacios.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // 3. Validación de nombre de usuario (alfanumérico con guiones bajos)
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(nombreUsuario)) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "El nombre de usuario solo puede contener letras, números y guiones bajos.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // 4. Validación de formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa una dirección de correo electrónico válida.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // 5. Validación de número de teléfono con la librería intl-tel-input
+    if (iti && !iti.isValidNumber()) {
+        Swal.fire({
+            title: "Error de Formato",
+            text: "Por favor, ingresa un número de teléfono válido.",
+            icon: "error"
+        });
+        return;
+    }
+
+    // 6. Validación de la cantidad de caracteres (min y max)
+    if (fullName.length < 5 || fullName.length > 100) {
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El nombre completo debe tener entre 5 y 100 caracteres.",
+            icon: "error"
+        });
+        return;
+    }
+    if (userData.username.length < 3 || userData.username.length > 100) {
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El nombre de usuario debe tener entre 3 y 100 caracteres.",
+            icon: "error"
+        });
+        return;
+    }
+    if (userData.email.length > 100) {
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El email excede el límite de 100 caracteres.",
+            icon: "error"
+        });
+        return;
+    }
+    if (userData.phone.length > 20) {
+        Swal.fire({
+            title: "Error de Longitud",
+            text: "El número de teléfono excede el límite de 20 caracteres.",
+            icon: "error"
+        });
+        return;
+    }
+    // --- FIN VALIDACIONES ---
 
     // 3. Control de UI (Deshabilitar botón)
     const submitButton = event.currentTarget; 
@@ -617,12 +764,16 @@ async function handleFormSubmit(event) {
 
     } catch (error) {
         // 6. Manejo de Errores
-        Swal.fire({
+
+        const errorMessage = error.message || "Error desconocido al intentar guardar el técnico.";
+
+        console.error("Detalle del error:", error);
+
+         Swal.fire({
             title: "Error de Guardado",
             text: `❌ Error: ${errorMessage}`,
             icon: "error"
         });
-        console.error("Detalle del error:", error);
     } finally {
         // 7. Restaurar UI
         submitButton.textContent = 'Guardar Técnico';
