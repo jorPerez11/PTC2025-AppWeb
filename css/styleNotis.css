@@ -10,6 +10,7 @@ body {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -60,54 +61,55 @@ body {
 }
 
 .header {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(to top, #6A040F, #170000);
-  padding: 5rem 2rem;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin-top: 5rem;
-  color: white;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(to top, #6A040F, #170000);
+    padding: 5rem 2rem;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 5rem;
+    color: white;
 }
 
 .header-inner {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  max-width: 1200px;
-  margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 /* Pseudo-elementos para el patrón de hexágonos del header */
 .header::before,
 .header::after {
-  content: '';
-  position: absolute;
-  display: block;
-  width: clamp(300px, 45vw, 900px); /* Se adapta mejor a distintos tamaños */
-  aspect-ratio: 2.3 / 1;
-  background-size: contain;
-  background-repeat: no-repeat;
-  z-index: 1;
-  opacity: 0.8;
-  pointer-events: none;
+    content: '';
+    position: absolute;
+    display: block;
+    width: clamp(300px, 45vw, 900px);
+    /* Se adapta mejor a distintos tamaños */
+    aspect-ratio: 2.3 / 1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1;
+    opacity: 0.8;
+    pointer-events: none;
 }
 
 .header::before {
-  background-image: url('../img/notificacionesImg/hexagon-left.png');
-  top: 0;
-  left: 0;
+    background-image: url('../img/notificacionesImg/hexagon-left.png');
+    top: 0;
+    left: 0;
 }
 
 .header::after {
-  background-image: url('../img/notificacionesImg/hexagon-right.png');
-  top: 0;
-  right: 0;
+    background-image: url('../img/notificacionesImg/hexagon-right.png');
+    top: 0;
+    right: 0;
 }
 
 .header h2 {
@@ -125,22 +127,29 @@ body {
 
 /* ===== ESTILOS PARA EL CONTENIDO PRINCIPAL ===== */
 
+/* ===== ESTILOS PARA EL CONTENIDO PRINCIPAL ===== */
+
 /* ==== MAIN-CONTENT ACTUALIZADO ==== */
 .main-content {
     position: relative;
     background-color: #f8f9fa;
     padding-top: 4rem;
     padding-bottom: 4rem;
-    overflow: hidden; /* Evita que pseudo-elemento sobresalga */
+    overflow: hidden;
+    /* >>> CAMBIO 1: Centrar el contenido de la lista de notificaciones <<< */
+    display: flex;
+    justify-content: center;
 }
 
 /* Hexágono superior izquierdo - se adapta por tamaño */
 .main-content::before {
+    /* ... (Mantenemos tu código actual para el hexágono) ... */
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: clamp(200px, 25vw, 400px); /* Responsive */
+    width: clamp(200px, 25vw, 400px);
+    /* Responsive */
     aspect-ratio: 1.2 / 1;
     background-image: url('../img/notificacionesImg/hexagons-left-main.png');
     background-size: cover;
@@ -151,16 +160,23 @@ body {
 }
 
 .notifications-container {
-    position: relative; /* Para que esté por encima del pseudo-elemento */
+    position: relative;
     z-index: 2;
+    /* >>> CAMBIO 2: Añadimos ancho máximo para uniformidad si hay cards <<< */
+    width: 100%;
+    max-width: 800px;
+    /* >>> Mantenemos estilos de centrado para el mensaje "No tienes notificaciones" <<< */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: #333;
-    padding: 2rem;
+    padding: 0;
+    /* Eliminamos el padding grande aquí, se maneja en el main-content */
 }
+
+/* MANTENER LOS ESTILOS DE .notification-icon, h3 y .subtitle para la vista sin notificaciones */
 
 .notification-icon {
     width: 333px;
@@ -176,7 +192,124 @@ body {
 
 .notifications-container .subtitle {
     font-size: 1.1rem;
-    color: #6c757d; /* Un gris sutil */
+    color: #6c757d;
+}
+
+/* ---------------------------------------------------- */
+/* === ESTILOS PARA LAS NOTIFICACIONES INYECTADAS (CARDS) === */
+/* ---------------------------------------------------- */
+
+.notification-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    /* Más padding para mayor altura */
+    margin-bottom: 20px;
+    /* Más espacio entre tarjetas */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Sombra más pronunciada */
+    background-color: #fff;
+    border: none;
+    /* Quitamos el borde, mantenemos la sombra */
+    width: 100%;
+    /* Ocupa todo el max-width: 800px del contenedor */
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.notification-icon-wrapper {
+    width: 50px;
+    /* Icono más grande */
+    height: 50px;
+    min-width: 50px;
+    margin-right: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    /* Tamaño del ícono dentro del círculo */
+}
+
+/* Colores de los iconos de ejemplo */
+.icon-message {
+    background-color: #dc3545;
+}
+
+.icon-ticket {
+    background-color: #dc3545;
+}
+
+.notification-text {
+    flex-grow: 1;
+    /* Permite que el texto ocupe el espacio restante */
+    text-align: left;
+    /* Alineamos el texto a la izquierda dentro del card */
+}
+
+.notification-text h5 {
+    font-size: 1.15rem;
+    /* Título más grande */
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.notification-text p {
+    font-size: 0.95rem;
+    /* Texto más grande */
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* Estilo para los botones de acción */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    min-width: fit-content;
+}
+
+.btn-ver-mas {
+    padding: 10px 18px;
+    /* Botón más grande */
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    background-color: #ff9900;
+    border: none;
+    border-radius: 6px;
+    margin-right: 15px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-ver-mas:hover {
+    background-color: #e68a00;
+    color: #fff;
+}
+
+/* Estilo para el botón de eliminar (basura) */
+.btn-eliminar {
+    background: none;
+    border: none;
+    color: #dc3545;
+    padding: 0;
+    font-size: 1.4rem;
+    /* Icono de basura más grande */
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-eliminar:hover {
+    color: #a71d2a;
 }
 
 /* ===== ESTILOS RESPONSIVOS ===== */
@@ -212,15 +345,15 @@ body {
 }
 
 @media (max-width: 975px) {
-  .main-content::before {
-    width: 400px;
-    aspect-ratio: 1 / 1;
-    top: -20px;
-    left: -10px;
-  }
+    .main-content::before {
+        width: 400px;
+        aspect-ratio: 1 / 1;
+        top: -20px;
+        left: -10px;
+    }
 
-  .header::before,
-  .header::after {
-    display: none;
-  }
+    .header::before,
+    .header::after {
+        display: none;
+    }
 }
