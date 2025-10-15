@@ -1,5 +1,5 @@
 // Importamos la función de login desde nuestro servicio.
-import { login, me, changePassword, requestPasswordReset} from "../services/serviceLogin.js";
+import { login, me, changePassword, requestPasswordReset } from "../services/serviceLogin.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // --- Referencias a elementos del DOM ---
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             preConfirm: () => {
                 const newPassword = document.getElementById('newPasswordInput').value;
                 const confirmPassword = document.getElementById('confirmPasswordInput').value;
-                
+
                 // Validación de longitud mínima para la nueva contraseña en el modal
                 if (newPassword.length < 12) {
                     Swal.showValidationMessage('La nueva contraseña debe tener al menos 12 caracteres.');
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                     // Usamos las variables currentUsername y currentPassword que guardamos anteriormente
                     await changePassword(currentUsername, currentPassword, result.value.newPassword);
-                    
+
                     Swal.fire('¡Éxito!', 'Tu contraseña ha sido cambiada. Por favor, inicia sesión con la nueva contraseña.', 'success').then(() => {
                         window.location.href = "login.html";
                     });
@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             loginButton.disabled = true;
-            
+
             // 1. Hacer login (esto establece la cookie)
             await login(credentials);
 
@@ -153,6 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
             showCancelButton: true,
             confirmButtonText: 'Restablecer',
             cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#F48C06',
+            cancelButtonColor: '#03071E',
             showLoaderOnConfirm: true,
             customClass: {
                 // ... (usa tus clases personalizadas si las tienes)
@@ -187,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // para evitar enumeración de usuarios, pero el mensaje debe ser claro.
                 Swal.fire({
                     title: 'Correo Enviado!',
-                    html: 'Si el correo está registrado, recibirás un **mensaje con la contraseña temporal** para iniciar sesión. Al ingresar, se te pedirá establecer una nueva.',
+                    html: 'Correo de restablecimiento enviado. Al ingresar, se te pedirá establecer una nueva contraseña.',
                     icon: 'success'
                 });
             }
