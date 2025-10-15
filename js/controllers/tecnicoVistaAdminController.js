@@ -643,19 +643,27 @@ async function handleFormSubmit(event) {
     
     const phoneNumber = iti ? iti.getNumber() : telefono.value;
 
-    const categoriaSeleccionada = Object.values(cargarCategoriasDinamicas).find(
+    let categoriaSeleccionada = Object.values(categoriasApiDinamicas).find(
         cat => String(cat.id) === categoryId
     );
 
+    if (!categoriaSeleccionada) {
+    // Si no se encuentra, buscar por displayName como fallback (menos probable si el select fue llenado correctamente)
+    const displayName = document.getElementById('categoria').options[document.getElementById('categoria').selectedIndex].text;
+    categoriaSeleccionada = Object.values(categoriasApiDinamicas).find(
+        cat => cat.displayName === displayName
+    );
+}
+
     // 2. Control de validación (opcional pero recomendado)
-    //if (!categoriaSeleccionada) {
-        //Swal.fire({
-            //title: "Error de Validación",
-            //text: "Debe seleccionar una categoría válida para el técnico.",
-            //icon: "warning"
-        //});
-        //return; // Detener la ejecución si no hay categoría
-    //}
+    if (!categoriaSeleccionada) {
+        Swal.fire({
+            title: "Error de Validación",
+            text: "Debe seleccionar una categoría válida para el técnico.",
+            icon: "warning"
+        });
+        return; // Detener la ejecución si no hay categoría
+    }
 
     // 2. Estructurar el JSON (Payload)
     const userData = {
@@ -889,7 +897,6 @@ async function confirmarEliminacion(userId) {
         });
         
         // Recarga la página actual para reflejar el cambio
-        // Asumiendo que 'currentPage' está definido en el alcance global o superior
         await cargarPaginaTecnicos(currentPage); 
 
     } catch (error) {
