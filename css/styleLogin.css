@@ -329,6 +329,18 @@ body{
     color: #ccc !important;
 }
 
+.forgot-password-link {
+    padding-top: 20px;
+    color: orange; /* O un código hexadecimal como #fd7e14 o el color exacto de tu marca */
+    font-size: 1.2em; /* Puedes ajustar el tamaño si lo ves muy grande */
+    text-align: left; /* Aseguramos la alineación a la izquierda si el contenedor lo permite */
+    display: block; /* Mantenemos 'display: block' para que los márgenes verticales funcionen y ocupe su propia línea */
+}
+
+/* Opcional: Estilo al pasar el ratón (hover) */
+.forgot-password-link:hover {
+    color: #e65c00; /* Un naranja un poco más oscuro para el hover */
+}
 
 @media (max-width: 1283px){
     .loginImg img{
