@@ -33,6 +33,35 @@ export async function me() {
     }
 }
 
+/**
+ * Solicita el restablecimiento de contraseña para un correo dado.
+ * @param {string} email - El correo electrónico del usuario.
+ * @returns {Promise<Object>} - Una promesa que resuelve con la respuesta del API.
+ */
+export async function requestPasswordReset(email) {
+    const apiURL = `${API_URL}/users/request-password-reset`;
+
+    const response = await fetch(apiURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+    });
+
+   //CLAVE: No verificamos si el usuario existe o no, solo si la petición
+    // al servidor falló (ej. error 500 o error de red).
+    if (!response.ok) {
+        // Lanza un error si la respuesta HTTP no es 2xx (ej. 400 Bad Request o 500 Internal Server Error)
+        const errorData = await response.json().catch(() => ({ message: 'Error desconocido del servidor' }));
+        throw new Error(errorData.message || 'Fallo al solicitar el restablecimiento de contraseña');
+    }
+
+    // Si la respuesta es 200 OK (el caso esperado, incluso si el correo no existe en la DB),
+    // devolvemos la respuesta al controlador para mostrar el modal de éxito genérico.
+    return response.json(); 
+}
+
 export async function changePassword(username, currentPassword, newPassword) {
     const response = await fetch(`${API_URL}/users/change-password`, {
         method: 'POST',

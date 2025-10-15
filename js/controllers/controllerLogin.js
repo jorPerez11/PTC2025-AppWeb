@@ -1,5 +1,5 @@
 // Importamos la función de login desde nuestro servicio.
-import { login, me, changePassword } from "../services/serviceLogin.js";
+import { login, me, changePassword, requestPasswordReset} from "../services/serviceLogin.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     // --- Referencias a elementos del DOM ---
@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usernameInput = document.getElementById("inputUsername");
     const passwordInput = document.getElementById("inputPassword");
     const loginButton = document.getElementById("btnLogin");
+    const forgotPasswordLink = document.querySelector(".forgot-password-link");
 
     let currentUsername = '';
     let currentPassword = '';
@@ -142,6 +143,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 break;
         }
     }
+
+    function showForgotPasswordModal() {
+        Swal.fire({
+            title: 'Recuperar Contraseña',
+            text: 'Ingresa tu correo electrónico para enviarte una contraseña temporal.',
+            input: 'email',
+            inputPlaceholder: 'Correo Electrónico',
+            showCancelButton: true,
+            confirmButtonText: 'Restablecer',
+            cancelButtonText: 'Cancelar',
+            showLoaderOnConfirm: true,
+            customClass: {
+                // ... (usa tus clases personalizadas si las tienes)
+                popup: 'custom-popup',
+                title: 'custom-title',
+                confirmButton: 'custom-confirm-button',
+                input: 'custom-input'
+            },
+            preConfirm: (email) => {
+                if (!email) {
+                    Swal.showValidationMessage('Por favor, ingresa un correo.');
+                    return false;
+                }
+                // Aquí llamamos al servicio para solicitar el restablecimiento
+                return requestPasswordReset(email)
+                    .then(response => {
+                        // El servicio debería manejar el error si el correo no existe
+                        return response;
+                    })
+                    .catch(error => {
+                        // Mensaje de error más genérico para no revelar si el usuario existe
+                        Swal.showValidationMessage(`Error: No se pudo restablecer la contraseña. Por favor, verifica el correo.`);
+                        // Lanzamos el error para detener el flujo
+                        throw new Error(error);
+                    });
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Se asume que si llega aquí, la petición fue exitosa (o al menos no falló con un error de red/servidor).
+                // El backend debería manejar la lógica de verificación de existencia de correo internamente y responder siempre con éxito,
+                // para evitar enumeración de usuarios, pero el mensaje debe ser claro.
+                Swal.fire({
+                    title: 'Correo Enviado!',
+                    html: 'Si el correo está registrado, recibirás un **mensaje con la contraseña temporal** para iniciar sesión. Al ingresar, se te pedirá establecer una nueva.',
+                    icon: 'success'
+                });
+            }
+        });
+    }
+
+    // Asociar la función al enlace de "Olvidé mi contraseña"
+    forgotPasswordLink.addEventListener("click", (event) => {
+        event.preventDefault(); // Evita que el '#' de la etiqueta <a> recargue la página
+        showForgotPasswordModal();
+    });
 
     // Función para mostrar mensajes globales
     function showGlobalMessage(message, type) {
