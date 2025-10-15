@@ -6,6 +6,21 @@ const commonHeaders = {
     'Content-Type': 'application/json',
 };
 
+
+export async function getCategories(){
+    try{
+        const response = await fetchWithAuth(`${API_URL}/categories`);
+
+        console.log("Respuesta obtenida:", response); 
+        console.log("Status:", response.status); // Verifica si esto es 200
+
+        return response;
+        
+    }catch(error){
+        console.error("Error al obtener las categorias: ", error);
+    }
+}
+
 export async function getUserTech(page = 0, size = 10, term = '', category = 'all', period = 'all') {
     try {
         // 1. Codificar el término de búsqueda para manejar espacios y caracteres especiales
