@@ -648,14 +648,14 @@ async function handleFormSubmit(event) {
     );
 
     // 2. Control de validación (opcional pero recomendado)
-    if (!categoriaSeleccionada) {
-        Swal.fire({
-            title: "Error de Validación",
-            text: "Debe seleccionar una categoría válida para el técnico.",
-            icon: "warning"
-        });
-        return; // Detener la ejecución si no hay categoría
-    }
+    //if (!categoriaSeleccionada) {
+        //Swal.fire({
+            //title: "Error de Validación",
+            //text: "Debe seleccionar una categoría válida para el técnico.",
+            //icon: "warning"
+        //});
+        //return; // Detener la ejecución si no hay categoría
+    //}
 
     // 2. Estructurar el JSON (Payload)
     const userData = {
