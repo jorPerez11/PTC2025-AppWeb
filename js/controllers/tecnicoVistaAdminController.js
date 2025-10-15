@@ -558,7 +558,7 @@ async function abrirFormularioCreacion() {
     selectCategoria.innerHTML = ''; 
 
     // Object.values() nos da un array con los objetos de categoría ({id: X, displayName: Y})
-    const categoriasArray = Object.values(categoriasApi);
+    const categoriasArray = Object.values(categoriasApiDinamicas);
 
     // 4. Llenar el select con las categorías
     categoriasArray.forEach(categoria => {
