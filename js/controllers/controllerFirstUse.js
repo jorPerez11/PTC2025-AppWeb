@@ -577,11 +577,4 @@ export function inicializarAplicacion() {
 document.addEventListener('DOMContentLoaded', () => {
     // Aquí es donde se llama a la función de inicialización
     inicializarInputsTelefono(); 
-    
-    // También asegúrate de que cualquier otra lógica de inicialización del DOM
-    // como la carga del paso actual, se haga aquí.
-    cargarPasoActual(); 
-    
-    // Y cualquier listener global
-    // document.getElementById('siguienteBtn').addEventListener('click', siguientePaso);
 });
