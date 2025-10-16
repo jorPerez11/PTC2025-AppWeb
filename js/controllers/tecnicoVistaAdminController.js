@@ -2,7 +2,8 @@ import{
     getUserTech,
     createUserTech,
     updateUserTech,
-    deleteUserTech
+    deleteUserTech,
+    getCategories
 } from '../services/tecnicoVistaAdminService.js';
 
 let currentPage = 0;
@@ -18,13 +19,31 @@ let phoneMask;
 
 let form;
 
-const categoriasApi = {
-    'Soporte técnico': { id: 1, displayName: 'Soporte técnico' },
-    'Consultas': { id: 2, displayName: 'Consultas' },
-    'Gestión de Usuarios': { id: 3, displayName: 'Gestión de Usuarios' },
-    'Redes': { id: 4, displayName: 'Redes' },
-    'Incidentes Críticos': { id: 5, displayName: 'Incidentes Críticos' }
-};
+//const categoriasApi = {
+    //'Soporte técnico': { id: 1, displayName: 'Soporte técnico' },
+    //'Consultas': { id: 2, displayName: 'Consultas' },
+    //'Gestión de Usuarios': { id: 3, displayName: 'Gestión de Usuarios' },
+    //'Redes': { id: 4, displayName: 'Redes' },
+    //'Incidentes Críticos': { id: 5, displayName: 'Incidentes Críticos' }
+//};
+
+let categoriasApiDinamicas = {};
+
+
+async function cargarCategoriasDinamicas() {
+    try {
+        const categoriasArray = await getCategories();
+        categoriasApiDinamicas = categoriasArray.reduce((acc, current) => {
+            // Se asegura de que cada categoría sea única por displayName si es necesario
+            acc[current.displayName] = current; 
+            return acc;
+        }, {});
+        console.log("✅ Categorías cargadas dinámicamente:", categoriasApiDinamicas);
+    } catch (error) {
+        console.error("❌ Error al cargar las categorías desde la API:", error);
+        // Opcional: Cargar un set de categorías de respaldo o mostrar un error al usuario
+    }
+}
 
 //FUNCION PARA CARGAR PAGINA WEB
 async function cargarPaginaTecnicos(page){
@@ -106,7 +125,7 @@ function renderFilterBar(){
     selectCategoria.innerHTML = '<option value="all">Todas las categorías</option>';
 
     // 2. Iterar sobre el objeto categoriasApi para llenar el select
-    const categoriasArray = Object.values(categoriasApi);
+    const categoriasArray = Object.values(categoriasApiDinamicas);
 
     categoriasArray.forEach(categoria => {
         const option = document.createElement('option');
@@ -144,6 +163,8 @@ function handlePaginationClick(event) {
 //FUNCION PARA INICIALIZAR INTERFAZ / LLAMADO DE CARGA INICIAL
 async function initTecnicos() {
     try{
+
+        await cargarCategoriasDinamicas();
         //Inicializacion de UI y eventos
         renderFilterBar();
         initFilterEvents();
@@ -537,7 +558,7 @@ async function abrirFormularioCreacion() {
     selectCategoria.innerHTML = ''; 
 
     // Object.values() nos da un array con los objetos de categoría ({id: X, displayName: Y})
-    const categoriasArray = Object.values(categoriasApi);
+    const categoriasArray = Object.values(categoriasApiDinamicas);
 
     // 4. Llenar el select con las categorías
     categoriasArray.forEach(categoria => {
@@ -622,9 +643,17 @@ async function handleFormSubmit(event) {
     
     const phoneNumber = iti ? iti.getNumber() : telefono.value;
 
-    const categoriaSeleccionada = Object.values(categoriasApi).find(
+    let categoriaSeleccionada = Object.values(categoriasApiDinamicas).find(
         cat => String(cat.id) === categoryId
     );
+
+    if (!categoriaSeleccionada) {
+    // Si no se encuentra, buscar por displayName como fallback (menos probable si el select fue llenado correctamente)
+    const displayName = document.getElementById('categoria').options[document.getElementById('categoria').selectedIndex].text;
+    categoriaSeleccionada = Object.values(categoriasApiDinamicas).find(
+        cat => cat.displayName === displayName
+    );
+}
 
     // 2. Control de validación (opcional pero recomendado)
     if (!categoriaSeleccionada) {
@@ -868,7 +897,6 @@ async function confirmarEliminacion(userId) {
         });
         
         // Recarga la página actual para reflejar el cambio
-        // Asumiendo que 'currentPage' está definido en el alcance global o superior
         await cargarPaginaTecnicos(currentPage); 
 
     } catch (error) {
