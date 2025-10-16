@@ -709,7 +709,7 @@ async function handleFormSubmit(event) {
     }
 
     // 4. Validación de formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$/;
     if (!emailRegex.test(email)) {
         Swal.fire({
             title: "Error de Formato",
