@@ -1,7 +1,8 @@
 // Importaciones
 import {
     validarPaso1,
-    inicializarInputsTelefono
+    inicializarInputsTelefono,
+    getFormattedPhoneNumber
 } from '../utils/validacionesFirstUse.js';
 
 import {
@@ -147,10 +148,16 @@ export async function siguientePaso() {
             return;
         }
 
-        guardarDatosPaso1();
-
+        // Antes de guardar, obtenemos los datos (ya formateados para API)
         const companyData = obtenerDatosCompania();
         const adminData = obtenerDatosAdmin();
+
+        // **IMPORTANTE:** Guardamos los datos con los teléfonos formateados para la API en localStorage
+        localStorage.setItem('companyData', JSON.stringify(companyData));
+        localStorage.setItem('adminData', JSON.stringify(adminData));
+
+        guardarDatosPaso1();
+
         const storedCompanyId = localStorage.getItem('companyId');
         const storedAdminId = localStorage.getItem('adminId');
         // Combina los datos de la compañía y del administrador en un solo objeto para simplificar
@@ -419,7 +426,7 @@ function obtenerDatosCompania() {
     return {
         companyName: document.getElementById("nombreEmpresa")?.value.trim(),
         emailCompany: document.getElementById("correoEmpresa")?.value.trim(),
-        contactPhone: document.getElementById("telefonoEmpresa")?.value.trim(),
+        contactPhone: getFormattedPhoneNumber('company') || '',
         websiteUrl: document.getElementById("sitioWeb")?.value.trim()
     };
 }
@@ -429,7 +436,7 @@ function obtenerDatosAdmin() {
         name: document.getElementById("nombreAdmin")?.value.trim(),
         username: document.getElementById("adminUsername")?.value.trim(),
         email: document.getElementById("correoAdmin")?.value.trim(),
-        phone: document.getElementById("telefonoAdmin")?.value.trim(),
+        phone: getFormattedPhoneNumber('admin') || '',
         password: document.getElementById("adminPassword")?.value.trim(),
         rolId: 3 // Asume el rol de administrador
     };
