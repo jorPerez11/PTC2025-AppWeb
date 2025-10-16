@@ -1,5 +1,3 @@
-import IMask from 'https://cdn.jsdelivr.net/npm/imask@6.4.3/dist/imask.min.js';
-
 // Variable para almacenar las instancias de la máscara, una por cada input.
 // Usamos un Map para manejar múltiples inputs.
 const phoneMasks = new Map();
