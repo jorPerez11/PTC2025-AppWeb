@@ -375,6 +375,5 @@ export function formatearTelefonoParaMostrar(telefono) {
 
 export { 
     validarPaso1, 
-    inicializarInputsTelefono, 
-    getFormattedPhoneNumber 
+    inicializarInputsTelefono
 };
