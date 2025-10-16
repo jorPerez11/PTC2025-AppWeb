@@ -1,3 +1,7 @@
+/* global IMask, window */ 
+// ^^ Esta línea le dice al motor de JavaScript (y a los linters) 
+// que la variable IMask existe en el ámbito global.
+
 // Variables globales para almacenar las instancias de intlTelInput e IMask
 // Hacemos que estas variables sean globales para que se puedan acceder desde getFormattedPhoneNumber.
 let itiCompanyInstance = null;
