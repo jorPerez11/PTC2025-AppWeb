@@ -373,7 +373,7 @@ export function formatearTelefonoParaMostrar(telefono) {
     return telefono;
 }
 
-export { 
+/* export { 
     validarPaso1, 
     inicializarInputsTelefono
-};
+}; */
