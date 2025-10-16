@@ -1,3 +1,7 @@
+// Variable para almacenar las instancias de la máscara, una por cada input.
+// Usamos un Map para manejar múltiples inputs.
+const phoneMasks = new Map();
+
 // Validaciones del Paso 1
 export function validarPaso1() {
     let errores = [];
@@ -111,22 +115,78 @@ export function validarTelefonoIndividual(idInput) {
     return esValido;
 }
 
+// REEMPLAZA ESTA FUNCIÓN COMPLETA EN TU ARCHIVO
 export function inicializarInputsTelefono() {
+    // Selectores de los inputs de teléfono
     const inputs = ["#telefonoAdmin", "#telefonoEmpresa"];
+
     inputs.forEach(selector => {
-        const input = document.querySelector(selector);
-        if (input && typeof window.intlTelInput === "function" && !input.dataset.intl) {
+        const phoneInput = document.querySelector(selector);
+        
+        // Verificar que el input exista, que intlTelInput esté cargado, y que no se haya inicializado antes.
+        if (phoneInput && typeof window.intlTelInput === "function" && !phoneInput.dataset.intl) {
             try {
-                const iti = window.intlTelInput(input, {
+                // 1. Inicializa intl-tel-input
+                window.intlTelInput(phoneInput, {
                     initialCountry: "sv",
-                    preferredCountries: ["sv", "mx", "co"],
+                    preferredCountries: ["sv", "mx", "gt", "cr", "pa"],
                     separateDialCode: true,
-                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js", 
                 });
                 
-                input.dataset.intl = "true";
+                // Marca el input como inicializado
+                phoneInput.dataset.intl = "true";
+
+                // Función para aplicar la máscara
+                const applyMask = () => {
+                    if (typeof window.IMask !== 'function') {
+                        console.warn("IMask no está cargado. No se puede aplicar la máscara.");
+                        return;
+                    }
+                    
+                    const placeholder = phoneInput.placeholder;
+                    
+                    if (!placeholder) {
+                        // Si el placeholder no está listo, reintenta después de un breve momento
+                        setTimeout(applyMask, 100);
+                        return;
+                    } 
+
+                    // 2. Transforma el placeholder a un formato de máscara de IMask.
+                    // Se reemplazan los dígitos (0-9) en el placeholder por '0'.
+                    // Nota: Usamos el placeholder para obtener el formato local.
+                    const maskFormat = placeholder.replace(/\d/g, '0');
+                    
+                    let phoneMask = phoneMasks.get(selector);
+
+                    if (phoneMask) {
+                        phoneMask.destroy();
+                    }
+
+                    // 3. Aplica la nueva máscara
+                    phoneMask = window.IMask(phoneInput, {
+                        mask: maskFormat,
+                        lazy: false,
+                        // Limpia el valor en la máscara de caracteres fijos de IMask
+                        commit: function(value, masked){
+                            masked._value = value.replace(/\s+/g, '').replace(/[\(\)\-\+]/g, '');
+                        }
+                    });
+                    
+                    // Guarda la nueva instancia
+                    phoneMasks.set(selector, phoneMask);
+                };
+
+                // Agrega el listener para cambiar la máscara al cambiar de país
+                phoneInput.addEventListener("countrychange", applyMask);
+
+                // Dispara el evento una vez para inicializar la máscara con el país por defecto
+                requestAnimationFrame(() => {
+                    phoneInput.dispatchEvent(new Event('countrychange'));
+                });
+                
             } catch (error) {
-                console.error('Error initializing intl-tel-input:', error);
+                console.error('Error initializing intl-tel-input or IMask:', error);
             }
         }
     });
