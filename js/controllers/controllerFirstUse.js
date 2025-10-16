@@ -72,7 +72,7 @@ export function cargarPaso() {
                 setTimeout(() => {
                     // Retrasamos la llamada para dar tiempo a que IMask esté disponible
                     inicializarInputsTelefono();
-                }, 50); // 50 milisegundos son más que suficientes para cargar IMask
+                }, 500); // 50 milisegundos son más que suficientes para cargar IMask
 
                 requestAnimationFrame(() => {
                     if (pasoActualGlobal === 1) {
@@ -519,7 +519,7 @@ export function inicializarComponentesPaso(pasoActualGlobal) {
                 setTimeout(() => {
                     // Retrasamos la llamada para dar tiempo a que IMask esté disponible
                     inicializarInputsTelefono();
-                }, 50); // 50 milisegundos son más que suficientes para cargar IMask
+                }, 500); // 50 milisegundos son más que suficientes para cargar IMask
 
                 requestAnimationFrame(async () => {
                     if (pasoActualGlobal === 1) {
