@@ -156,15 +156,16 @@
                     <input type="hidden" id="userId">
                     <div class="mb-3">
                         <label for="nombreCompleto" class="form-label fw-semibold">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombreCompleto" required>
+                        <input type="text" class="form-control" id="nombreCompleto" placeholder="Ingresa tu nombre completo" required maxlength="100" minlength="10" pattern="[a-zA-Z\s]+" title="Solo se permiten letras y espacios">
                     </div>
                     <div class="mb-3">
                         <label for="nombreUsuario" class="form-label fw-semibold">Usuario</label>
-                        <input type="text" class="form-control" id="nombreUsuario" required>
+                    <input type="text" class="form-control" id="nombreUsuario"
+                        placeholder="Ingresa tu nombre de usuario" required maxlength="100" minlength="3"  pattern="[a-zA-Z0-9]+" title="Solo se permiten letras y números (mínimo 3, máximo 100).">
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label fw-semibold">Email</label>
-                        <input type="email" class="form-control" id="email" required>
+                    <input type="email" class="form-control" id="email" placeholder="Ingresa tu email" required maxlength="100" minlength="6" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,4}$" title="Ingresa una dirección de correo electrónico válida (no uses caracteres como $, #, etc.).">
                     </div>
                     <div class="mb-3">
                         <label for="telefono" class="form-label fw-semibold">Teléfono</label>
