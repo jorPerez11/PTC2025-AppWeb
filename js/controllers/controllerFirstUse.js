@@ -68,9 +68,11 @@ export function cargarPaso() {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPasoVisual();
+            // *** SOLUCIÓN APLICADA AQUÍ ***
+            // Inicializar inmediatamente después de inyectar el HTML
+            inicializarInputsTelefono();
 
             setTimeout(() => {
-                inicializarInputsTelefono();
 
                 requestAnimationFrame(() => {
                     if (pasoActualGlobal === 1) {
@@ -518,9 +520,11 @@ export function inicializarComponentesPaso(pasoActualGlobal) {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPaso();
+            // *** SOLUCIÓN APLICADA AQUÍ ***
+            // Inicializar inmediatamente después de inyectar el HTML
+            inicializarInputsTelefono();
 
             setTimeout(() => {
-                inicializarInputsTelefono();
 
                 requestAnimationFrame(async () => {
                     if (pasoActualGlobal === 1) {
@@ -573,8 +577,3 @@ export function inicializarAplicacion() {
         }
     });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Aquí es donde se llama a la función de inicialización
-    inicializarInputsTelefono(); 
-});
