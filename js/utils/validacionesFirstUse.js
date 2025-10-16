@@ -297,7 +297,7 @@ export function validarTelefonoIndividual(idInput) {
     return esValido;
 }
 
-export function inicializarInputsTelefono() {
+/* export function inicializarInputsTelefono() {
     const inputs = ["#telefonoAdmin", "#telefonoEmpresa"];
     inputs.forEach(selector => {
         const input = document.querySelector(selector);
@@ -316,7 +316,7 @@ export function inicializarInputsTelefono() {
             }
         }
     });
-}
+} */
 
 export function obtenerTelefonoConPrefijo(idInput) {
     const input = document.getElementById(idInput);
