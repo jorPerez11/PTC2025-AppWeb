@@ -20,8 +20,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return; // Importante: salir de la función
         }
     } catch (error) {
-        // Restaurar cursor normal en caso de error de red/servidor (ya no es estrictamente necesario, pero no estorba)
-        // document.body.style.cursor = 'default'; // Se moverá al finally
         
         console.error("Error al verificar existencia de compañías:", error);
         
@@ -30,7 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         return; // Salir, ya que la verificación falló catastróficamente
     } finally {
-        // ✅ SOLUCIÓN: Restablece el cursor siempre, haya habido éxito o error (excepto redirección).
         if (companyExists) {
             document.body.style.cursor = 'default';
         }
@@ -151,7 +148,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            // -- INICIO del estado de CARGA
             document.body.style.cursor = 'wait'; // Pone el cursor en "cargando"
             registerButton.disabled = true; // Deshabilita el botón
 
