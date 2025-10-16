@@ -110,9 +110,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // 3. Validación de nombre de usuario (sin espacios, alfanumérico con guiones bajos)
-        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        const usernameRegex = /^[a-zA-Z0-9._]+$/;
         if (!usernameRegex.test(userData.username)) {
-            showGlobalMessage("El nombre de usuario solo puede contener letras, números y guiones bajos.", 'error');
+            showGlobalMessage("El nombre de usuario solo puede contener letras, números, puntos y guiones bajos.", 'error');
             return;
         }
 
