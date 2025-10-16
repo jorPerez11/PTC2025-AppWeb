@@ -11,4 +11,8 @@ window.anteriorPaso = anteriorPaso;
 window.cancelarPaso = cancelarPaso;
 
 // Inicializar la aplicación cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', inicializarAplicacion);
+// **ENVUELVE AQUÍ LA LLAMADA A INICIALIZAR APLICACIÓN**
+document.addEventListener('DOMContentLoaded', () => {
+    // Aquí, DOM, SweetAlert, intlTelInput e IMask deben estar cargados.
+    inicializarAplicacion(); 
+});
