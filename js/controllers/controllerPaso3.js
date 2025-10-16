@@ -23,6 +23,9 @@ let listaTecnicos = [];
 let tecnicosAgregados = [];
 let listaCategorias = [];
 let miEquipo = [];
+// Variable para almacenar las instancias de la máscara, una por cada input.
+// Usamos un Map para manejar múltiples inputs.
+const phoneMasks = new Map();
 
 // Funciones específicas del Paso 3
 export async function initPaso3() {
@@ -578,16 +581,26 @@ export function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
     modalEditar.showModal();
 
     setTimeout(() => {
+      // 1. Inicializa intl-tel-input y IMask
       inicializarTelefonosPaso3();
 
       setTimeout(() => {
         const telefonoInput = document.getElementById("telefonoEditar");
-        if (telefonoInput && telefono) {
-          const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
-          if (iti) {
-            const telefonoLimpio = telefono.replace(/[^\d\+\-\s\(\)]/g, '');
-            iti.setNumber(telefonoLimpio);
-          }
+        const iti = intlTelInputInstances.get("telefonoEditar"); // Obtiene la instancia guardada
+        const maskInstance = phoneMasks.get("#telefonoEditar"); // Obtiene la instancia de IMask
+
+        if (telefonoInput && telefono && iti) {
+          // 2. Limpia el número (asegura el formato intl-tel-input: +123456789)
+          const telefonoLimpio = telefono.replace(/[^\d\+]/g, '');
+
+          // 3. Establece el número con intl-tel-input (esto actualiza el país y el placeholder)
+          iti.setNumber(telefonoLimpio);
+
+          // 4. El valor final del input ya está limpio y listo
+          // No necesitamos hacer nada con IMask.value si iti ya ajustó el valor del input.
+
+          // Forzamos la re-aplicación de la máscara por si acaso el país cambia el formato
+          telefonoInput.dispatchEvent(new Event('countrychange'));
         }
       }, 200);
     }, 100);
@@ -636,14 +649,14 @@ export async function editarTecnico() {
   const telefonoInput = document.getElementById("telefonoEditar");
 
   let telefono = "";
-  if (telefonoInput) {
-    const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
-    if (iti) {
-      telefono = iti.getNumber() || obtenerTelefonoConPrefijo("telefonoEditar");
-    } else {
-      telefono = obtenerTelefonoConPrefijo("telefonoEditar");
+    if (telefonoInput) {
+        // Usar la instancia guardada en nuestro Map
+        const iti = intlTelInputInstances.get("telefonoEditar"); 
+        
+        // La función getNumber() es la manera más fiable de obtener el valor internacional.
+        // Si iti existe, usa getNumber(). Si no, usa el fallback de obtenerTelefonoConPrefijo.
+        telefono = iti ? iti.getNumber() : obtenerTelefonoConPrefijo("telefonoEditar");
     }
-  }
 
   if (!nombre || !correo || !telefono) {
     alert("Complete todos los campos obligatorios");
@@ -711,22 +724,106 @@ export function toBase64(file) {
   });
 }
 
+/**
+ * Función que aplica la máscara de IMask basada en el placeholder
+ * generado por intl-tel-input.
+ * @param {HTMLInputElement} phoneInput - El elemento input.
+ * @param {string} selector - El selector del input (ID).
+ */
+const applyMask = async (phoneInput, selector) => {
+  // 1. Carga la librería IMask dinámicamente si aún no está cargada
+  if (!IMaskLib) {
+    try {
+      const module = await import('https://cdn.jsdelivr.net/npm/imask@6.4.3/dist/imask.min.js');
+      IMaskLib = module.default || window.IMask;
+
+      if (!IMaskLib) {
+        console.error("No se pudo cargar IMask como módulo.");
+        return;
+      }
+    } catch (error) {
+      console.error('Error al cargar IMask dinámicamente:', error);
+      return;
+    }
+  }
+
+  const placeholder = phoneInput.placeholder;
+
+  if (!placeholder) {
+    // Si el placeholder (de intl-tel-input) no está listo, reintenta.
+    setTimeout(() => applyMask(phoneInput, selector), 100);
+    return;
+  }
+
+  // 2. Transforma el placeholder a formato de máscara '0000 0000'
+  // Se usa la '0' como un comodín de dígito.
+  const maskFormat = placeholder.replace(/[^\d]/g, '0');
+
+  let phoneMask = phoneMasks.get(selector);
+
+  // Destruye la máscara anterior si existe.
+  if (phoneMask) {
+    phoneMask.destroy();
+  }
+
+  // 3. Aplica la nueva máscara
+  phoneMask = IMaskLib(phoneInput, {
+    mask: maskFormat,
+    lazy: false,
+    // El commit es importante para limpiar el valor antes de almacenarlo en el input.value
+    commit: function (value, masked) {
+      // Almacenamos el valor en el input sin los caracteres de la máscara (solo dígitos)
+      // Esto ayuda a intl-tel-input a validar mejor y obtener el valor limpio.
+      masked._value = value.replace(/\s+/g, '').replace(/[\(\)\-\+]/g, '');
+    }
+  });
+
+  // Guarda la nueva instancia de IMask
+  phoneMasks.set(selector, phoneMask);
+};
+
+
+/**
+ * Inicializa intl-tel-input y IMask para los inputs de los modales (Paso 3).
+ * @returns {void}
+ */
 export function inicializarTelefonosPaso3() {
+  // IDs de los inputs de teléfono en los modales
   const inputs = ["#telefonoAgregar", "#telefonoEditar"];
 
   inputs.forEach(selector => {
-    const input = document.querySelector(selector);
-    if (input && typeof window.intlTelInput === "function") {
-      if (input.dataset.intl === "true") return;
+    const phoneInput = document.querySelector(selector);
+    const id = selector.replace('#', ''); // Obtener el ID sin el #
 
-      const iti = window.intlTelInput(input, {
-        initialCountry: "sv",
-        preferredCountries: ["sv", "mx", "co"],
-        separateDialCode: true,
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-      });
+    // intlTelInput debe estar cargado
+    if (phoneInput && typeof window.intlTelInput === "function") {
+      try {
+        let iti = intlTelInputInstances.get(id);
 
-      input.dataset.intl = "true";
+        // 1. Inicializa intl-tel-input solo si no se ha inicializado
+        if (!iti) {
+          iti = window.intlTelInput(phoneInput, {
+            initialCountry: "sv",
+            preferredCountries: ["sv", "mx", "gt", "cr", "pa"],
+            separateDialCode: true,
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js",
+          });
+          intlTelInputInstances.set(id, iti); // Guarda la instancia
+
+          // 2. Agrega el listener para cambiar la máscara al cambiar de país
+          // y aplica la máscara inmediatamente después de un pequeño retraso
+          phoneInput.addEventListener("countrychange", () => applyMask(phoneInput, selector));
+        }
+
+        // 3. Dispara el evento una vez para inicializar o actualizar la máscara
+        // Usamos requestAnimationFrame para asegurar que el placeholder de intl-tel-input esté listo.
+        requestAnimationFrame(() => {
+          phoneInput.dispatchEvent(new Event('countrychange'));
+        });
+
+      } catch (error) {
+        console.error(`Error initializing intl-tel-input or IMask for ${selector}:`, error);
+      }
     }
   });
 }
@@ -774,47 +871,47 @@ export function actualizarEquipoEnStorage(id, accion, categoria, username = '') 
 
 // Corregido: La función debe ser ASYNC para poder usar 'await'
 export async function marcarTecnicoComoAñadido(idTecnico, categoria, username, restaurando = false) {
-    const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
-    if (!btnAñadir) return;
-    const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
-    if (!contenedorAcciones) return;
+  const btnAñadir = document.querySelector(`button.añadir[data-id="${idTecnico}"]`);
+  if (!btnAñadir) return;
+  const contenedorAcciones = document.getElementById(`acciones-${idTecnico}`);
+  if (!contenedorAcciones) return;
 
-    // Solo si no estamos restaurando (es decir, el usuario acaba de hacer click en añadir)
-    if (!restaurando) {
-        try {
-            // 🛑 LÍNEA CLAVE AGREGADA: Llamar a la API para asignar la categoría y activar el técnico
-            // Esto es lo que faltaba para reflejar el cambio en la BD.
-            console.log(`Llamando a la API para asignar categoría ${categoria} al técnico ${idTecnico}`);
-            await asignarCategoriaYActivarTecnicoAPI(idTecnico, categoria);
+  // Solo si no estamos restaurando (es decir, el usuario acaba de hacer click en añadir)
+  if (!restaurando) {
+    try {
+      // 🛑 LÍNEA CLAVE AGREGADA: Llamar a la API para asignar la categoría y activar el técnico
+      // Esto es lo que faltaba para reflejar el cambio en la BD.
+      console.log(`Llamando a la API para asignar categoría ${categoria} al técnico ${idTecnico}`);
+      await asignarCategoriaYActivarTecnicoAPI(idTecnico, categoria);
 
-            // Si el backend responde OK, actualizamos el localStorage
-            actualizarEquipoEnStorage(idTecnico, "agregar", categoria, username);
+      // Si el backend responde OK, actualizamos el localStorage
+      actualizarEquipoEnStorage(idTecnico, "agregar", categoria, username);
 
-            // Mostrar mensaje de éxito específico para esta acción
-            Swal.fire({
-                icon: 'success',
-                title: 'Técnico añadido y categorizado',
-                text: 'El técnico ha sido asignado a su equipo y a su categoría.',
-                timer: 1500,
-                showConfirmButton: false
-            });
-            
-        } catch (error) {
-            console.error("Error al asignar categoría y activar técnico:", error);
-            // Si el backend falla, mostramos el error y detenemos la ejecución
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al añadir al equipo',
-                text: error.message || "Ocurrió un error al intentar asignar la categoría en el sistema.",
-                confirmButtonText: 'Aceptar'
-            });
-            return; // Salir de la función para no actualizar la vista si falla el backend
-        }
+      // Mostrar mensaje de éxito específico para esta acción
+      Swal.fire({
+        icon: 'success',
+        title: 'Técnico añadido y categorizado',
+        text: 'El técnico ha sido asignado a su equipo y a su categoría.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
+    } catch (error) {
+      console.error("Error al asignar categoría y activar técnico:", error);
+      // Si el backend falla, mostramos el error y detenemos la ejecución
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al añadir al equipo',
+        text: error.message || "Ocurrió un error al intentar asignar la categoría en el sistema.",
+        confirmButtonText: 'Aceptar'
+      });
+      return; // Salir de la función para no actualizar la vista si falla el backend
     }
-    
-    // Luego actualizamos la vista (Visualización en el frontend)
-    const accionesContainer = document.getElementById(`acciones-${idTecnico}`);
-    marcarTecnicoComoAñadidoVisual(idTecnico, accionesContainer, restaurando, username);
+  }
+
+  // Luego actualizamos la vista (Visualización en el frontend)
+  const accionesContainer = document.getElementById(`acciones-${idTecnico}`);
+  marcarTecnicoComoAñadidoVisual(idTecnico, accionesContainer, restaurando, username);
 }
 
 export function obtenerCategoriaTecnico(id) {
