@@ -24,6 +24,10 @@ let tecnicosAgregados = [];
 let listaCategorias = [];
 let miEquipo = [];
 
+// Variable para almacenar las instancias de la máscara, una por cada input.
+// Usamos un Map para manejar múltiples inputs.
+const phoneMasks = new Map(); // Esta variable ya la tienes en el controller.
+
 // Funciones específicas del Paso 3
 export async function initPaso3() {
   const contenedor = document.getElementById("lista-tecnicos");
@@ -562,36 +566,39 @@ export async function enviarTecnico(nombre, correo, telefono, archivoFoto) {
 }
 
 export function AbrirModalEditar(id, nombre, correo, telefono, foto = "") {
-  const nombreLimpio = limpiarTexto(nombre);
+    const nombreLimpio = limpiarTexto(nombre);
 
-  document.getElementById("idEditar").value = id;
-  document.getElementById("nombreEditar").value = nombreLimpio || "";
-  document.getElementById("emailEditar").value = correo || "";
+    document.getElementById("idEditar").value = id;
+    document.getElementById("nombreEditar").value = nombreLimpio || "";
+    document.getElementById("emailEditar").value = correo || "";
 
-  const fotoActual = document.getElementById("fotoActual");
-  if (fotoActual) {
-    fotoActual.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-  }
+    const fotoActual = document.getElementById("fotoActual");
+    if (fotoActual) {
+        fotoActual.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    }
 
-  const modalEditar = document.getElementById("modal-editar");
-  if (modalEditar) {
-    modalEditar.showModal();
+    const modalEditar = document.getElementById("modal-editar");
+    if (modalEditar) {
+        modalEditar.showModal();
 
-    setTimeout(() => {
-      inicializarTelefonosPaso3();
+        // 💡 LLAMADA CRÍTICA: Inicializa el input.
+        setTimeout(() => {
+            inicializarTelefonosPaso3(); 
 
-      setTimeout(() => {
-        const telefonoInput = document.getElementById("telefonoEditar");
-        if (telefonoInput && telefono) {
-          const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
-          if (iti) {
-            const telefonoLimpio = telefono.replace(/[^\d\+\-\s\(\)]/g, '');
-            iti.setNumber(telefonoLimpio);
-          }
-        }
-      }, 200);
-    }, 100);
-  }
+            // Esperamos un poco más para que la inicialización y el evento 'countrychange'
+            // de intlTelInput terminen, luego establecemos el número.
+            setTimeout(() => {
+                const telefonoInput = document.getElementById("telefonoEditar");
+                if (telefonoInput && telefono) {
+                    const iti = window.intlTelInputGlobals?.getInstance(telefonoInput);
+                    if (iti) {
+                        const telefonoLimpio = telefono.replace(/[^\d\+\s\(\)]/g, ''); // Limpieza más estricta
+                        iti.setNumber(telefonoLimpio);
+                    }
+                }
+            }, 300); // Incrementado a 300ms para mayor seguridad
+        }, 100);
+    }
 }
 
 export function abrirModalAgregarEquipo(tecnico) {
@@ -712,23 +719,105 @@ export function toBase64(file) {
 }
 
 export function inicializarTelefonosPaso3() {
-  const inputs = ["#telefonoAgregar", "#telefonoEditar"];
+    // Selectores de los inputs de teléfono en los modales:
+    const inputs = ["#telefonoAgregar", "#telefonoEditar"];
 
-  inputs.forEach(selector => {
-    const input = document.querySelector(selector);
-    if (input && typeof window.intlTelInput === "function") {
-      if (input.dataset.intl === "true") return;
+    // Variable para almacenar la referencia a IMask, se cargará solo una vez.
+    let IMaskLib = null;
 
-      const iti = window.intlTelInput(input, {
-        initialCountry: "sv",
-        preferredCountries: ["sv", "mx", "co"],
-        separateDialCode: true,
-        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js"
-      });
+    inputs.forEach(selector => {
+        const phoneInput = document.querySelector(selector);
 
-      input.dataset.intl = "true";
-    }
-  });
+        // Verificar que el input exista, que intlTelInput esté cargado, y que no se haya inicializado antes.
+        if (phoneInput && typeof window.intlTelInput === "function" && !phoneInput.dataset.intl) {
+            try {
+                // 1. Inicializa intl-tel-input
+                window.intlTelInput(phoneInput, {
+                    initialCountry: "sv",
+                    preferredCountries: ["sv", "mx", "gt", "cr", "pa"],
+                    separateDialCode: true,
+                    // Ya estás cargando utils.js globalmente, pero lo dejamos como respaldo.
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17.0.19/build/js/utils.js", 
+                });
+
+                // Marca el input como inicializado para no duplicar
+                phoneInput.dataset.intl = "true";
+
+                // Función para aplicar la máscara
+                const applyMask = async () => { 
+                    // 1. Carga la librería IMask dinámicamente si aún no está cargada
+                    if (!IMaskLib) {
+                        try {
+                            const module = await import('https://cdn.jsdelivr.net/npm/imask@6.4.3/dist/imask.min.js');
+                            // Se busca el objeto IMask en 'default' o directamente en 'window'
+                            IMaskLib = module.default || window.IMask; 
+
+                            if (!IMaskLib) {
+                                console.error("No se pudo cargar IMask como módulo.");
+                                return;
+                            }
+                        } catch (error) {
+                            console.error('Error al cargar IMask dinámicamente:', error);
+                            return;
+                        }
+                    }
+
+                    const placeholder = phoneInput.placeholder;
+
+                    if (!placeholder) {
+                        // Si el placeholder no está listo, reintenta después de un breve momento
+                        setTimeout(applyMask, 100);
+                        return;
+                    }
+
+                    // 2. Transforma el placeholder, eliminando el código de país
+                    let maskFormat = placeholder.replace(/.*?\s/, '').replace(/\d/g, '0');
+                    // Caso especial: si el placeholder es solo el código de país o vacío, usa un formato por defecto (ej. El Salvador 0000-0000)
+                    if (!maskFormat || maskFormat.trim() === '0') {
+                        maskFormat = '0000-0000'; 
+                    }
+
+
+                    let phoneMask = phoneMasks.get(selector);
+
+                    // Si ya existe una máscara, destrúyela antes de crear una nueva
+                    if (phoneMask) {
+                        phoneMask.destroy();
+                    }
+
+                    // 3. Aplica la nueva máscara usando la referencia IMaskLib
+                    phoneMask = IMaskLib(phoneInput, { 
+                        mask: maskFormat,
+                        lazy: false,
+                        commit: function (value, masked) {
+                            // Guarda solo los dígitos y los signos que intl-tel-input necesita para validar
+                            masked._value = value.replace(/\s+/g, '').replace(/[\(\)\-\+]/g, '');
+                        }
+                    });
+
+                    // Guarda la nueva instancia en el mapa
+                    phoneMasks.set(selector, phoneMask);
+                };
+
+                // Agrega el listener para cambiar la máscara al cambiar de país
+                phoneInput.addEventListener("countrychange", applyMask);
+
+                // Dispara el evento una vez para inicializar la máscara con el país por defecto
+                // Usamos requestAnimationFrame y setTimeout para asegurar que intlTelInput haya establecido el placeholder.
+                requestAnimationFrame(() => {
+                    setTimeout(() => phoneInput.dispatchEvent(new Event('countrychange')), 50);
+                });
+
+            } catch (error) {
+                console.error(`Error initializing intl-tel-input for ${selector}:`, error);
+            }
+        } else if (phoneInput && phoneInput.dataset.intl === "true") {
+            // Si ya está inicializado (por ejemplo, al reabrir un modal),
+            // podemos reajustar el número para el modal de edición.
+            // Para el modal de agregar, no es necesario hacer nada.
+            console.log(`intlTelInput ya inicializado para ${selector}.`);
+        }
+    });
 }
 
 export function validarAntesDeEnviar(idInput) {
