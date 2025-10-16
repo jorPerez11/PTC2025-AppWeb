@@ -10,9 +10,10 @@ window.siguientePaso = siguientePaso;
 window.anteriorPaso = anteriorPaso;
 window.cancelarPaso = cancelarPaso;
 
-// Inicializar la aplicación cuando el DOM esté listo
-// **ENVUELVE AQUÍ LA LLAMADA A INICIALIZAR APLICACIÓN**
-document.addEventListener('DOMContentLoaded', () => {
-    // Aquí, DOM, SweetAlert, intlTelInput e IMask deben estar cargados.
+window.onload = function() {
+    console.log("window.onload activado: Inicializando aplicación.");
     inicializarAplicacion(); 
-});
+    
+    // Si todavía usaste un setTimeout para la inicialización dentro de inicializarAplicacion,
+    // puedes intentar reducirlo ahora o eliminarlo si el problema se resuelve.
+};
