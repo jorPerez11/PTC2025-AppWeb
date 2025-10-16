@@ -183,9 +183,7 @@ export function validarPaso1() {
     validarCampoVacio(nombreEmpresa, "Nombre de la Empresa");
     validarCampoVacio(correoEmpresa, "Correo de la Empresa");
     validarCampoVacio(adminNombre, "Nombre del Administrador");
-    validarCampoVacio(adminUsername, "Nombre de Usuario");
     validarCampoVacio(adminCorreo, "Correo del Administrador");
-    validarCampoVacio(adminPassword, "Contraseña");
 
 
     // Validación de formato de correos
@@ -376,8 +374,3 @@ export function formatearTelefonoParaMostrar(telefono) {
     
     return telefono;
 }
-
-/* export { 
-    validarPaso1, 
-    inicializarInputsTelefono
-}; */
