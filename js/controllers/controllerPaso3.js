@@ -23,6 +23,11 @@ let listaTecnicos = [];
 let tecnicosAgregados = [];
 let listaCategorias = [];
 let miEquipo = [];
+let IMaskLib = null; // Variable para almacenar la referencia a IMask
+
+// 🛑 ¡FALTABA ESTA DECLARACIÓN!
+// Almacena las instancias de intlTelInput para evitar reinicializarlas
+const intlTelInputInstances = new Map();
 // Variable para almacenar las instancias de la máscara, una por cada input.
 // Usamos un Map para manejar múltiples inputs.
 const phoneMasks = new Map();
