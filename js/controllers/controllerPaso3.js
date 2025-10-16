@@ -763,31 +763,46 @@ export function inicializarTelefonosPaso3() {
                     }
 
                     const placeholder = phoneInput.placeholder;
-
+                    const countryData = window.intlTelInputGlobals.getInstance(phoneInput).getSelectedCountryData();
+                    
                     if (!placeholder) {
-                        // Si el placeholder no está listo, reintenta después de un breve momento
+                        // Si el placeholder no está listo, reintenta
                         setTimeout(applyMask, 100);
                         return;
                     }
 
-                    // 2. Transforma el placeholder, eliminando el código de país
-                    let maskFormat = placeholder.replace(/.*?\s/, '').replace(/\d/g, '0');
-                    // Caso especial: si el placeholder es solo el código de país o vacío, usa un formato por defecto (ej. El Salvador 0000-0000)
-                    if (!maskFormat || maskFormat.trim() === '0') {
-                        maskFormat = '0000-0000'; 
+                    // 2. Transforma el placeholder a formato de máscara '0'
+                    let rawMaskFormat = placeholder.replace(/.*?\s/, '').replace(/\d/g, '0');
+                    
+                    // 💡 CORRECCIÓN CRÍTICA AQUÍ: Ajustar la máscara para El Salvador y otros casos.
+                    let maskFormat = rawMaskFormat;
+
+                    // Si la longitud del placeholder es menor a 8, forzamos la máscara correcta para El Salvador
+                    // (ya que intl-tel-input en algunos casos puede dejarlo corto).
+                    // Para El Salvador (+503), el formato es típicamente 8 dígitos: 0000-0000
+                    if (countryData.iso2 === 'sv' && maskFormat.length < 8) {
+                        maskFormat = '0000-0000';
+                    } else if (countryData.iso2 === 'sv' && maskFormat.length === 8) {
+                        // Si tiene 8 dígitos, aplicamos el formato con guion
+                        maskFormat = '0000-0000';
+                    }
+                    
+                    // Para otros países, usa el formato que intl-tel-input proporcione
+                    if (maskFormat.trim() === '0' || maskFormat.length < 4) {
+                        // Fallback genérico si el placeholder es inútil (ej. +52 o +503 lo deja vacío)
+                        maskFormat = '0000-00000000'; // Máscara segura de 12 dígitos
                     }
 
-
+                    // 3. Destruye la máscara anterior si existe
                     let phoneMask = phoneMasks.get(selector);
-
-                    // Si ya existe una máscara, destrúyela antes de crear una nueva
                     if (phoneMask) {
                         phoneMask.destroy();
+                        phoneMasks.delete(selector); // Limpiar antes de reasignar
                     }
 
-                    // 3. Aplica la nueva máscara usando la referencia IMaskLib
-                    phoneMask = IMaskLib(phoneInput, { 
-                        mask: maskFormat,
+                    // 4. Aplica la nueva máscara
+                    phoneMask = IMaskLib(phoneInput, {
+                        mask: maskFormat, // <--- USA la máscara ajustada
                         lazy: false,
                         commit: function (value, masked) {
                             // Guarda solo los dígitos y los signos que intl-tel-input necesita para validar
