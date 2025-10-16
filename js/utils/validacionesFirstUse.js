@@ -138,13 +138,33 @@ export function inicializarInputsTelefono() {
                 phoneInput.dataset.intl = "true";
 
                 // Función para aplicar la máscara
-                const applyMask = () => {
-                    if (typeof window.IMask !== 'function') {
-                        console.warn("IMask no está cargado. Reintentando...");
-                        setTimeout(applyMask, 50); // Reintenta
-                        return;
+                // Variable para almacenar la referencia a IMask, se cargará solo una vez.
+                let IMaskLib = null;
+
+                // Reemplaza tu función applyMask con esta versión:
+                const applyMask = async () => { // <--- HACER ESTA FUNCIÓN ASÍNCRONA
+
+                    // 1. Carga la librería IMask dinámicamente si aún no está cargada
+                    if (!IMaskLib) {
+                        try {
+                            // Usa 'imask/dist/imask.min.js' que funciona como un módulo ES6
+                            const module = await import('https://cdn.jsdelivr.net/npm/imask@6.4.3/dist/imask.min.js');
+                            // La mayoría de las librerías CDN exponen el objeto en el 'default'
+                            IMaskLib = module.default || window.IMask;
+
+                            if (!IMaskLib) {
+                                // Si la importación falla o no tiene default, salimos.
+                                console.error("No se pudo cargar IMask como módulo.");
+                                return;
+                            }
+                        } catch (error) {
+                            console.error('Error al cargar IMask dinámicamente:', error);
+                            return;
+                        }
                     }
 
+                    // Ya no necesitas la advertencia de 'IMask no está cargado'.
+                    // Ahora usamos IMaskLib
                     const placeholder = phoneInput.placeholder;
 
                     if (!placeholder) {
@@ -153,9 +173,7 @@ export function inicializarInputsTelefono() {
                         return;
                     }
 
-                    // 2. Transforma el placeholder a un formato de máscara de IMask.
-                    // Se reemplazan los dígitos (0-9) en el placeholder por '0'.
-                    // Nota: Usamos el placeholder para obtener el formato local.
+                    // 2. Transforma el placeholder (igual que antes)
                     const maskFormat = placeholder.replace(/\d/g, '0');
 
                     let phoneMask = phoneMasks.get(selector);
@@ -164,11 +182,10 @@ export function inicializarInputsTelefono() {
                         phoneMask.destroy();
                     }
 
-                    // 3. Aplica la nueva máscara
-                    phoneMask = window.IMask(phoneInput, {
+                    // 3. Aplica la nueva máscara usando la referencia IMaskLib
+                    phoneMask = IMaskLib(phoneInput, { // <--- ¡USAMOS IMaskLib!
                         mask: maskFormat,
                         lazy: false,
-                        // Limpia el valor en la máscara de caracteres fijos de IMask
                         commit: function (value, masked) {
                             masked._value = value.replace(/\s+/g, '').replace(/[\(\)\-\+]/g, '');
                         }
