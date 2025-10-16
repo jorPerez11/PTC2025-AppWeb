@@ -1,8 +1,7 @@
 // Importaciones
 import {
     validarPaso1,
-    inicializarInputsTelefono,
-    getFormattedPhoneNumber
+    inicializarInputsTelefono
 } from '../utils/validacionesFirstUse.js';
 
 import {
@@ -68,11 +67,9 @@ export function cargarPaso() {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPasoVisual();
-            // *** SOLUCIÓN APLICADA AQUÍ ***
-            // Inicializar inmediatamente después de inyectar el HTML
-            inicializarInputsTelefono();
 
             setTimeout(() => {
+                inicializarInputsTelefono();
 
                 requestAnimationFrame(() => {
                     if (pasoActualGlobal === 1) {
@@ -150,16 +147,10 @@ export async function siguientePaso() {
             return;
         }
 
-        // Antes de guardar, obtenemos los datos (ya formateados para API)
-        const companyData = obtenerDatosCompania();
-        const adminData = obtenerDatosAdmin();
-
-        // **IMPORTANTE:** Guardamos los datos con los teléfonos formateados para la API en localStorage
-        localStorage.setItem('companyData', JSON.stringify(companyData));
-        localStorage.setItem('adminData', JSON.stringify(adminData));
-
         guardarDatosPaso1();
 
+        const companyData = obtenerDatosCompania();
+        const adminData = obtenerDatosAdmin();
         const storedCompanyId = localStorage.getItem('companyId');
         const storedAdminId = localStorage.getItem('adminId');
         // Combina los datos de la compañía y del administrador en un solo objeto para simplificar
@@ -428,7 +419,7 @@ function obtenerDatosCompania() {
     return {
         companyName: document.getElementById("nombreEmpresa")?.value.trim(),
         emailCompany: document.getElementById("correoEmpresa")?.value.trim(),
-        contactPhone: getFormattedPhoneNumber('company') || '',
+        contactPhone: document.getElementById("telefonoEmpresa")?.value.trim(),
         websiteUrl: document.getElementById("sitioWeb")?.value.trim()
     };
 }
@@ -438,7 +429,7 @@ function obtenerDatosAdmin() {
         name: document.getElementById("nombreAdmin")?.value.trim(),
         username: document.getElementById("adminUsername")?.value.trim(),
         email: document.getElementById("correoAdmin")?.value.trim(),
-        phone: getFormattedPhoneNumber('admin') || '',
+        phone: document.getElementById("telefonoAdmin")?.value.trim(),
         password: document.getElementById("adminPassword")?.value.trim(),
         rolId: 3 // Asume el rol de administrador
     };
@@ -520,11 +511,9 @@ export function inicializarComponentesPaso(pasoActualGlobal) {
             document.getElementById("contenido-dinamico").innerHTML = html;
             document.getElementById("paso-actual").textContent = pasoActualGlobal;
             actualizarIndicadorPaso();
-            // *** SOLUCIÓN APLICADA AQUÍ ***
-            // Inicializar inmediatamente después de inyectar el HTML
-            inicializarInputsTelefono();
 
             setTimeout(() => {
+                inicializarInputsTelefono();
 
                 requestAnimationFrame(async () => {
                     if (pasoActualGlobal === 1) {
