@@ -69,7 +69,10 @@ export function cargarPaso() {
             actualizarIndicadorPasoVisual();
 
             setTimeout(() => {
-                inicializarInputsTelefono();
+                setTimeout(() => {
+                    // Retrasamos la llamada para dar tiempo a que IMask esté disponible
+                    inicializarInputsTelefono();
+                }, 500); // 50 milisegundos son más que suficientes para cargar IMask
 
                 requestAnimationFrame(() => {
                     if (pasoActualGlobal === 1) {
@@ -513,7 +516,10 @@ export function inicializarComponentesPaso(pasoActualGlobal) {
             actualizarIndicadorPaso();
 
             setTimeout(() => {
-                inicializarInputsTelefono();
+                setTimeout(() => {
+                    // Retrasamos la llamada para dar tiempo a que IMask esté disponible
+                    inicializarInputsTelefono();
+                }, 500); // 50 milisegundos son más que suficientes para cargar IMask
 
                 requestAnimationFrame(async () => {
                     if (pasoActualGlobal === 1) {
