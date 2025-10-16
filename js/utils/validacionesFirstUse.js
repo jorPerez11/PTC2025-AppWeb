@@ -1,7 +1,3 @@
-/* global IMask, window */ 
-// ^^ Esta línea le dice al motor de JavaScript (y a los linters) 
-// que la variable IMask existe en el ámbito global.
-
 // Variables globales para almacenar las instancias de intlTelInput e IMask
 // Hacemos que estas variables sean globales para que se puedan acceder desde getFormattedPhoneNumber.
 let itiCompanyInstance = null;
@@ -160,67 +156,37 @@ export function getFormattedPhoneNumber(type) {
 export function validarPaso1() {
     let errores = [];
     
-    // Obtenemos el valor directamente del input para validación inmediata (aunque usamos la instancia de ITI para la validación final)
-    const nombreEmpresa = document.getElementById("nombreEmpresa")?.value.trim();
     const correoEmpresa = document.getElementById("correoEmpresa")?.value.trim();
     const telefonoEmpresaEl = document.getElementById("telefonoEmpresa");
+    const telefonoEmpresa = telefonoEmpresaEl ? window.intlTelInputGlobals?.getInstance(telefonoEmpresaEl)?.getNumber() : null;
     const sitioWeb = document.getElementById("sitioWeb")?.value.trim();
     
     const adminNombre = document.getElementById("nombreAdmin")?.value.trim();
-    const adminUsername = document.getElementById("adminUsername")?.value.trim();
     const adminCorreo = document.getElementById("correoAdmin")?.value.trim();
     const telefonoAdminEl = document.getElementById("telefonoAdmin");
-    const adminPassword = document.getElementById("adminPassword")?.value.trim();
+    const telefonoAdmin = telefonoAdminEl ? window.intlTelInputGlobals?.getInstance(telefonoAdminEl)?.getNumber() : null;
     
-    const validarCampoVacio = (valor, nombre) => {
-        if (!valor) {
-            errores.push(`El campo **${nombre}** no puede estar vacío.`);
-            return false;
-        }
-        return true;
-    };
+    if (!correoEmpresa) errores.push("El correo de empresa no puede estar vacío.");
+    if (!telefonoEmpresa) errores.push("El teléfono de empresa es requerido.");
+    if (!adminNombre) errores.push("El nombre del administrador es obligatorio.");
+    if (!adminCorreo) errores.push("El correo del administrador no puede estar vacío.");
+    if (!telefonoAdmin) errores.push("El teléfono del administrador es requerido.");
     
-    validarCampoVacio(nombreEmpresa, "Nombre de la Empresa");
-    validarCampoVacio(correoEmpresa, "Correo de la Empresa");
-    validarCampoVacio(adminNombre, "Nombre del Administrador");
-    validarCampoVacio(adminCorreo, "Correo del Administrador");
-
-
-    // Validación de formato de correos
-    const regexEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-    if (correoEmpresa && !regexEmail.test(correoEmpresa)) {
+    if (correoEmpresa && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correoEmpresa)) {
         errores.push("El correo de empresa no tiene un formato válido.");
     }
     
-    if (adminCorreo && !regexEmail.test(adminCorreo)) {
+    if (adminCorreo && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(adminCorreo)) {
         errores.push("El correo del administrador no es válido.");
     }
-
-    // 🚩 Validación de Teléfonos (Usando la instancia de intlTelInput)
-    const validarITITelefono = (inputEl, itiInstance, nombre) => {
-        if (!inputEl.value.trim()) {
-            errores.push(`El teléfono de **${nombre}** es requerido.`);
-            inputEl.classList.add('is-invalid');
-            return false;
-        }
-        
-        if (itiInstance && !itiInstance.isValidNumber()) {
-            errores.push(`El número de teléfono de **${nombre}** no es un número válido.`);
-            inputEl.classList.add('is-invalid');
-            return false;
-        }
-        inputEl.classList.remove('is-invalid');
-        return true;
-    }
-
-    validarITITelefono(telefonoEmpresaEl, itiCompanyInstance, "Empresa");
-    validarITITelefono(telefonoAdminEl, itiAdminInstance, "Administrador");
-
-    // Si el número de caracteres mínimo de la contraseña no se valida:
-    if (adminPassword && adminPassword.length < 6) {
-        errores.push("La contraseña debe tener al menos 6 caracteres.");
+    
+    if (telefonoEmpresa && telefonoEmpresa.length < 10) {
+        errores.push("El número de teléfono de empresa parece incompleto.");
     }
     
+    if (telefonoAdmin && telefonoAdmin.length < 10) {
+        errores.push("El número de teléfono del administrador parece incompleto.");
+    }
     
     if (errores.length > 0) {
         if (typeof Swal !== 'undefined') {
@@ -299,7 +265,7 @@ export function validarTelefonoIndividual(idInput) {
     return esValido;
 }
 
-/* export function inicializarInputsTelefono() {
+export function inicializarInputsTelefono() {
     const inputs = ["#telefonoAdmin", "#telefonoEmpresa"];
     inputs.forEach(selector => {
         const input = document.querySelector(selector);
@@ -318,7 +284,7 @@ export function validarTelefonoIndividual(idInput) {
             }
         }
     });
-} */
+}
 
 export function obtenerTelefonoConPrefijo(idInput) {
     const input = document.getElementById(idInput);
